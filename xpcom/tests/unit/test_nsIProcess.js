@@ -59,6 +59,27 @@ function test_quick()
   do_check_eq(process.exitValue, 42);
 }
 
+// Test nsIProcess.hideWindow
+function test_hideWindow()
+{
+  var file = get_test_program("TestQuickReturn");
+
+  var process = Components.classes["@mozilla.org/process/util;1"]
+                          .createInstance(Components.interfaces.nsIProcess);
+  process.init(file);
+
+  do_check_false(process.hideWindow);
+
+  process.hideWindow = true;
+
+  // to get an exit value it must be a blocking process
+  process.run(true, [], 0);
+
+  do_check_eq(process.exitValue, 42);
+
+  do_check_true(process.hideWindow);
+}
+
 function test_args(file, args, argsAreASCII)
 {
   var process = Components.classes["@mozilla.org/process/util;1"]
@@ -101,18 +122,24 @@ function rename_and_test(asciiName, unicodeName, args, argsAreASCII)
   unicodeFile.moveTo(null, asciiLeaf);
 }
 
+
+
 // test passing ASCII and Unicode arguments to an application with a Unicode name
 function test_unicode_app()
 {
-  rename_and_test("TestArguments",
-                  // "Unicode" in Tamil
-                  "\u0BAF\u0BC1\u0BA9\u0BBF\u0B95\u0BCB\u0B9F\u0BCD",
-                  TEST_ARGS, true);
+  // Bug 582821: Disable this test because of intermittent failures
+  var isWindows = ("@mozilla.org/windows-registry-key;1" in Components.classes);
+  if (!isWindows) {
+    rename_and_test("TestArguments",
+                    // "Unicode" in Tamil
+                    "\u0BAF\u0BC1\u0BA9\u0BBF\u0B95\u0BCB\u0B9F\u0BCD",
+                    TEST_ARGS, true);
 
-  rename_and_test("TestUnicodeArguments",
-                  // "Unicode" in Thai
-                  "\u0E22\u0E39\u0E19\u0E34\u0E42\u0E04\u0E14",
-                  TEST_UNICODE_ARGS, false);
+    rename_and_test("TestUnicodeArguments",
+                    // "Unicode" in Thai
+                    "\u0E22\u0E39\u0E19\u0E34\u0E42\u0E04\u0E14",
+                    TEST_UNICODE_ARGS, false);
+  }
 }
 
 // test if we get notified about a blocking process

@@ -72,6 +72,7 @@ nsProcess::nsProcess()
     , mObserver(nullptr)
     , mWeakObserver(nullptr)
     , mExitValue(-1)
+    , mHideWindow(false)
 #if !defined(XP_MACOSX)
     , mProcess(nullptr)
 #endif
@@ -450,7 +451,7 @@ nsProcess::RunProcess(bool blocking, char **my_argv, nsIObserver* observer,
     sinfo.cbSize = sizeof(SHELLEXECUTEINFOW);
     sinfo.hwnd   = NULL;
     sinfo.lpFile = wideFile.get();
-    sinfo.nShow  = SW_SHOWNORMAL;
+    sinfo.nShow  = mHideWindow ? SW_HIDE : SW_SHOWNORMAL;
     sinfo.fMask  = SEE_MASK_FLAG_DDEWAIT |
                    SEE_MASK_NO_CONSOLE |
                    SEE_MASK_NOCLOSEPROCESS;
@@ -538,6 +539,20 @@ NS_IMETHODIMP nsProcess::GetIsRunning(bool *aIsRunning)
         *aIsRunning = true;
     else
         *aIsRunning = false;
+
+    return NS_OK;
+}
+
+NS_IMETHODIMP nsProcess::GetHideWindow(bool *aHideWindow)
+{
+    *aHideWindow = mHideWindow;
+
+    return NS_OK;
+}
+
+NS_IMETHODIMP nsProcess::SetHideWindow(bool aHideWindow)
+{
+    mHideWindow = aHideWindow;
 
     return NS_OK;
 }
