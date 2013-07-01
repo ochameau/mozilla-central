@@ -255,3 +255,50 @@ LocalDebuggerTransport.prototype = {
 
 }
 
+/**
+ * A transport for the debugging protocol that uses nsIMessageSenders to
+ * exchange packets with servers running in child processes.
+ *
+ * In the parent process, |aSender| should be the nsIMessageSender for the
+ * child process. In a child process, |aSender| should be the child process
+ * message manager, which sends packets to the parent.
+ *
+ * aPrefix is a string included in the message names, to distinguish
+ * multiple servers running in the same child process.
+ *
+ * This transport exchanges messages named 'debug:<prefix>:packet', where
+ * <prefix> is |aPrefix|, whose data is the protocol packet.
+ */
+function ChildDebuggerTransport(aSender, aPrefix) {
+  this._sender = aSender.QueryInterface(Components.interfaces.nsIMessageSender);
+  this._messageName = "debug:" + aPrefix + ":packet";
+}
+
+/*
+ * To avoid confusion, we use 'message' to mean something that
+ * nsIMessageSender conveys, and 'packet' to mean a remote debugging
+ * protocol packet.
+ */
+ChildDebuggerTransport.prototype = {
+  constructor: ChildDebuggerTransport,
+
+  hooks: null,
+
+  ready: function () {
+    this._sender.addMessageListener(this._messageName, this);
+  },
+
+  close: function () {
+    this._sender.removeMessageListener(this._messageName, this);
+    this.hooks.onClosed();
+  },
+
+  receiveMessage: function ({data}) {
+    this.hooks.onPacket(data);
+  },
+
+  send: function (packet) {
+    this._sender.sendAsyncMessage(this._messageName, packet);
+  }
+};
+
