@@ -45,7 +45,7 @@ BrowserRootActor.prototype = {
    */
   sayHello: function BRA_sayHello() {
     return {
-      from: "root",
+      from: this.actorID,
       applicationType: "browser",
       traits: {}
     };
@@ -125,7 +125,7 @@ BrowserRootActor.prototype = {
     this.conn.addActorPool(this._tabActorPool);
 
     let response = {
-      "from": "root",
+      "from": this.actorID,
       "selected": selected,
       "tabs": [actor.grip() for (actor of tabActorList)]
     };
