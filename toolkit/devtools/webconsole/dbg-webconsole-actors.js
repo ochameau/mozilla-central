@@ -427,6 +427,12 @@ WebConsoleActor.prototype =
       }
     }
 
+    // If both FileActivity and LocationChange have been detached,
+    // its destroy method will be automatically called.
+    // We have to unregister this zombie instance!
+    if (this.consoleProgressListener && !this.consoleProgressListener.window)
+      this.consoleProgressListener = null;
+
     return { stoppedListeners: stoppedListeners };
   },
 
