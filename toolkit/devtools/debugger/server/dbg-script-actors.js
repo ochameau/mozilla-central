@@ -785,7 +785,7 @@ ThreadActor.prototype = {
    * Create a grip for the given debuggee value.  If the value is an
    * object, will create an actor with the given lifetime.
    */
-  createValueGrip: function TA_createValueGrip(aValue, aPool=false) {
+  createValueGrip: function TA_createValueGrip(aValue, aPool) {
     if (!aPool) {
       aPool = this._pausePool;
     }
@@ -851,7 +851,7 @@ ThreadActor.prototype = {
       return aPool.objectActors.get(aValue).grip();
     }
 
-    let actor = new ObjectActor(aValue, this);
+    let actor = new PauseScopedObjectActor(aValue, this);
     aPool.addActor(actor);
     aPool.objectActors.set(aValue, actor);
     return actor.grip();
@@ -1361,10 +1361,7 @@ function ObjectActor(aObj, aThreadActor)
   this.threadActor = aThreadActor;
 }
 
-ObjectActor.prototype = Object.create(PauseScopedActor.prototype);
-
-update(ObjectActor.prototype, {
-  constructor: ObjectActor,
+ObjectActor.prototype = {
   actorPrefix: "obj",
 
   /**
@@ -1380,7 +1377,9 @@ update(ObjectActor.prototype, {
    * Releases this actor from the pool.
    */
   release: function OA_release() {
-    this.registeredPool.objectActors.delete(this.obj);
+    if (this.registeredPool.objectActors) {
+      this.registeredPool.objectActors.delete(this.obj);
+    }
     this.registeredPool.removeActor(this.actorID);
   },
 
@@ -1391,11 +1390,10 @@ update(ObjectActor.prototype, {
    * @param aRequest object
    *        The protocol request object.
    */
-  onOwnPropertyNames:
-  PauseScopedActor.withPaused(function OA_onOwnPropertyNames(aRequest) {
-    return { from: this.actorID,
-             ownPropertyNames: this.obj.getOwnPropertyNames() };
-  }),
+  onOwnPropertyNames: function OA_onOwnPropertyNames(aRequest) {
+     return { from: this.actorID,
+              ownPropertyNames: this.obj.getOwnPropertyNames() };
+  },
 
   /**
    * Handle a protocol request to provide the prototype and own properties of
@@ -1404,8 +1402,7 @@ update(ObjectActor.prototype, {
    * @param aRequest object
    *        The protocol request object.
    */
-  onPrototypeAndProperties:
-  PauseScopedActor.withPaused(function OA_onPrototypeAndProperties(aRequest) {
+  onPrototypeAndProperties: function OA_onPrototypeAndProperties(aRequest) {
     let ownProperties = {};
     for each (let name in this.obj.getOwnPropertyNames()) {
       try {
@@ -1421,7 +1418,7 @@ update(ObjectActor.prototype, {
     return { from: this.actorID,
              prototype: this.threadActor.createValueGrip(this.obj.proto),
              ownProperties: ownProperties };
-  }),
+  },
 
   /**
    * Handle a protocol request to provide the prototype of the object.
@@ -1429,10 +1426,10 @@ update(ObjectActor.prototype, {
    * @param aRequest object
    *        The protocol request object.
    */
-  onPrototype: PauseScopedActor.withPaused(function OA_onPrototype(aRequest) {
+  onPrototype: function OA_onPrototype(aRequest) {
     return { from: this.actorID,
              prototype: this.threadActor.createValueGrip(this.obj.proto) };
-  }),
+  },
 
   /**
    * Handle a protocol request to provide the property descriptor of the
@@ -1441,7 +1438,7 @@ update(ObjectActor.prototype, {
    * @param aRequest object
    *        The protocol request object.
    */
-  onProperty: PauseScopedActor.withPaused(function OA_onProperty(aRequest) {
+  onProperty: function OA_onProperty(aRequest) {
     if (!aRequest.name) {
       return { error: "missingParameter",
                message: "no property name was specified" };
@@ -1450,7 +1447,7 @@ update(ObjectActor.prototype, {
     let desc = this.obj.getOwnPropertyDescriptor(aRequest.name);
     return { from: this.actorID,
              descriptor: this._propertyDescriptor(desc) };
-  }),
+  },
 
   /**
    * A helper method that creates a property descriptor for the provided object,
@@ -1479,7 +1476,7 @@ update(ObjectActor.prototype, {
    * @param aRequest object
    *        The protocol request object.
    */
-  onDecompile: PauseScopedActor.withPaused(function OA_onDecompile(aRequest) {
+  onDecompile: function OA_onDecompile(aRequest) {
     if (this.obj.class !== "Function") {
       return { error: "objectNotFunction",
                message: "decompile request is only valid for object grips " +
@@ -1488,7 +1485,61 @@ update(ObjectActor.prototype, {
 
     return { from: this.actorID,
              decompiledCode: this.obj.decompile(!!aRequest.pretty) };
-  }),
+  },
+
+  /**
+   * Handle a protocol request to release a thread-lifetime grip.
+   *
+   * @param aRequest object
+   *        The protocol request object.
+   */
+  onRelease: function OA_onRelease(aRequest) {
+    this.release();
+    return {};
+  },
+};
+
+ObjectActor.prototype.requestTypes = {
+  "nameAndParameters": ObjectActor.prototype.onNameAndParameters,
+  "prototypeAndProperties": ObjectActor.prototype.onPrototypeAndProperties,
+  "prototype": ObjectActor.prototype.onPrototype,
+  "property": ObjectActor.prototype.onProperty,
+  "ownPropertyNames": ObjectActor.prototype.onOwnPropertyNames,
+  "scope": ObjectActor.prototype.onScope,
+  "decompile": ObjectActor.prototype.onDecompile,
+  "threadGrip": ObjectActor.prototype.onThreadGrip,
+  "release": ObjectActor.prototype.onRelease,
+};
+
+
+/**
+ * Creates a pause-scoped  actor for the specified object.
+ * @see ObjectActor
+ */
+function PauseScopedObjectActor()
+{
+  ObjectActor.apply(this, arguments);
+}
+
+PauseScopedObjectActor.prototype = Object.create(PauseScopedActor.prototype);
+
+update(PauseScopedObjectActor.prototype, ObjectActor.prototype);
+
+update(PauseScopedObjectActor.prototype, {
+  constructor: PauseScopedObjectActor,
+
+  onOwnPropertyNames:
+    PauseScopedActor.withPaused(ObjectActor.prototype.onOwnPropertyNames),
+
+  onPrototypeAndProperties:
+    PauseScopedActor.withPaused(ObjectActor.prototype.onPrototypeAndProperties),
+
+  onPrototype: PauseScopedActor.withPaused(ObjectActor.prototype.onPrototype),
+  onProperty: PauseScopedActor.withPaused(ObjectActor.prototype.onProperty),
+  onDecompile: PauseScopedActor.withPaused(ObjectActor.prototype.onDecompile),
+
+  onParameterNames:
+    PauseScopedActor.withPaused(ObjectActor.prototype.onParameterNames),
 
   /**
    * Handle a protocol request to provide the lexical scope of a function.
@@ -1563,17 +1614,10 @@ update(ObjectActor.prototype, {
   }),
 });
 
-ObjectActor.prototype.requestTypes = {
-  "nameAndParameters": ObjectActor.prototype.onNameAndParameters,
-  "prototypeAndProperties": ObjectActor.prototype.onPrototypeAndProperties,
-  "prototype": ObjectActor.prototype.onPrototype,
-  "property": ObjectActor.prototype.onProperty,
-  "ownPropertyNames": ObjectActor.prototype.onOwnPropertyNames,
-  "scope": ObjectActor.prototype.onScope,
-  "decompile": ObjectActor.prototype.onDecompile,
-  "threadGrip": ObjectActor.prototype.onThreadGrip,
-  "release": ObjectActor.prototype.onRelease,
-};
+update(PauseScopedObjectActor.prototype.requestTypes, {
+  "scope": PauseScopedObjectActor.prototype.onScope,
+  "threadGrip": PauseScopedObjectActor.prototype.onThreadGrip,
+});
 
 
 /**
