@@ -255,6 +255,8 @@ function BrowserTabActor(aConnection, aBrowser, aTabBrowser)
 BrowserTabActor.prototype = {
   get browser() { return this._browser; },
 
+  get contentWindow() { return this._browser.contentWindow; },
+
   get exited() { return !this.browser; },
   get attached() { return !!this._attached },
 
@@ -384,7 +386,7 @@ BrowserTabActor.prototype = {
     this.conn.addActorPool(this._contextPool);
 
     this.threadActor = new ThreadActor(this);
-    this._addDebuggees(this.browser.contentWindow.wrappedJSObject);
+    this._addDebuggees(this.contentWindow.wrappedJSObject);
     this._contextPool.addActor(this.threadActor);
   },
 
@@ -470,7 +472,7 @@ BrowserTabActor.prototype = {
       // The tab is already closed.
       return;
     }
-    let windowUtils = this.browser.contentWindow
+    let windowUtils = this.contentWindow
                           .QueryInterface(Ci.nsIInterfaceRequestor)
                           .getInterface(Ci.nsIDOMWindowUtils);
     windowUtils.suppressEventHandling(true);
@@ -485,7 +487,7 @@ BrowserTabActor.prototype = {
       // The tab is already closed.
       return;
     }
-    let windowUtils = this.browser.contentWindow
+    let windowUtils = this.contentWindow
                           .QueryInterface(Ci.nsIInterfaceRequestor)
                           .getInterface(Ci.nsIDOMWindowUtils);
     windowUtils.resumeTimeouts();
@@ -501,7 +503,7 @@ BrowserTabActor.prototype = {
    * client.
    */
   onWindowCreated: function BTA_onWindowCreated(evt) {
-    if (evt.target === this.browser.contentDocument) {
+    if (evt.target === this.contentWindow.document) {
       // pageshow events for non-persisted pages have already been handled by a
       // prior DOMWindowCreated event.
       if (evt.type == "pageshow" && !evt.persisted) {
@@ -514,7 +516,7 @@ BrowserTabActor.prototype = {
           delete this._progressListener._needsTabNavigated;
         }
         this.conn.send({ from: this.actorID, type: "tabNavigated",
-                         url: this.browser.contentDocument.URL });
+                         url: this.contentWindow.document.URL });
       }
     }
 
@@ -560,7 +562,7 @@ DebuggerProgressListener.prototype = {
     if (isStart && isDocument && isRequest && isNetwork) {
       // If the request is about to happen in a new window, we are not concerned
       // about the request.
-      if (aProgress.DOMWindow != this._tabActor.browser.contentWindow) {
+      if (aProgress.DOMWindow != this._tabActor.contentWindow) {
         return;
       }
 
@@ -580,7 +582,7 @@ DebuggerProgressListener.prototype = {
       this._tabActor.conn.send({
         from: this._tabActor.actorID,
         type: "tabNavigated",
-        url: this._tabActor.browser.contentDocument.URL
+        url: this._tabActor.contentWindow.document.URL
       });
 
       this.destroy();

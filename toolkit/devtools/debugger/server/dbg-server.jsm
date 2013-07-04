@@ -15,7 +15,7 @@ const Ci = Components.interfaces;
 const Cc = Components.classes;
 const Cu = Components.utils;
 
-this.EXPORTED_SYMBOLS = ["DebuggerServer"];
+this.EXPORTED_SYMBOLS = ["DebuggerServer", "ActorPool"];
 
 var loadSubScript =
   "function loadSubScript(aURL)\n" +
@@ -43,3 +43,4 @@ Cu.evalInSandbox(loadSubScript, gGlobal, "1.8");
 gGlobal.loadSubScript("chrome://global/content/devtools/dbg-server.js");
 
 this.DebuggerServer = gGlobal.DebuggerServer;
+this.ActorPool = gGlobal.ActorPool;

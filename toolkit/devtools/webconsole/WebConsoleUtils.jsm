@@ -2072,8 +2072,10 @@ NetworkMonitor.prototype = {
 
     gActivityDistributor.addObserver(this);
 
-    Services.obs.addObserver(this._httpResponseExaminer,
-                             "http-on-examine-response", false);
+    if (Services.appinfo.processType != Ci.nsIXULRuntime.PROCESS_TYPE_CONTENT) {
+      Services.obs.addObserver(this._httpResponseExaminer,
+                               "http-on-examine-response", false);
+    }
   },
 
   /**
@@ -2574,8 +2576,10 @@ NetworkMonitor.prototype = {
    */
   destroy: function NM_destroy()
   {
-    Services.obs.removeObserver(this._httpResponseExaminer,
-                                "http-on-examine-response");
+    if (Services.appinfo.processType != Ci.nsIXULRuntime.PROCESS_TYPE_CONTENT) {
+      Services.obs.removeObserver(this._httpResponseExaminer,
+                                  "http-on-examine-response");
+    }
 
     gActivityDistributor.removeObserver(this);
 

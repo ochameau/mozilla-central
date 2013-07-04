@@ -185,11 +185,9 @@ var DebuggerServer = {
    */
   addBrowserActors: function DH_addBrowserActors() {
     this.addActors("chrome://global/content/devtools/dbg-browser-actors.js");
-#ifndef MOZ_WIDGET_GONK
     this.addActors("chrome://global/content/devtools/dbg-webconsole-actors.js");
     this.addTabActor(this.WebConsoleActor, "consoleActor");
     this.addGlobalActor(this.WebConsoleActor, "consoleActor");
-#endif
     if ("nsIProfiler" in Ci)
       this.addActors("chrome://global/content/devtools/dbg-profiler-actors.js");
   },
@@ -282,11 +280,10 @@ var DebuggerServer = {
    *    "debug:<prefix>:packet", and all its actors will have names
    *    beginning with "<prefix>:".
    */
-  connectToParent: function(aPrefix) {
+  connectToParent: function(aPrefix, aMessageManager) {
     this._checkInit();
 
-    let sender = Cc["@mozilla.org/childprocessmessagemanager;1"].getService()
-    let transport = new ChildDebuggerTransport(sender, aPrefix);
+    let transport = new ChildDebuggerTransport(aMessageManager, aPrefix);
     return this._onConnection(transport, aPrefix);
   },
 
@@ -354,6 +351,8 @@ var DebuggerServer = {
     conn.addActor(conn.rootActor);
     aTransport.send(conn.rootActor.sayHello());
     aTransport.ready();
+
+    return conn;
   },
 
   /**
@@ -598,7 +597,7 @@ DebuggerServerConnection.prototype = {
     // Note that the presence of a prefix alone doesn't indicate that
     // forwarding is needed: in DebuggerServerConnection instances in child
     // processes, every actor has a prefixed name.
-    if (this._forwardingPrefixes.size > 0) {
+    if (this._forwardingPrefixes.size() > 0) {
       let colon = String(aPacket.to).indexOf(':');
       if (colon >= 0) {
         let forwardTo = this._forwardingPrefixes.get(aPacket.to.substring(0, colon));

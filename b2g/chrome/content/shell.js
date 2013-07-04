@@ -953,10 +953,19 @@ let RemoteDebugger = {
   start: function debugger_start() {
     if (!DebuggerServer.initialized) {
       // Ask for remote connections.
-      DebuggerServer.init(this.prompt.bind(this));
-      DebuggerServer.addBrowserActors();
-      DebuggerServer.addActors('chrome://browser/content/dbg-browser-actors.js');
-      DebuggerServer.addActors('chrome://browser/content/dbg-webapps-actors.js');
+      try {
+        DebuggerServer.init(this.prompt.bind(this));
+        DebuggerServer.addActors("chrome://global/content/devtools/dbg-browser-actors.js");
+        DebuggerServer.addActors("chrome://global/content/devtools/dbg-webconsole-actors.js");
+        DebuggerServer.addTabActor(DebuggerServer.WebConsoleActor, "consoleActor");
+        DebuggerServer.addGlobalActor(DebuggerServer.WebConsoleActor, "consoleActor");
+        if ("nsIProfiler" in Ci)
+          DebuggerServer.addActors("chrome://global/content/devtools/dbg-profiler-actors.js");
+        DebuggerServer.addActors('chrome://browser/content/dbg-browser-actors.js');
+        DebuggerServer.addActors('chrome://browser/content/dbg-webapps-actors.js');
+      }catch(e) {
+        dump("Error while initializing devtools: "+e+"\n"+e.stack+"\n");
+      }
     }
 
     let port = Services.prefs.getIntPref('devtools.debugger.remote-port') || 6000;

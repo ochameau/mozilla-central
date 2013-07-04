@@ -35,6 +35,8 @@ function WebappsActor(aConnection) {
   Cu.import("resource://gre/modules/AppsUtils.jsm");
   Cu.import("resource://gre/modules/FileUtils.jsm");
   Cu.import('resource://gre/modules/Services.jsm');
+
+  this._appActorsMap = new WeakMap();
 }
 
 WebappsActor.prototype = {
@@ -370,6 +372,177 @@ WebappsActor.prototype = {
 
     return {};
   },
+
+  _appFrames: function () {
+    // Register the system app
+    let chromeWindow = Services.wm.getMostRecentWindow('navigator:browser');
+    let systemAppFrame = chromeWindow.shell.contentBrowser;
+    yield systemAppFrame;
+
+    // Register apps hosted in the system app. i.e. the homescreen, all regular
+    // apps and the keyboard.
+    // XXX: We can easily fetch bookmark apps and other system app internal frames
+    // like captive portal here. They are not using mozapp attribute.
+    let frames = systemAppFrame.contentDocument.querySelectorAll("iframe[mozapp]");
+    for (let i = 0; i < frames.length; i++) {
+      yield frames[i];
+    }
+  },
+
+  listRunningApps: function wa_actorListRunningApps(aRequest) {
+    debug("listRunningApps\n");
+
+    let apps = [];
+
+    for each (let frame in this._appFrames()) {
+      let manifestURL = frame.getAttribute("mozapp");
+      apps.push(manifestURL);
+    }
+
+    return { apps: apps };
+  },
+
+  _connectToApp: function (aFrame, aCallback) {
+    let mm = aFrame.QueryInterface(Ci.nsIFrameLoaderOwner).frameLoader.messageManager;
+    mm.loadFrameScript("chrome://global/content/devtools/child.js", false);
+
+    let childTransport, prefix;
+
+    let onActorCreated = (function (msg) {
+      mm.removeMessageListener("debug:actor", onActorCreated);
+
+      debug("***** Got debug:actor\n");
+      let { actor, appId } = msg.json;
+      prefix = msg.json.prefix;
+      let messageManager = msg.target;
+
+      // Pipe Debugger message from/to parent/child via the message manager
+      childTransport = new ChildDebuggerTransport(mm, prefix);
+      childTransport.hooks = {
+        onPacket: this.conn.send.bind(this.conn),
+        onClosed: function () {}
+      };
+      childTransport.ready();
+
+      this.conn.setForwarding(prefix, childTransport);
+
+      debug("establishing forwarding for app with prefix " + prefix);
+
+      this._appActorsMap.set(aFrame, actor);
+
+      this.conn.send({ from: this.actorID, actor: actor });
+    }).bind(this);
+    mm.addMessageListener("debug:actor", onActorCreated);
+
+    let onMessageManagerDisconnect = (function (subject, type, data) {
+      if (subject == mm) {
+        Services.obs.removeObserver(onMessageManagerDisconnect, type);
+        if (childTransport) {
+          // If we have a child transport, the actor has already
+          // been created. We need to stop using this message manager.
+          childTransport.close();
+          this.conn.cancelForwarding(prefix);
+        } else {
+          // Otherwise, the app has been closed before the actor
+          // had a chance to be created, so we are not able to create
+          // the actor.
+          this.conn.send({ from: this.actorID, actor: null });
+        }
+      }
+    }).bind(this);
+    Services.obs.addObserver(onMessageManagerDisconnect,
+                             "message-manager-disconnect", false);
+
+    let prefix_start = this.conn.prefix + "child";
+    mm.sendAsyncMessage("debug:connect", { prefix: prefix_start });
+  },
+
+  getAppActor: function (aRequest) {
+    debug("getAppActor\n");
+
+    let { manifestURL } = aRequest;
+
+    let appFrame = null;
+    for each (let frame in this._appFrames()) {
+      if (frame.getAttribute("mozapp") == manifestURL) {
+        appFrame = frame;
+      }
+    }
+
+    if (!appFrame) {
+      return { error: "appNotFound",
+               message: "Unable to find any opened app whose manifest " +
+                        "is '" + manifestURL + "'" };
+    }
+
+    // XXX: I'd have liked to use messageManager as key, but for some reasons
+    // they can't be weakmap keys :(
+    let actor = this._appActorsMap.get(appFrame);
+    if (!actor) {
+      this._connectToApp(appFrame);
+      return;
+    }
+
+    return { actor: actor };
+  },
+
+  watchApps: function () {
+    this._framesByOrigin = {};
+    let chromeWindow = Services.wm.getMostRecentWindow('navigator:browser');
+    let systemAppFrame = chromeWindow.getContentWindow();
+    systemAppFrame.addEventListener("appwillopen", this);
+    systemAppFrame.addEventListener("appterminated", this);
+
+    return {};
+  },
+
+  unwatchApps: function () {
+    this._framesByOrigin = null;
+    let chromeWindow = Services.wm.getMostRecentWindow('navigator:browser');
+    let systemAppFrame = chromeWindow.getContentWindow();
+    systemAppFrame.removeEventListener("appwillopen", this);
+    systemAppFrame.removeEventListener("appterminated", this);
+
+    return {};
+  },
+
+  handleEvent: function (event) {
+    let frame, origin;
+    switch(event.type) {
+      case "appwillopen":
+        frame = event.target;
+        // Ignore the event if we already received an appwillopen for this app
+        // (appwillopen is also fired when the app has been moved to background
+        // and get back to foreground)
+        if (this._appActorsMap.has(frame)) {
+          return;
+        }
+
+        // XXX: workaround to be able to get the frame during appterminated evt
+        origin = event.detail.origin;
+        this._framesByOrigin[origin] = frame;
+
+        this.conn.send({ from: this.actorID,
+                         type: "appOpen",
+                         manifestURL: frame.getAttribute("mozapp")
+                       });
+        break;
+
+      case "appterminated":
+        origin = event.detail.origin;
+        // Get the related app frame out of this event
+        // TODO: eventually fire the event on the frame or at least use
+        // manifestURL as key (and propagate manifestURL via event detail)
+        frame = this._framesByOrigin[origin];
+        if (frame) {
+          let manifestURL = frame.getAttribute("mozapp");
+          this.conn.send({ from: this.actorID,
+                           type: "appClose",
+                           manifestURL: manifestURL
+                         });
+        }
+        break;
+    }
   }
 };
 
@@ -382,6 +555,10 @@ WebappsActor.prototype.requestTypes = {
   "launch": WebappsActor.prototype.launch,
   "close": WebappsActor.prototype.close,
   "uninstall": WebappsActor.prototype.uninstall,
+  "listRunningApps": WebappsActor.prototype.listRunningApps,
+  "getAppActor": WebappsActor.prototype.getAppActor,
+  "watchApps": WebappsActor.prototype.watchApps,
+  "unwatchApps": WebappsActor.prototype.unwatchApps
 };
 
 DebuggerServer.addGlobalActor(WebappsActor, "webappsActor");
