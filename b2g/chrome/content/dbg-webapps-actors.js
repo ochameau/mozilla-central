@@ -26,7 +26,16 @@ function debug(aMsg) {
  * Creates a WebappsActor. WebappsActor provides remote access to
  * install apps.
  */
-function WebappsActor(aConnection) { debug("init"); }
+function WebappsActor(aConnection) {
+  debug("init");
+  // Load actor dependencies lazily as this actor require extra environnement
+  // preparation to work (like have a profile setup in xpcshell tests)
+
+  Cu.import("resource://gre/modules/Webapps.jsm");
+  Cu.import("resource://gre/modules/AppsUtils.jsm");
+  Cu.import("resource://gre/modules/FileUtils.jsm");
+  Cu.import('resource://gre/modules/Services.jsm');
+}
 
 WebappsActor.prototype = {
   actorPrefix: "webapps",
@@ -237,10 +246,6 @@ WebappsActor.prototype = {
   install: function wa_actorInstall(aRequest) {
     debug("install");
 
-    Cu.import("resource://gre/modules/Webapps.jsm");
-    Cu.import("resource://gre/modules/AppsUtils.jsm");
-    Cu.import("resource://gre/modules/FileUtils.jsm");
-
     let appId = aRequest.appId;
     if (!appId) {
       return { error: "missingParameter",
@@ -289,6 +294,82 @@ WebappsActor.prototype = {
     }
 
     return { appId: appId, path: appDir.path }
+  },
+
+  getAll: function wa_actorGetAll(aRequest) {
+    debug("getAll");
+
+    let self = this;
+    let reg = DOMApplicationRegistry;
+    reg.getAll(function onsuccess(apps) {
+      self.conn.send({ from: aRequest.to, apps: apps });
+    });
+  },
+
+  uninstall: function wa_actorUninstall(aRequest) {
+    debug("uninstall");
+
+    let manifestURL = aRequest.manifestURL;
+    if (!manifestURL) {
+      return { error: "missingParameter",
+               message: "missing parameter manifestURL" };
+    }
+
+    let reg = DOMApplicationRegistry;
+    let self = this;
+    reg.uninstall(
+      manifestURL,
+      function onsuccess() {
+        self.conn.send({ from: self.actorID });
+      },
+      function onfailure(reason) {
+        self.conn.send({ from: self.actorID, error: reason });
+      }
+    );
+  },
+
+  launch: function wa_actorLaunch(aRequest) {
+    debug("launch");
+
+    let manifestURL = aRequest.manifestURL;
+    if (!manifestURL) {
+      return { error: "missingParameter",
+               message: "missing parameter manifestURL" };
+    }
+
+    let reg = DOMApplicationRegistry;
+    let self = this;
+    reg.launch(
+      aRequest.manifestURL,
+      aRequest.startPoint || "",
+      function onsuccess() {
+        self.conn.send({ from: self.actorID });
+      },
+      function onfailure(reason) {
+        self.conn.send({ from: self.actorID, error: reason });
+      });
+  },
+
+  close: function wa_actorLaunch(aRequest) {
+    debug("close");
+
+    let manifestURL = aRequest.manifestURL;
+    if (!manifestURL) {
+      return { error: "missingParameter",
+               message: "missing parameter manifestURL" };
+    }
+
+    let reg = DOMApplicationRegistry;
+    let app = reg.getAppByManifestURL(manifestURL);
+    if (!app) {
+      return { error: "missingParameter",
+               message: "No application for " + manifestURL };
+    }
+
+    reg.close(app);
+
+    return {};
+  },
   }
 };
 
@@ -296,7 +377,11 @@ WebappsActor.prototype = {
  * The request types this actor can handle.
  */
 WebappsActor.prototype.requestTypes = {
-  "install": WebappsActor.prototype.install
+  "install": WebappsActor.prototype.install,
+  "getAll": WebappsActor.prototype.getAll,
+  "launch": WebappsActor.prototype.launch,
+  "close": WebappsActor.prototype.close,
+  "uninstall": WebappsActor.prototype.uninstall,
 };
 
 DebuggerServer.addGlobalActor(WebappsActor, "webappsActor");
