@@ -11,6 +11,7 @@ DIRS += [
     'discovery',
     'gcli',
     'jsbeautify',
+    'memory',
     'pretty-fast',
     'qrcode',
     'security',

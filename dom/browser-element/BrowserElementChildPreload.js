@@ -56,7 +56,8 @@ let CERTIFICATE_ERROR_PAGE_PREF = 'security.alternate_certificate_error_page';
 const OBSERVED_EVENTS = [
   'xpcom-shutdown',
   'media-playback',
-  'activity-done'
+  'activity-done',
+  'document-element-inserted'
 ];
 
 const COMMAND_MAP = {
@@ -278,6 +279,16 @@ BrowserElementChild.prototype = {
   },
 
   observe: function(subject, topic, data) {
+    if (topic == 'document-element-inserted') {
+      dump("Enable allocation metadata for " + subject +"\n");
+      if (subject.defaultView)
+        dump(subject.defaultView.location.href+"\n");
+      let listener = Cc["@mozilla.org/cycle-collector-logger;1"]
+                       .createInstance(Ci.nsICycleCollectorListener);
+      if (subject.defaultView)
+        listener.enableAllocationMetadata(subject.defaultView);
+      return;
+    }
     // Ignore notifications not about our document.  (Note that |content| /can/
     // be null; see bug 874900.)
 

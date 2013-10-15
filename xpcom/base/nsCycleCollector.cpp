@@ -179,6 +179,8 @@
 #include "nsDumpUtils.h"
 #include "xpcpublic.h"
 #include "GeckoProfiler.h"
+#include "jsapi.h"
+#include "jsfriendapi.h"
 #include <stdint.h>
 #include <stdio.h>
 
@@ -1205,7 +1207,7 @@ nsPurpleBuffer::SelectPointers(CCGraphBuilder& aBuilder)
   SelectPointersVisitor visitor(aBuilder);
   VisitEntries(visitor);
 
-  NS_ASSERTION(mCount == 0, "AddPurpleRoot failed");
+  //NS_ASSERTION(mCount == 0, "AddPurpleRoot failed");
   if (mCount == 0) {
     FreeBlocks();
     InitBlocks();
@@ -1257,6 +1259,7 @@ class nsCycleCollector : public nsIMemoryReporter
   CCGraph mGraph;
   nsAutoPtr<CCGraphBuilder> mBuilder;
   nsRefPtr<nsCycleCollectorLogger> mLogger;
+  JS::Zone *mSelectedZone;
 
   DebugOnly<void*> mThread;
 
@@ -1288,6 +1291,7 @@ public:
     CheckThreadSafety();
     mBeforeUnlinkCB = aBeforeUnlinkCB;
   }
+  void SetSelectedZone(JS::Zone *aZone);
 
   void SetForgetSkippableCallback(CC_ForgetSkippableCallback aForgetSkippableCB)
   {
@@ -1693,9 +1697,6 @@ private:
   FileInfo mCCLog;
 };
 
-NS_IMPL_ISUPPORTS(nsCycleCollectorLogSinkToFile, nsICycleCollectorLogSink)
-
-
 class nsCycleCollectorLogger final : public nsICycleCollectorListener
 {
   ~nsCycleCollectorLogger()
@@ -1723,6 +1724,36 @@ public:
   bool IsAllTraces()
   {
     return mWantAllTraces;
+  }
+
+  NS_IMETHOD EnableAllocationMetadata(const JS::HandleValue target, JSContext* cx)
+  {
+      CollectorData *data = sCollectorData.get();
+      if (data && data->mRuntime)
+          data->mRuntime->EnableAllocationMetadata(target, cx);
+      return NS_OK;
+  }
+
+  NS_IMETHOD DisableAllocationMetadata(const JS::HandleValue target, JSContext* cx)
+  {
+      CollectorData *data = sCollectorData.get();
+      if (data && data->mRuntime)
+          data->mRuntime->DisableAllocationMetadata(target, cx);
+      return NS_OK;
+  }
+
+  NS_IMETHOD TraceZone(const JS::HandleValue targetArg, JSContext* cx)
+  {
+      JS::RootedValue target(cx, targetArg);
+      JS::RootedObject obj(cx);
+      if (!JS_ValueToObject(cx, target, &obj))
+        return NS_OK;
+      obj = JS_FindCompilationScope(cx, obj);
+      JS::Zone *zone = js::GetCompartmentZone(GetObjectCompartment(obj));
+      CollectorData *data = sCollectorData.get();
+      if (data && data->mCollector)
+        data->mCollector->SetSelectedZone(zone);
+      return NS_OK;
   }
 
   NS_IMETHOD AllTraces(nsICycleCollectorListener** aListener) override
@@ -2031,13 +2062,15 @@ private:
   nsRefPtr<nsCycleCollectorLogger> mLogger;
   bool mMergeZones;
   nsAutoPtr<NodePool::Enumerator> mCurrNode;
+  JS::Zone *mSelectedZone;
 
 public:
   CCGraphBuilder(CCGraph& aGraph,
                  CycleCollectorResults& aResults,
                  CycleCollectedJSRuntime* aJSRuntime,
                  nsCycleCollectorLogger* aLogger,
-                 bool aMergeZones);
+                 bool aMergeZones,
+                 JS::Zone *aSelectedZone);
   virtual ~CCGraphBuilder();
 
   bool WantAllTraces() const
@@ -2135,7 +2168,8 @@ CCGraphBuilder::CCGraphBuilder(CCGraph& aGraph,
                                CycleCollectorResults& aResults,
                                CycleCollectedJSRuntime* aJSRuntime,
                                nsCycleCollectorLogger* aLogger,
-                               bool aMergeZones)
+                               bool aMergeZones,
+                               JS::Zone *aSelectedZone)
   : mGraph(aGraph)
   , mResults(aResults)
   , mNodeBuilder(aGraph.mNodes)
@@ -2144,6 +2178,7 @@ CCGraphBuilder::CCGraphBuilder(CCGraph& aGraph,
   , mJSZoneParticipant(nullptr)
   , mLogger(aLogger)
   , mMergeZones(aMergeZones)
+  , mSelectedZone(aSelectedZone)
 {
   if (aJSRuntime) {
     mJSParticipant = aJSRuntime->GCThingParticipant();
@@ -2171,6 +2206,10 @@ CCGraphBuilder::~CCGraphBuilder()
 PtrInfo*
 CCGraphBuilder::AddNode(void* aPtr, nsCycleCollectionParticipant* aParticipant)
 {
+  //if (mSelectedZone && mSelectedZone != JS::GetTenuredGCThingZone(aPtr)) {
+  //  return nullptr;
+  //}
+
   PtrToNodeEntry* e = mGraph.AddNodeToMap(aPtr);
   if (!e) {
     return nullptr;
@@ -3370,7 +3409,8 @@ nsCycleCollector::nsCycleCollector() :
   mBeforeUnlinkCB(nullptr),
   mForgetSkippableCB(nullptr),
   mUnmergedNeeded(0),
-  mMergedInARow(0)
+  mMergedInARow(0),
+  mSelectedZone(nullptr)
 {
 }
 
@@ -3400,6 +3440,12 @@ nsCycleCollector::ForgetJSRuntime()
 {
   MOZ_RELEASE_ASSERT(mJSRuntime, "Forgetting JS runtime in cycle collector before a JS runtime was registered");
   mJSRuntime = nullptr;
+}
+
+void
+nsCycleCollector::SetSelectedZone(JS::Zone *aZone)
+{
+    mSelectedZone = aZone;
 }
 
 #ifdef DEBUG
@@ -3801,7 +3847,7 @@ nsCycleCollector::BeginCollection(ccType aCCType,
 
   MOZ_ASSERT(!mBuilder, "Forgot to clear mBuilder");
   mBuilder = new CCGraphBuilder(mGraph, mResults, mJSRuntime, mLogger,
-                                mergeZones);
+                                mergeZones, mSelectedZone);
   timeLog.Checkpoint("BeginCollection prepare graph builder");
 
   if (mJSRuntime) {

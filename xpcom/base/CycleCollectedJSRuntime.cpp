@@ -79,6 +79,7 @@
 #include "nsIException.h"
 #include "nsThreadUtils.h"
 #include "xpcpublic.h"
+//#include "js/OldDebugAPI.h"
 
 using namespace mozilla;
 using namespace mozilla::dom;
@@ -450,6 +451,113 @@ CycleCollectedJSRuntime::~CycleCollectedJSRuntime()
   mozilla::dom::DestroyScriptSettings();
 }
 
+static JSClass sDebugContextGlobalClass = {
+  "DebugContextGlobalClass",
+  JSCLASS_GLOBAL_FLAGS,
+  nullptr,
+     nullptr,
+     nullptr,
+     nullptr,
+     nullptr,
+     nullptr,
+     nullptr,
+     nullptr,
+     nullptr,
+     nullptr,
+     nullptr,
+     nullptr,
+     nullptr
+};
+static JSContext* mDebugContext;
+static JSObject* mDebugGlobal;
+static JSObject* 
+ObjectMetadataCallback(JSContext *cx, JSObject *target)
+{
+  if (!mDebugContext) {
+    mDebugContext = JS_NewContext(JS_GetRuntime(cx), 8192);
+  }
+  JSAutoRequest ar(mDebugContext);
+  if (!mDebugGlobal) {
+    // We have to ensure creating another context, otherwise we would trigger
+    // an infinite loop by triggering this method for the metadata object
+    // itself... Also we have to register this context in the same zone
+    // to please the gc.
+    JS::CompartmentOptions options;
+    options.setSameZoneAs(JS::CurrentGlobalOrNull(cx));
+    mDebugGlobal = JS_NewGlobalObject(mDebugContext, &sDebugContextGlobalClass,
+                                      NULL, JS::FireOnNewGlobalHook, options);
+  }
+  JS::Rooted<JSObject*> global(mDebugContext, mDebugGlobal);
+  JSAutoCompartment ac(mDebugContext, global);
+  JSContext *dcx = mDebugContext;
+
+  JS::AutoFilename filename;
+  unsigned lineno = 0;
+
+  if (!JS::DescribeScriptedCaller(cx, &filename, &lineno)) {
+    //__android_log_print(ANDROID_LOG_INFO, "Gecko", ">> Object without stack :( %p\n", JS::CurrentGlobalOrNull(cx));
+    JS::RootedObject obj(dcx, JS_NewObject(dcx, nullptr));
+    return obj;
+  }
+
+  //printf(">> %s : %d\n", filename, lineno);
+  //__android_log_print(ANDROID_LOG_INFO, "Gecko", ">> %s : %d", filename, lineno);
+
+  JS::RootedObject obj(dcx, nullptr);
+  //JS_NewObject(dcx, nullptr));
+
+  JSString* fileStr = JS_NewStringCopyZ(dcx, filename.get());
+
+  JS::RootedValue fileVal(dcx, JS::StringValue(fileStr));
+  JS_DefineProperty(dcx, obj,
+                    "file",
+                    fileVal,
+                    JSPROP_ENUMERATE);
+  JS::RootedValue lineVal(dcx, JS::NumberValue((double)lineno));
+  JS_DefineProperty(dcx, obj,
+                    "line",
+                    lineVal,
+                    JSPROP_ENUMERATE);
+
+  return obj;
+}
+
+
+void
+CycleCollectedJSRuntime::TraceZone(const JS::HandleValue targetArg, JSContext* cx)
+{
+  JS::RootedValue target(cx, targetArg);
+  JS::RootedObject obj(cx);
+  if (!JS_ValueToObject(cx, target, &obj))
+    return;
+  obj = JS_FindCompilationScope(cx, obj);
+  mSelectedZone = js::GetCompartmentZone(GetObjectCompartment(obj));
+}
+
+void
+CycleCollectedJSRuntime::EnableAllocationMetadata(const JS::HandleValue targetArg, JSContext* cx)
+{
+  JS::RootedValue target(cx, targetArg);
+  JS::RootedObject obj(cx);
+  if (!JS_ValueToObject(cx, target, &obj))
+    return;
+  obj = JS_FindCompilationScope(cx, obj);
+  JSAutoCompartment ac(cx, obj);
+  js::SetObjectMetadataCallback(cx, ObjectMetadataCallback);
+}
+
+void
+CycleCollectedJSRuntime::DisableAllocationMetadata(const JS::HandleValue targetArg, JSContext* cx)
+{
+  JS::RootedValue target(cx, targetArg);
+  JS::RootedObject obj(cx);
+  if (!JS_ValueToObject(cx, target, &obj))
+    return;
+  obj = JS_FindCompilationScope(cx, obj);
+  JSAutoCompartment ac(cx, obj);
+  js::SetObjectMetadataCallback(cx, nullptr);
+}
+
 size_t
 CycleCollectedJSRuntime::SizeOfExcludingThis(MallocSizeOf aMallocSizeOf) const
 {
@@ -472,6 +580,15 @@ CycleCollectedJSRuntime::UnmarkSkippableJSHolders()
   }
 }
 
+static bool
+JSONCreator(const char16_t* aBuf, uint32_t aLen, void* aData)
+{
+  nsAString* result = static_cast<nsAString*>(aData);
+  result->Append(static_cast<const char16_t*>(aBuf),
+                 static_cast<uint32_t>(aLen));
+  return true;
+}
+
 void
 CycleCollectedJSRuntime::DescribeGCThing(bool aIsMarked, JS::GCCellPtr aThing,
                                          nsCycleCollectionTraversalCallback& aCb) const
@@ -486,11 +603,15 @@ CycleCollectedJSRuntime::DescribeGCThing(bool aIsMarked, JS::GCCellPtr aThing,
   if (aThing.isObject()) {
     JSObject* obj = aThing.toObject();
     compartmentAddress = (uint64_t)js::GetObjectCompartment(obj);
+    nsAutoString description;
     const js::Class* clasp = js::GetObjectClass(obj);
+    description.AssignLiteral("JS Object");
 
     // Give the subclass a chance to do something
     if (DescribeCustomObjects(obj, clasp, name)) {
       // Nothing else to do!
+    } else if (strcmp(clasp->name, "Proxy") == 0 && JS_IsDeadWrapper(obj)) {
+      description.AppendLiteral(" (DeadWrapper)");
     } else if (js::IsFunctionObject(obj)) {
       JSFunction* fun = JS_GetObjectFunction(obj);
       JSString* str = JS_GetFunctionDisplayId(fun);
@@ -499,13 +620,82 @@ CycleCollectedJSRuntime::DescribeGCThing(bool aIsMarked, JS::GCCellPtr aThing,
         nsAutoString chars;
         AssignJSFlatString(chars, flat);
         NS_ConvertUTF16toUTF8 fname(chars);
-        JS_snprintf(name, sizeof(name),
-                    "JS Object (Function - %s)", fname.get());
+        description.AppendLiteral(" (Function - ");
+        description.AppendASCII(fname.get());
+        description.AppendLiteral(")");
       } else {
-        JS_snprintf(name, sizeof(name), "JS Object (Function)");
+        description.AppendLiteral(" (Function)");
       }
     } else {
-      JS_snprintf(name, sizeof(name), "JS Object (%s)", clasp->name);
+      description.AppendLiteral(" (");
+      description.AppendASCII(clasp->name);
+      description.AppendLiteral(")");
+    }
+
+    JSAutoRequest ar(mDebugContext);
+    JS::Rooted<JSObject*> global(mDebugContext, mDebugGlobal);
+    JSAutoCompartment ac(mDebugContext, global);
+    JSContext *dcx = mDebugContext;
+
+/*
+  __android_log_print(ANDROID_LOG_INFO, "Gecko", ">> G\n");
+    JSCompartment *compartment = js::GetObjectCompartment(obj);
+    if (compartment) {
+      nsIPrincipal *prin = xpc::GetCompartmentPrincipal(compartment);
+      nsCOMPtr<nsIURI> uri;
+      if (!NS_FAILED(prin->GetURI(getter_AddRefs(uri))) && uri) {
+        // if the principal has a URI, use that to generate the origin
+  __android_log_print(ANDROID_LOG_INFO, "Gecko", ">> H\n");
+        nsAutoString origin;
+        nsContentUtils::GetUTFOrigin(prin, origin);
+        description.AppendLiteral(" [");
+        description.Append(origin);
+        description.AppendLiteral("]");
+      } else if (js::IsSystemCompartment(compartment)){
+        description.AppendLiteral(" [system]");
+      } else {
+        description.AppendLiteral(" [unknown compartment]");
+      }
+    }
+*/
+//    if (!js::IsScopeObject(obj)) {
+      JSObject *parent = js::GetGlobalForObjectCrossCompartment(obj);
+      if (parent) {
+        description.AppendLiteral(" parent:0x");
+        description.AppendInt((uint64_t)parent, 16);
+      }
+//    }
+
+    JSObject *metadata = (JSObject *)js::GetObjectMetadata(obj);
+    if (metadata) {
+      nsAutoString json;
+      JS::Rooted<JS::Value> v(dcx, JS::ObjectValue(*metadata));
+      if (JS_Stringify(dcx, &v, nullptr, JS::NullHandleValue,
+                       JSONCreator, &json)) {
+        description.AppendLiteral(" ");
+        description.Append(json);
+      }
+    }
+    char long_name[description.Length() + 1];
+    JS_snprintf(long_name, sizeof(long_name), "%s", NS_ConvertUTF16toUTF8(description).get());
+    aCb.DescribeGCedNode(aIsMarked, long_name);
+    return;
+  } else if (aThing.isScript()) {
+    JSAutoRequest ar(mDebugContext);
+    JS::Rooted<JSObject*> global(mDebugContext, mDebugGlobal);
+    JSAutoCompartment ac(mDebugContext, global);
+    JSContext *dcx = mDebugContext;
+    JSScript* script = aThing.toScript();
+    JS::RootedScript s(dcx, script);
+
+    const char* filename = JS_GetScriptFilename(s);
+    if (filename) {
+      char long_name[strlen(filename) + 13];
+      JS_snprintf(long_name, sizeof(long_name), "JS Script (%s)", filename);
+      aCb.DescribeGCedNode(aIsMarked, long_name);
+      return;
+    } else {
+      JS_snprintf(name, sizeof(name), "JS Script");
     }
   } else {
     JS_snprintf(name, sizeof(name), "JS %s", JS::GCTraceKindToAscii(aThing.kind()));

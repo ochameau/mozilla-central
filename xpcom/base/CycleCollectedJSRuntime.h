@@ -255,6 +255,9 @@ private:
   void OnLargeAllocationFailure();
 
 public:
+  void EnableAllocationMetadata(const JS::HandleValue target, JSContext* cx);
+  void DisableAllocationMetadata(const JS::HandleValue target, JSContext* cx);
+  void TraceZone(const JS::HandleValue target, JSContext* cx);
   void AddJSHolder(void* aHolder, nsScriptObjectTracer* aTracer);
   void RemoveJSHolder(void* aHolder);
 #ifdef DEBUG
@@ -315,6 +318,7 @@ private:
   JSRuntime* mJSRuntime;
 
   JS::GCSliceCallback mPrevGCSliceCallback;
+  JS::Zone* mSelectedZone;
 
   nsDataHashtable<nsPtrHashKey<void>, nsScriptObjectTracer*> mJSHolders;
 
