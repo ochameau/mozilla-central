@@ -493,6 +493,10 @@ class MozbuildObject(ProcessExecutionMixin):
                 return [which.which('mozmake')]
             except which.WhichError:
                 pass
+            try:
+                return [which.which('make')]
+            except which.WhichError:
+                pass
 
         if self._is_windows() or force_pymake:
             make_py = os.path.join(self.topsrcdir, 'build', 'pymake',
