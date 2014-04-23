@@ -114,7 +114,9 @@ pref("browser.sessionstore.max_tabs_undo", 1);
 /* these should help performance */
 pref("mozilla.widget.force-24bpp", true);
 pref("mozilla.widget.use-buffer-pixmap", true);
+#ifndef MOZ_MULET
 pref("mozilla.widget.disable-native-theme", true);
+#endif
 pref("layout.reflow.synthMouseMove", false);
 #ifndef MOZ_X11
 pref("layers.enable-tiles", true);
@@ -280,6 +282,7 @@ pref("ui.threedshadow", "#aea194");
 pref("ui.windowframe", "#efebe7");
 
 // Themable via mozSettings
+#ifndef MOZ_MULET
 pref("ui.menu", "#f97c17");
 pref("ui.menutext", "#ffffff");
 pref("ui.infobackground", "#343e40");
@@ -287,6 +290,7 @@ pref("ui.infotext", "#686868");
 pref("ui.window", "#ffffff");
 pref("ui.windowtext", "#000000");
 pref("ui.highlight", "#b2f2ff");
+#endif
 
 // replace newlines with spaces on paste into single-line text boxes
 pref("editor.singleLine.pasteNewlines", 2);

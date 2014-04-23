@@ -417,6 +417,10 @@ setUpdateTrackingId();
 
 // ================ Theming ============
 (function themingSettingsListener() {
+  // Ignore customized css color values on the mulet
+  if (Services.appinfo.ID != "{3c2e2abc-06d4-11e1-ac3b-374f68613e61}") {
+    return;
+  }
   let themingPrefs = ['ui.menu', 'ui.menutext', 'ui.infobackground', 'ui.infotext',
                       'ui.window', 'ui.windowtext', 'ui.highlight'];
 
