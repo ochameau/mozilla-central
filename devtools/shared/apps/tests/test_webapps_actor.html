@@ -352,6 +352,43 @@ var steps = [
           next();
         };
         document.body.appendChild(iframe);
+      });
+  },
+  function() {
+    ok(true, "== TEST == Install packaged app with custom origin");
+    let appId = "origin-test";
+    let url = SimpleTest.getTestFileURL("data/app-origin.zip");
+    installTestApp(url, appId,
+      function (aResponse, aApp) {
+        ok(true, "Installed!");
+        is(aResponse.appId, "mochi.test", "The app id is overloaded by manifest's origin");
+        is(aApp.manifest.origin, "app://mochi.test",
+           "Got expected `origin` in manifest");
+        is(aApp.manifest.origin, aApp.origin);
+
+        // We add the app frame to the toplevel chrome document
+        // as that's the only way to get a functional mozbrowser/mozapp frame on b2g *desktop*
+        let shellWindow = SpecialPowers.Services.wm.getMostRecentWindow('navigator:browser');
+        // but on b2g on device, we run mochitest in remote frame and can't have access
+        // to toplevel window:
+        let document = shellWindow ? shellWindow.document : window.document;
+        let iframe = document.createElementNS("http://www.w3.org/1999/xhtml", "iframe");
+        iframe.setAttribute("mozbrowser", "true");
+        iframe.setAttribute("mozapp", aApp.manifestURL);
+        iframe.setAttribute("src", aApp.origin + aApp.manifest.launch_path);
+
+        iframe.addEventListener("mozbrowserloadend", function (event) {
+          ok(true, "app frame loaded");
+          iframe.contentWindow.postMessage("foo", "*");
+          iframe.contentWindow.addEventListener("response", function (event) {
+            event = SpecialPowers.wrap(event);
+            ok(event.detail, "foo", "we communicated back and forth with the app");
+
+            document.documentElement.removeChild(iframe);
+            next();
+          });
+        });
+        document.documentElement.appendChild(iframe);
       }
     );
   },
