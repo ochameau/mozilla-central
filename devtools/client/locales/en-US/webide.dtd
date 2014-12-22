@@ -98,6 +98,7 @@
 <!ENTITY details_description "Description">
 <!ENTITY details_location "Location">
 <!ENTITY details_manifestURL "App ID">
+<!ENTITY details_fetch "Import app as local project">
 <!ENTITY details_removeProject_button "Remove Project">
 <!ENTITY details_showPrepackageLog_button "Show Pre-package Log">
 
