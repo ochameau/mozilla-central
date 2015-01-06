@@ -9,4 +9,5 @@ dictionary AppInfo
 {
   DOMString path = "";
   boolean   isCoreApp = false;
+  boolean   hasApplicationZip = true;
 };

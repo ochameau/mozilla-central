@@ -139,6 +139,7 @@ function _setAppProperties(aObj, aApp) {
   aObj.android_packagename = aApp.android_packagename;
   aObj.android_classname = aApp.android_classname;
 #endif
+  aObj.hasApplicationZip = aApp.hasApplicationZip;
 }
 
 this.AppsUtils = {
@@ -377,11 +378,13 @@ this.AppsUtils = {
     if (Services.prefs.prefHasUserValue(prefName) &&
         Services.prefs.getBoolPref(prefName)) {
       return { "path": app.basePath + "/" + app.id,
-               "isCoreApp": isCoreApp };
+               "isCoreApp": isCoreApp,
+               "hasApplicationZip": app.hasApplicationZip };
     }
 
     return { "path": WebappOSUtils.getPackagePath(app),
-             "isCoreApp": isCoreApp };
+             "isCoreApp": isCoreApp,
+             "hasApplicationZip": app.hasApplicationZip };
   },
 
   /**

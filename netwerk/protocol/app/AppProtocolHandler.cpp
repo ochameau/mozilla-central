@@ -472,6 +472,8 @@ AppProtocolHandler::NewChannel2(nsIURI* aUri,
              NS_LITERAL_CSTRING("/application.zip!") +
              fileSpec;
 
+  printf_stderr("app:// resolved to: %s\n", jarSpec.get());
+
   nsCOMPtr<nsIURI> jarURI;
   rv = NS_NewURI(getter_AddRefs(jarURI),
                  jarSpec, nullptr, nullptr);

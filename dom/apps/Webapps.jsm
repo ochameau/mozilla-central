@@ -352,6 +352,10 @@ this.DOMApplicationRegistry = {
           app.blockedStatus = Ci.nsIBlocklistService.STATE_NOT_BLOCKED;
         }
 
+        if (app.hasApplicationZip === undefined) {
+          app.hasApplicationZip = true;
+        }
+
         // At startup we can't be downloading, and the $TMP directory
         // will be empty so we can't just apply a staged update.
         app.downloading = false;
@@ -2935,6 +2939,7 @@ this.DOMApplicationRegistry = {
     this._saveWidgetsFullPath(aLocaleManifest, appObject);
     appObject.installerAppId = aData.appId;
     appObject.installerIsBrowser = aData.isBrowser;
+    appObject.hasApplicationZip = aData.hasApplicationZip;
 
     return appObject;
   },
@@ -3000,6 +3005,7 @@ this.DOMApplicationRegistry = {
 
     let zipFile = WebappOSUtils.getPackagePath(app);
     app.packageHash = yield this._computeFileHash(zipFile);
+    app.hasApplicationZip = true;
 
     app.role = aManifest.role || "";
     if (!AppsUtils.checkAppRole(app.role, app.appStatus)) {
