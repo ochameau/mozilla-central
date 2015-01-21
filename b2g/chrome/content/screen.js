@@ -99,10 +99,8 @@ function onStart() {
   
   // Special case --screen=full goes into fullscreen mode
   if (screenarg === 'full') {
-    Services.prefs.setBoolPref("full-screen-api.ignore-widgets", false);
-    window.fullScreen = true;
-    Services.prefs.setBoolPref("full-screen-api.ignore-widgets", true);
-    screenarg = DEFAULT_SCREEN;
+    shell.setAttribute('sizemode', 'fullscreen');
+    return;
   } 
 
   let width, height, ratio = 1.0;
