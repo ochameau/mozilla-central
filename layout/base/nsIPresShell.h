@@ -308,6 +308,10 @@ public:
 
   nsIDocument* GetDocument() const { return mDocument; }
 
+  double              mDevPixelsRatio = 1.0;
+  double GetDevPixelsRatio() { return mDevPixelsRatio; }
+  void SetDevPixelsRatio(double aRatio) { mDevPixelsRatio = aRatio; }
+
   nsPresContext* GetPresContext() const { return mPresContext; }
 
   nsViewManager* GetViewManager() const { return mViewManager; }

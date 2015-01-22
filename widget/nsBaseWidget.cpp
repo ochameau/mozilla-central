@@ -523,6 +523,12 @@ CSSToLayoutDeviceScale nsIWidget::GetDefaultScale()
     devPixelsPerCSSPixel = GetDefaultScaleInternal();
   }
 
+  nsIWidgetListener* listener = this->GetWidgetListener();
+  nsIPresShell* presShell = listener->GetPresShell();
+  if (presShell) {
+    devPixelsPerCSSPixel = presShell->GetDevPixelsRatio();
+  }
+
   return CSSToLayoutDeviceScale(devPixelsPerCSSPixel);
 }
 
@@ -538,6 +544,8 @@ double nsIWidget::DefaultScaleOverride()
   if (!prefString.IsEmpty()) {
     devPixelsPerCSSPixel = PR_strtod(prefString, nullptr);
   }
+
+
 
   return devPixelsPerCSSPixel;
 }
