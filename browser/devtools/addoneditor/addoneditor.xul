@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://browser/content/devtools/widgets.css" type="text/css"?>
+<?xml-stylesheet href="chrome://browser/skin/devtools/common.css" type="text/css"?>
+<?xml-stylesheet href="chrome://browser/skin/devtools/widgets.css" type="text/css"?>
+<?xul-overlay href="chrome://global/content/editMenuOverlay.xul"?>
+
+<xul:window xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        xmlns="http://www.w3.org/1999/xhtml"
+        id="addon-editor-chrome-window">
+
+  <xul:script type="application/javascript;version=1.8"
+              src="chrome://browser/content/devtools/theme-switching.js"/>
+  <xul:script type="application/javascript" src="chrome://global/content/globalOverlay.js"/>
+
+  <xul:hbox>
+    <xul:label class="devtools-toolbar" flex="1" value="Style" style="text-align: center; padding: 0; margin: 0; font-weight: bold; padding-top: 2px;" />
+    <xul:toolbar id="sp-toolbar"
+             class="devtools-toolbar">
+      <xul:toolbarbutton id="ae-toolbar-save"
+                     class="devtools-toolbarbutton"
+                     label="Save as addon"
+                     command="ae-cmd-save" />
+      <xul:toolbarspacer/>
+    </xul:toolbar>
+    <xul:label class="devtools-toolbar" flex="1" value="Code" style="text-align: center; padding: 0; margin: 0; font-weight: bold; padding-top: 2px;" />
+  </xul:hbox>
+
+  <xul:hbox flex="1">
+    <xul:iframe id="style" flex="1" src="chrome://browser/content/devtools/styleeditor.xul" />
+    <xul:iframe id="js" flex="1" src="chrome://browser/content/devtools/scratchpad.xul" />
+  </xul:hbox>
+
+</xul:window>

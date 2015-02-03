@@ -47,7 +47,7 @@ StyleEditorPanel.prototype = {
   /**
    * open is effectively an asynchronous constructor
    */
-  open: Task.async(function* () {
+  open: Task.async(function* (uiOptions) {
     // We always interact with the target as if it were remote
     if (!this.target.isRemote) {
       yield this.target.makeRemote();
@@ -64,7 +64,7 @@ StyleEditorPanel.prototype = {
     }
 
     // Initialize the UI
-    this.UI = new StyleEditorUI(this._debuggee, this.target, this._panelDoc);
+    this.UI = new StyleEditorUI(this._debuggee, this.target, this._panelDoc, uiOptions);
     this.UI.on("error", this._showError);
     yield this.UI.initialize();
 
