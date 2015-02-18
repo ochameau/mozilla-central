@@ -112,6 +112,7 @@ flags:
     - crashtest
     - crashtest-e10s
     - crashtest-ipc
+    - devtools
     - gaia-build
     - gaia-build-unit
     - gaia-js-integration

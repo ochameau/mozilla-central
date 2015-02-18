@@ -1,0 +1,16 @@
+#!/bin/bash
+
+Xvfb :0 -nolisten tcp -screen 0 1600x1200x24 2>/dev/null &&
+export DISPLAY=:0
+./bin/pull_gaia.sh
+make -C ./gaia/
+wget {{build_url}}
+tar jxvf target-*.tar.bz2
+wget http://ftp.mozilla.org/pub/mozilla.org/firefox/nightly/latest-mozilla-central/firefox-38.0a1.en-US.linux-x86_64.tar.bz2
+tar jxvf firefox-38.0a1.en-US.linux-x86_64.tar.bz2
+git clone https://github.com/luser/luciddream.git
+cd luciddream/
+virtualenv ./ve
+. ./ve/bin/activate
+python setup.py develop
+runluciddream --b2g-desktop-path ../b2g/b2g-bin --gaia-profile ../gaia/profile/ --browser-path ../firefox/firefox-bin example-tests/luciddream.ini

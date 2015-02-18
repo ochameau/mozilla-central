@@ -1,0 +1,33 @@
+---
+$inherits:
+  from: 'tasks/test.yml'
+task:
+  metadata:
+    name: '[TC] Devtools luciddream test'
+    description: Devtools Luciddream Test Run {{chunk}}
+
+  payload:
+    command:
+      - entrypoint
+      - ./bin/pull_gaia.sh &&
+      - make -C ./gaia/ &&
+      - wget {{build_url}} &&
+      - tar jxvf target.*.tar.bz2 &&
+      - wget http://ftp.mozilla.org/pub/mozilla.org/firefox/nightly/latest-mozilla-central/firefox-38.0a1.en-US.linux-x86_64.tar.bz2 &&
+      - tar jxvf firefox-38.0a1.en-US.linux-x86_64.tar.bz2 &&
+      - tc-vcs checkout gecko {{base_repository}} {{head_repository}} {{head_rev}} {{head_ref}} &&
+      - cd gecko/ &&
+      - ./mach luciddream --b2g-desktop ../b2g/b2g-bin --firefox ../firefox/firefox-bin --gaia-profile ../gaia/profile browser/devtools/framework/test/luciddream.ini
+
+    artifacts:
+      'public/build':
+        type: directory
+        path: '/home/worker/artifacts/'
+        expires: '{{#from_now}}1 year{{/from_now}}'
+
+  extra:
+    treeherder:
+      groupName: Devtools Luciddream Tests
+      groupSymbol: tc-Dt
+      symbol: '{{chunk}}'
+      productName: b2g
