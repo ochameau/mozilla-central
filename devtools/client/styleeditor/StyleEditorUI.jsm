@@ -52,7 +52,7 @@ const PREF_NAV_WIDTH = "devtools.styleeditor.navSidebarWidth";
  * @param {Document} panelDoc
  *        Document of the toolbox panel to populate UI in.
  */
-function StyleEditorUI(debuggee, target, panelDoc) {
+function StyleEditorUI(debuggee, target, panelDoc, options) {
   EventEmitter.decorate(this);
 
   this._debuggee = debuggee;
@@ -79,6 +79,9 @@ function StyleEditorUI(debuggee, target, panelDoc) {
   this._prefObserver = new PrefObserver("devtools.styleeditor.");
   this._prefObserver.on(PREF_ORIG_SOURCES, this._onNewDocument);
   this._prefObserver.on(PREF_MEDIA_SIDEBAR, this._onMediaPrefChanged);
+
+  this._doNotLoadExistings = options ? options.doNotLoadExistings : false;
+  this._stylesheet = options ? options.stylesheet : null;
 }
 this.StyleEditorUI = StyleEditorUI;
 
@@ -117,9 +120,29 @@ StyleEditorUI.prototype = {
    * reference to the walker and the selector highlighter if available
    */
   initialize: Task.async(function* () {
+    dump("init\n");
     yield this.initializeHighlighter();
 
     this.createUI();
+
+    if (this._stylesheet) {
+      dump("has ss\n");
+      yield this._resetStyleSheetList([]);
+      dump("reseted\n");
+      let editor = yield this._addStyleSheetEditor(this._stylesheet, null, null, true);
+      dump("added\n");
+//      yield this.selectStyleSheet(this._styleSheet);
+      yield this._selectEditor(editor);
+      dump("selected\n");
+      return;
+    }
+    if (this._doNotLoadExistings) {
+      dump("do not load\n");
+      this._resetStyleSheetList([]);
+      this._debuggee.addStyleSheet(null).then(this._onStyleSheetCreated);
+      dump("added\n");
+      return;
+    }
 
     let styleSheets = yield this._debuggee.getStyleSheets();
     yield this._resetStyleSheetList(styleSheets);
@@ -319,10 +342,13 @@ StyleEditorUI.prototype = {
    *         Optional file object that sheet was imported from
    * @param {Boolean} isNew
    *         Optional if stylesheet is a new sheet created by user
+   * @param {Boolean} forceLoad 
+   *         Optional if stylesheet has to be loaded in the editor immediately
    * @return {Promise} that is resolved with the created StyleSheetEditor when
    *                   the editor is fully initialized or rejected on error.
    */
-  _addStyleSheetEditor: Task.async(function* (styleSheet, file, isNew) {
+  _addStyleSheetEditor: Task.async(function* (styleSheet, file, isNew, forceLoad) {
+    dump("_addStyleSheetEditor\n");
     // recall location of saved file for this sheet after page reload
     let identifier = this.getStyleSheetIdentifier(styleSheet);
     let savedFile = this.savedLocations[identifier];
@@ -341,8 +367,10 @@ StyleEditorUI.prototype = {
 
     this.editors.push(editor);
 
+    dump("go fetchSource\n");
     yield editor.fetchSource();
-    this._sourceLoaded(editor);
+    dump("source fetched\n");
+    this._sourceLoaded(editor, forceLoad);
 
     return editor;
   }),
@@ -491,10 +519,14 @@ StyleEditorUI.prototype = {
    *
    * @param  {StyleSheetEditor} editor
    *         Editor to create UI for.
+   * @param {Boolean} forceLoad 
+   *         Optional if stylesheet has to be loaded in the editor immediately
    */
-  _sourceLoaded: function(editor) {
+  _sourceLoaded: function(editor, forceLoad) {
+    dump("source loaded...\n");
     let ordinal = editor.styleSheet.styleSheetIndex;
     ordinal = ordinal == -1 ? Number.MAX_SAFE_INTEGER : ordinal;
+
     // add new sidebar item and editor to the UI
     this._view.appendTemplatedItem(STYLE_EDITOR_TEMPLATE, {
       data: {
@@ -579,13 +611,16 @@ StyleEditorUI.prototype = {
       }.bind(this),
 
       onShow: function(summary, details, data) {
+        dump("onShow\n");
         let editor = data.editor;
         this.selectedEditor = editor;
 
         Task.spawn(function* () {
+          dump("has source ? "+editor.sourceEditor+"\n");
           if (!editor.sourceEditor) {
             // only initialize source editor when we switch to this view
             let inputElement = details.querySelector(".stylesheet-editor-input");
+            dump("go load\n");
             yield editor.load(inputElement);
           }
 
@@ -687,7 +722,9 @@ StyleEditorUI.prototype = {
       this._styleSheetBoundToSelect = null;
     });
 
+    dump(">>>> _selectEditor\n");
     let summaryPromise = this.getEditorSummary(editor).then((summary) => {
+    dump(">>>> _selectEditor >>> activeSummary: "+summary+"\n");
       this._view.activeSummary = summary;
     });
 

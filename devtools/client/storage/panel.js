@@ -39,7 +39,7 @@ StoragePanel.prototype = {
   /**
    * open is effectively an asynchronous constructor
    */
-  open: function() {
+  open: function(options) {
     let targetPromise;
     // We always interact with the target as if it were remote
     if (!this.target.isRemote) {
@@ -50,12 +50,18 @@ StoragePanel.prototype = {
 
     return targetPromise.then(() => {
       this.target.on("close", this.destroy);
-      this._front = new StorageFront(this.target.client, this.target.form);
+      if (!this._front) {
+        this._front = new StorageFront(this.target.client, this.target.form);
+      }
 
       this.UI = new StorageUI(this._front, this._target, this._panelWin);
       this.isReady = true;
       this.emit("ready");
 
+      if (options && options.type) {
+        this.UI.populateStorageTree(options.storageTypes);
+        this.UI.onHostSelect(null, [options.type, options.host]);
+      }
       return this;
     }).catch(this.destroy);
   },
