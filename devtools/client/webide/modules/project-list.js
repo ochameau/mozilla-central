@@ -318,9 +318,25 @@ ProjectList.prototype = {
       let projects = AppProjects.projects;
       for (let i = 0; i < projects.length; i++) {
         let project = projects[i];
-        let panelItemNode = doc.createElement(this._panelNodeEl);
+        let panelItemNode = doc.createElement("hbox");
         panelItemNode.className = "panel-item";
         projectsNode.appendChild(panelItemNode);
+
+        let tb = doc.createElement("toolbarbutton");
+        panelItemNode.appendChild(tb);
+
+        let updateBtn = this._doc.createElement("label");
+        updateBtn.className = "panel-item-update";
+        updateBtn.setAttribute("style", "-moz-user-focus: normal; -moz-user-select: all;");
+        updateBtn.setAttribute("value", "update");
+        panelItemNode.appendChild(updateBtn);
+
+        updateBtn.addEventListener("click", e=> {
+        }, true);
+        this._doc.defaultView.addEventListener("click", (e) => {
+          //AppManager.installAndRunProject(project);
+        }, true);
+
         if (!project.validationStatus) {
           // The result of the validation process (storing names, icons, …) is not stored in
           // the IndexedDB database when App Manager v1 is used.

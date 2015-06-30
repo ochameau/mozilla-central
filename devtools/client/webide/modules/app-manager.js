@@ -611,8 +611,10 @@ var AppManager = exports.AppManager = {
     return !!this._appsFront;
   },
 
-  installAndRunProject: function() {
-    let project = this.selectedProject;
+  installAndRunProject: function(project) {
+    if (!project) {
+      project = this.selectedProject;
+    }
 
     if (!project || (project.type != "packaged" && project.type != "hosted")) {
       console.error("Can't install project. Unknown type of project.");
