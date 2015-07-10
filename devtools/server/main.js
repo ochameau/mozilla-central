@@ -1023,6 +1023,18 @@ var DebuggerServer = {
     };
     mm.addMessageListener("debug:setup-in-parent", onSetupInParent);
 
+    let onGetSubActor = function (msg) {
+      dump("rcv msg 1\n");
+      let { module, actorConstructor } = msg.json;
+      dump("rcv msg 2\n");
+      let m = require(module);
+      dump("rcv msg 3\n");
+      let actor = m[actorConstructor](conn, null);
+      dump("rcv msg 4\n");
+      return actor.form();
+    };
+    mm.addMessageListener("debug:get-sub-actor", onGetSubActor);
+
     let onActorCreated = DevToolsUtils.makeInfallible(function (msg) {
       if (msg.json.prefix != prefix) {
         return;
@@ -1798,5 +1810,22 @@ DebuggerServerConnection.prototype = {
       module: module,
       setupParent: setupParent
     });
+  },
+
+  getSubActor: function({ module, actorConstructor, frontConstructor }) {
+    if (!this.parentMessageManager) {
+      return false;
+    }
+    let { sendSyncMessage } = this.parentMessageManager;
+
+    dump("send msg\n");
+    let response = sendSyncMessage("debug:get-sub-actor", {
+      module,
+      actorConstructor
+    });
+    dump("send msg 2: "+JSON.stringify(response)+"\n");
+    let m = require(module);
+    dump("send msg 3: "+m+"\n");
+    return m[frontConstructor](this, response);
   },
 };
