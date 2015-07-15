@@ -1226,6 +1226,84 @@ SourceScripts.prototype = {
     this.handleTabNavigation();
   },
 
+  takeCensus: function () {
+    DebuggerController.HitCounts.clear();
+    gTarget.activeTab.takeCensus(this.onCensus.bind(this), this.onCensus.bind(this));
+  },
+
+  onCensus: function (aResponse) {
+    dump("got census...\n");
+    dump(JSON.stringify(aResponse)+"\n");
+
+    // Merge all counts into just one column otherwise we get too many counts on the side
+    let objects = aResponse;
+    let counts = {};
+    for (let url in objects) {
+      // Ignore RDP pollution...
+      if (url == "from") {
+        continue;
+      }
+      for (let line in objects[url]) {
+        for (let column in objects[url][line]) {
+          let count = objects[url][line][column];
+          //dump(url+" : "+line+" // "+column+" = "+count+"\n");
+
+          if (!(url in counts)) {
+            counts[url] = {};
+          }
+          if (!(line in counts[url])) {
+            counts[url][line] = 0;
+          }
+          counts[url][line] += count;
+        }
+      }
+    }
+    
+    dump("TOTAL:\n");
+    for (let url in counts) {
+      let a = counts[url];
+      for (let line in a) {
+        let count = a[line];
+        dump(url + ":"+ line + " = "+count+"\n");
+        // column 0 is for total
+        DebuggerController.HitCounts.set({url: url, line: line, column: 0}, count);
+      }
+    }
+    if (this.counts) {
+      dump("DIFF:\n");
+      for (let url in counts) {
+        let a = counts[url];
+        for (let line in a) {
+          let count = a[line];
+          if (this.counts[url] && (line in this.counts[url])) {
+            count -= this.counts[url][line];
+          }
+          if (count != 0) {
+            dump(url + ":"+ line + " = "+count+"\n");
+          }
+          // column 1 is for diff
+          DebuggerController.HitCounts.set({url: url, line: line, column: 1}, count);
+        }
+      }
+      // Display objects that have been collected
+      for (let url in this.counts) {
+        let a = this.counts[url];
+        for (let line in a) {
+          if (!counts[url] || !(line in counts[url])) {
+            let count = this.counts[url][line];
+            dump(url + ":"+ line + " = --"+count+"\n");
+            // column 0 is for total
+            DebuggerController.HitCounts.set({url: url, line: line, column: 0}, 0);
+            // column 1 is for diff
+            DebuggerController.HitCounts.set({url: url, line: line, column: 1}, -1*count);
+          }
+        }
+      }
+    }
+    this.counts = counts;
+    DebuggerController.HitCounts.updateEditorHitCounts();
+  },
+
   /**
    * Disconnect from the client.
    */
@@ -2458,6 +2536,7 @@ HitCounts.prototype = {
    */
   updateEditorHitCounts: function() {
     // First, remove all hit counters.
+    dump("remove all markers\n");
     DebuggerView.editor.removeAllMarkers("hit-counts");
 
     // Then, add new hit counts, just for the current source.
@@ -2493,6 +2572,12 @@ HitCounts.prototype = {
                     .map(a => this._hitCounts[url][line][a]) // Extract values.
                     .map(a => a + "\u00D7") // Format hit count (e.g. 146×).
                     .join("|");
+    let total = this._hitCounts[url][line][0];
+    let diff = this._hitCounts[url][line][1];
+    content = total + "\u00D7";
+    if (diff) {
+      content += "|" + (diff > 0 ? "+" : "") + diff;
+    }
 
     // CodeMirror's lines are indexed from 0, while traces start from 1
     DebuggerView.editor.addContentMarker(line - 1, "hit-counts", "hit-count",
@@ -2503,6 +2588,7 @@ HitCounts.prototype = {
    * Remove all hit couters and clear the storage
    */
   clear: function() {
+    dump("remove all markets....\n");
     DebuggerView.editor.removeAllMarkers("hit-counts");
     this._hitCounts = Object.create(null);
   }
