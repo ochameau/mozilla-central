@@ -388,6 +388,7 @@ WebConsoleActor.prototype =
     this.dbg.enabled = false;
     this.dbg = null;
     this.conn = null;
+    this.parentActor = null;
   },
 
   /**
