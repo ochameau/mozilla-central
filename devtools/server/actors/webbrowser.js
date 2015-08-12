@@ -1908,6 +1908,17 @@ TabActor.prototype = {
     Cu.forceCC();
     Cu.forceGC();
 
+    const {MemoryProfiler} = require("devtools/toolkit/memory/memory-profiler");
+    this._profiler = new MemoryProfiler(this.window);
+    this._profiler.start();
+    this._profiler.snapshot()
+        .then(profile => {
+          //dump("PROFILE > "+JSON.stringify(profile)+"\n");
+        });
+
+    return {};
+/*
+
     let counts = {}; // COUNTS[URL][LINE][COLUMN]
     // Take a census
     let logs = this.threadActor.dbg.memory.drainAllocationsLog();
