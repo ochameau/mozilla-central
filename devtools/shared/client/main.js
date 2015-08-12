@@ -1282,6 +1282,13 @@ TabClient.prototype = {
     });
   },
 
+  takeCensus: DebuggerClient.requester({
+    type: "takeCensus",
+    options: args(0)
+  }, {
+    telemetry: "RELOAD"
+  }),
+
   /**
    * Detach the client from the tab actor.
    *

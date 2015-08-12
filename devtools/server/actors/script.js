@@ -639,6 +639,10 @@ ThreadActor.prototype = {
     this.dbg.addDebuggees();
     this.dbg.enabled = true;
     try {
+    this.dbg.memory.trackingAllocationSites = true;
+    dump("track alloc from script.js\n");
+    } catch(e) {}
+    try {
       // Put ourselves in the paused state.
       let packet = this._paused();
       if (!packet) {
