@@ -70,7 +70,8 @@ const OBSERVED_EVENTS = [
   'audio-playback',
   'activity-done',
   'invalid-widget',
-  'will-launch-app'
+  'will-launch-app',
+  'document-element-inserted'
 ];
 
 /**
@@ -323,6 +324,16 @@ BrowserElementChild.prototype = {
 
   _paintFrozenTimer: null,
   observe: function(subject, topic, data) {
+    if (topic == 'document-element-inserted') {
+      dump("Enable allocation metadata for " + subject +"\n");
+      if (subject.defaultView)
+        dump(subject.defaultView.location.href+"\n");
+      let listener = Cc["@mozilla.org/cycle-collector-logger;1"]
+                       .createInstance(Ci.nsICycleCollectorListener);
+      if (subject.defaultView)
+        listener.enableAllocationMetadata(subject.defaultView);
+      return;
+    }
     // Ignore notifications not about our document.  (Note that |content| /can/
     // be null; see bug 874900.)
 

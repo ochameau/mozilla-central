@@ -546,6 +546,108 @@ GetDebugGlobal(JSContext* cx, JSContext* dcx) {
   }
   return mDebugGlobal;
 }
+
+static JSObject* 
+ObjectMetadataCallback(JSContext *cx, JSObject *target)
+{
+  JSContext *dcx = GetDebugContext(JS_GetRuntime(cx));
+
+  JS::AutoFilename filename;
+  unsigned lineno = 0;
+  bool gotCaller = true;
+
+  JSAutoCompartment ac(cx, target);
+  JS::RootedObject stack(cx);
+  if (!JS::DescribeScriptedCaller(cx, &filename, &lineno)) {
+    gotCaller = false;
+    //printf("Failed to get caller\n");
+    //__android_log_print(ANDROID_LOG_INFO, "Gecko", ">> Object without stack :( %p\n", JS::CurrentGlobalOrNull(cx));
+    if (!JS::CaptureCurrentStack(cx, &stack)) {
+      printf("MetadataCallback failed to get the caller and stack!!\n");
+      return nullptr;
+    }
+  }
+
+  JS::Rooted<JSObject*> global(dcx, GetDebugGlobal(cx, dcx));
+
+  AutoJSAPI js;
+  nsCOMPtr<nsIGlobalObject> g = xpc::NativeGlobal(JS::CurrentGlobalOrNull(cx));
+  if (!js.Init(g, dcx)) {
+    MOZ_CRASH();
+  }
+  NS_WARN_IF(js.cx() != dcx);
+
+  //printf(">> %s : %d\n", filename, lineno);
+  //__android_log_print(ANDROID_LOG_INFO, "Gecko", ">> %s : %d", filename, lineno);
+
+  JS::RootedObject obj(dcx, JS_NewObject(dcx, nullptr));
+
+  if (gotCaller) {
+    JSString* fileStr = JS_NewStringCopyZ(dcx, filename.get());
+
+    JS::RootedValue fileVal(dcx, JS::StringValue(fileStr));
+    JS_DefineProperty(dcx, obj,
+                      "file",
+                      fileVal,
+                      JSPROP_ENUMERATE);
+    JS::RootedValue lineVal(dcx, JS::NumberValue((double)lineno));
+    JS_DefineProperty(dcx, obj,
+                      "line",
+                      lineVal,
+                      JSPROP_ENUMERATE);
+  } else if(stack) {
+    // XXX stack seems to be always falsy.
+    /*
+    {
+      AutoJSAPI js;
+      if (!js.Init(stack)) {
+        MOZ_CRASH();
+      }
+      JS::RootedValue v(cx);
+      JS::ExposeObjectToActiveJS(stack);
+      JS_WrapObject(cx, &stack);
+      if (!JS_GetProperty(cx, stack, "source", &v)) {
+        printf("unable to get source attribute\n");
+      }else  {
+        printf("got source attribute\n");
+      }
+    }
+    */
+    //JS_WrapObject(dcx, &stack);
+    JS_DefineProperty(dcx, obj,
+                      "stack",
+                      stack,
+                      JSPROP_ENUMERATE);
+  }
+
+  return obj;
+}
+
+
+void
+CycleCollectedJSRuntime::EnableAllocationMetadata(const JS::HandleValue targetArg, JSContext* cx)
+{
+  JS::RootedValue target(cx, targetArg);
+  JS::RootedObject obj(cx);
+  if (!JS_ValueToObject(cx, target, &obj))
+    return;
+  obj = JS_FindCompilationScope(cx, obj);
+  JSAutoCompartment ac(cx, obj);
+  js::SetObjectMetadataCallback(cx, ObjectMetadataCallback);
+}
+
+void
+CycleCollectedJSRuntime::DisableAllocationMetadata(const JS::HandleValue targetArg, JSContext* cx)
+{
+  JS::RootedValue target(cx, targetArg);
+  JS::RootedObject obj(cx);
+  if (!JS_ValueToObject(cx, target, &obj))
+    return;
+  obj = JS_FindCompilationScope(cx, obj);
+  JSAutoCompartment ac(cx, obj);
+  js::SetObjectMetadataCallback(cx, nullptr);
+}
+
 size_t
 CycleCollectedJSRuntime::SizeOfExcludingThis(MallocSizeOf aMallocSizeOf) const
 {
@@ -566,6 +668,15 @@ CycleCollectedJSRuntime::UnmarkSkippableJSHolders()
     nsScriptObjectTracer*& tracer = iter.Data();
     tracer->CanSkip(holder, true);
   }
+}
+
+static bool
+JSONCreator(const char16_t* aBuf, uint32_t aLen, void* aData)
+{
+  nsAString* result = static_cast<nsAString*>(aData);
+  result->Append(static_cast<const char16_t*>(aBuf),
+                 static_cast<uint32_t>(aLen));
+  return true;
 }
 
 void
@@ -617,6 +728,24 @@ CycleCollectedJSRuntime::DescribeGCThing(bool aIsMarked, JS::GCCellPtr aThing,
       description.AppendInt((uint64_t)parent, 16);
     }
 
+    JSContext *dcx = GetDebugContext(mJSRuntime);
+    AutoJSAPI js;
+    nsCOMPtr<nsIGlobalObject> g = xpc::NativeGlobal(parent);
+    if (!js.Init(g, dcx)) {
+      MOZ_CRASH();
+    }
+
+    JS::RootedObject metadata(dcx, js::GetObjectMetadata(obj));
+    if (metadata) {
+      nsAutoString json;
+      JS::RootedValue m(dcx, JS::ObjectValue(*js::UncheckedUnwrap(metadata)));
+      if (JS_Stringify(dcx, &m, nullptr, JS::NullHandleValue,
+                       JSONCreator, &json)) {
+        description.AppendLiteral(" ");
+        description.Append(json);
+      }
+      //printf("Got metadata %s!!\n", NS_ConvertUTF16toUTF8(description).get());
+    }
     char long_name[description.Length() + 1];
     snprintf_literal(long_name, "%s", NS_ConvertUTF16toUTF8(description).get());
     aCb.DescribeGCedNode(aIsMarked, long_name);

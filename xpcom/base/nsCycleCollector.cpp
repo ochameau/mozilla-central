@@ -1742,6 +1742,22 @@ public:
     return mWantAllTraces;
   }
 
+  NS_IMETHOD EnableAllocationMetadata(const JS::HandleValue target, JSContext* cx)
+  {
+      CollectorData *data = sCollectorData.get();
+      if (data && data->mRuntime)
+          data->mRuntime->EnableAllocationMetadata(target, cx);
+      return NS_OK;
+  }
+
+  NS_IMETHOD DisableAllocationMetadata(const JS::HandleValue target, JSContext* cx)
+  {
+      CollectorData *data = sCollectorData.get();
+      if (data && data->mRuntime)
+          data->mRuntime->DisableAllocationMetadata(target, cx);
+      return NS_OK;
+  }
+
   NS_IMETHOD AllTraces(nsICycleCollectorListener** aListener) override
   {
     SetAllTraces();
