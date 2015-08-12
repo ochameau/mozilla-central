@@ -567,6 +567,11 @@ var DebuggerServer = {
       constructor: "PerformanceEntriesActor",
       type: { tab: true }
     });
+    this.registerModule("devtools/server/actors/memory-alex", {
+      prefix: "memoryAlex",
+      constructor: "MemoryActor",
+      type: { global: true, tab: true}
+    });
   },
 
   /**
