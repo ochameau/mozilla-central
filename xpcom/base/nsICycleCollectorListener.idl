@@ -144,6 +144,12 @@ interface nsICycleCollectorListener : nsISupports
     [implicit_jscontext]
     void disableAllocationMetadata(in jsval target);
 
+    [implicit_jscontext]
+    void traceCompartment(in jsval target);
+
+    [implicit_jscontext]
+    uint64_t compartmentAddress(in jsval target);
+
     // If true, do not log each method call to a temporary file.
     // Initially false.
     attribute boolean disableLog;

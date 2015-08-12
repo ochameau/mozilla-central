@@ -267,6 +267,7 @@ private:
 public:
   void EnableAllocationMetadata(const JS::HandleValue target, JSContext* cx);
   void DisableAllocationMetadata(const JS::HandleValue target, JSContext* cx);
+  void TraceZone(const JS::HandleValue target, JSContext* cx);
   void AddJSHolder(void* aHolder, nsScriptObjectTracer* aTracer);
   void RemoveJSHolder(void* aHolder);
 #ifdef DEBUG
@@ -347,6 +348,7 @@ private:
 
   JS::GCSliceCallback mPrevGCSliceCallback;
   JS::GCNurseryCollectionCallback mPrevGCNurseryCollectionCallback;
+  uint64_t mSelectedCompartment;
 
   nsDataHashtable<nsPtrHashKey<void>, nsScriptObjectTracer*> mJSHolders;
 

@@ -586,6 +586,13 @@ js::GCThingTraceKind(void* thing)
     return static_cast<js::gc::Cell*>(thing)->getTraceKind();
 }
 
+JS_FRIEND_API(JSCompartment*)
+js::GCThingCompartment(void* thing)
+{
+    MOZ_ASSERT(thing);
+    return static_cast<js::gc::Cell*>(thing)->maybeCompartment();
+}
+
 JS_FRIEND_API(void)
 js::VisitGrayWrapperTargets(Zone* zone, GCThingCallback callback, void* closure)
 {

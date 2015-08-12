@@ -440,6 +440,7 @@ CycleCollectedJSRuntime::CycleCollectedJSRuntime(JSRuntime* aParentRuntime,
   , mDoingStableStates(false)
   , mOutOfMemoryState(OOMState::OK)
   , mLargeAllocationFailureState(OOMState::OK)
+  , mSelectedCompartment(0)
 {
   nsCOMPtr<nsIThread> thread = do_GetCurrentThread();
   mOwningThread = thread.forget().downcast<nsThread>().take();
@@ -648,6 +649,18 @@ CycleCollectedJSRuntime::DisableAllocationMetadata(const JS::HandleValue targetA
   js::SetObjectMetadataCallback(cx, nullptr);
 }
 
+void
+CycleCollectedJSRuntime::TraceZone(const JS::HandleValue targetArg, JSContext* cx)
+{
+  JS::RootedValue target(cx, targetArg);
+  JS::RootedObject obj(cx);
+  if (!JS_ValueToObject(cx, target, &obj))
+    return;
+  obj = JS_FindCompilationScope(cx, obj);
+  mSelectedCompartment = (uint64_t)js::GetObjectCompartment(obj);
+}
+
+
 size_t
 CycleCollectedJSRuntime::SizeOfExcludingThis(MallocSizeOf aMallocSizeOf) const
 {
@@ -693,6 +706,12 @@ CycleCollectedJSRuntime::DescribeGCThing(bool aIsMarked, JS::GCCellPtr aThing,
   if (aThing.is<JSObject>()) {
     JSObject* obj = &aThing.as<JSObject>();
     compartmentAddress = (uint64_t)js::GetObjectCompartment(obj);
+    if (mSelectedCompartment && compartmentAddress != mSelectedCompartment) {
+      //printf("Ignore object %p // %p\n", compartmentAddress, mSelectedCompartment);
+      aCb.DescribeGCedNode(aIsMarked, "JS Object", compartmentAddress);
+      return;
+    }
+    //printf("Consider object\n");
     nsAutoString description;
     const js::Class* clasp = js::GetObjectClass(obj);
     description.AssignLiteral("JS Object");
@@ -748,7 +767,7 @@ CycleCollectedJSRuntime::DescribeGCThing(bool aIsMarked, JS::GCCellPtr aThing,
     }
     char long_name[description.Length() + 1];
     snprintf_literal(long_name, "%s", NS_ConvertUTF16toUTF8(description).get());
-    aCb.DescribeGCedNode(aIsMarked, long_name);
+    aCb.DescribeGCedNode(aIsMarked, long_name, compartmentAddress);
     return;
   } else if (aThing.is<JSScript>()) {
     JSContext *dcx = GetDebugContext(mJSRuntime);
