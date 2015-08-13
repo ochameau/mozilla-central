@@ -656,25 +656,133 @@ Tester.prototype = {
         // JIT caches more aggressively.
 
         let checkForLeakedGlobalWindows = aCallback => {
+          Cu.forceGC();
+          Cu.forceCC();
           Cu.schedulePreciseShrinkingGC(() => {
-            let analyzer = new CCAnalyzer();
-            analyzer.run(() => {
-              let results = [];
-              for (let obj of analyzer.find("nsGlobalWindow ")) {
-                let m = obj.name.match(/^nsGlobalWindow #(\d+)/);
-                if (m && m[1] in this.openedWindows)
-                  results.push({ name: obj.name, url: m[1] });
-              }
-              aCallback(results);
-            });
+            setTimeout(() => {
+              dump("checkForLeaked: "+Object.keys(this.openedWindows)+"\n");
+              var s = new Date().getTime();
+              Cu.forceGC();Cu.forceCC();
+              Cu.schedulePreciseShrinkingGC(() => {
+                let analyzer = new CCAnalyzer();
+                analyzer.run(() => {
+                  let results = [];
+                  for (let obj of analyzer.find("nsGlobalWindow ")) {
+                    dump(">> "+obj.name+"\n");
+                    let m = obj.name.match(/^nsGlobalWindow #(\d+)/);
+                    if (m && m[1] in this.openedWindows && !obj.name.includes("about:blank"))
+                      results.push({ name: obj.name, url: m[1], address: obj.address, analyzer: analyzer });
+                  }
+                  dump("leaks?"+results.length+" in "+(new Date().getTime() -s)+"ms\n");
+                  aCallback(results);
+                }, true);
+              });
+            }, 1000);
           });
         };
 
         let reportLeaks = aResults => {
+          dump("reportLeaks!\n");
+
+          this.dumper.dump("TEST-INFO | (browser-test.js) | reportLeaks\n");
+          function describe(label, o, resolveProxy = true) {
+            dump(" >> "+label+" ("+o.name+" - "+o.address+")\n");
+            if (o.name == "JS Object (Window)") {
+              dump("  JS Window object\n");
+              let inner = o.edges.filter(a=>a.name == "UnwrapDOMObject(obj)");
+              if (inner.length > 0) {
+                inner = inner[0].to;
+                let m = inner.name.match(/nsGlobalWindow #\d+ inner (.+)/);
+                if (m && m[1]) {
+                  dump("  For document: "+m[1]+"\n");
+                } else {
+                  describe("inner window", inner[0].to);
+                }
+              }
+            } else if (o.name == "JS Object (BackstagePass)") {
+              dump("  JS Backstage pass\n");
+              /*
+              let p = o.edges.filter(a=>a.name == "__LOCATION__");
+              if (p.length > 0) {
+                describe("__location__", p[0].to);
+              }
+              if (p.length > 0) {
+                describe("exported_symbols", p[0].to);
+              }
+              */
+              p = o.edges.filter(a=>a.name == "EXPORTED_SYMBOLS");
+              dump(" edges: "+o.edges.map(a=>a.name).join(", ")+"\n");
+            } else if (o.name == "JS Object (Proxy)" && resolveProxy) {
+              dump("  JS Proxy Object for:\n");
+              let private = o.edges.filter(a=>a.name == "private");
+              if (private.length > 0) {
+                describe("proxy target", private[0].to);
+              }
+            } else if (o.name == "JS Object (Array)") {
+              dump("  Array:");
+              o.edges.filter(a=>a.name == "objectElementsOwner")
+               .forEach((e, i) => {
+                 describe("#" + i, e.to);
+               });
+            } else {
+              dump("owners:\n"+o.owners.map(a => " - "+a.name+": "+a.from.name).join("\n")+"\n");
+              dump("edges:\n"+o.edges.map(a => " - "+a.name+": "+a.to.name).join("\n")+"\n");
+            }
+          }
           for (let result of aResults) {
+            dump("Got one leak: "+result.name+"\n");
             let test = this.openedWindows[result.url];
             let msg = "leaked until shutdown [" + result.name +
                       " " + (this.openedURLs[result.url] || "NULL") + "]";
+            let analyzer = result.analyzer;
+            // We got the nsGlobalWindow object
+            // but this doesn't have the compartment information,
+            // So look for the JS window object
+            let win = analyzer.graph[result.address];
+            let jsWin;
+            for(let o of win.owners) {
+              if (o.from.name.includes("JS Object (Window)")) {
+                jsWin = o.from;
+                break;
+              }
+            }
+            if (!jsWin) {
+              dump("Unable to find the related JS window for this leak. "+result.name+"\n");
+              describe("nsGlobal", win);
+              continue;
+            }
+            let compartment = jsWin.compartment;
+
+            msg += "\n" + analyzer + " / "+win+" / "+compartment;
+            for (let edge of analyzer.edges) {
+              if (edge.from.compartment && edge.from.compartment != compartment && edge.to.compartment == compartment) {
+                let from = edge.from, to = edge.to;
+                dump(from.name+"("+from.compartment+") -- " + edge.name + " --> "+to.name + "("+to.compartment+") ["+compartment+"]\n");
+                if (to.name == "JS Object(Proxy)") {
+                  let p = to.edges.filter(a=>a.name=="private")[0];
+                  to = p.to;
+                }
+                describe("from", from, false);
+                describe("to", to);
+                let p = from.owners.filter(a=>a.name == "private");
+                if (p.length > 0) {
+                  p.forEach((a, i) => {
+                    describe("from's proxy #"+i, a.from);
+                  });
+                }
+                p = from.edges.filter(a=>a.name == "global");
+                if (p.length > 0) {
+                  describe("from's global", p[0].to);
+                }
+                dump("-------------------------------------------\n\n");
+              }
+            }
+            dump(" #### plop\n");
+            for (let edge of analyzer.edges) {
+              if (edge.name == "plop") {
+                describe("plop source", edge.from);
+              }
+            }
             test.addResult(new testResult(false, msg, "", false));
           }
         };
@@ -700,19 +808,21 @@ Tester.prototype = {
           ppmm.broadcastAsyncMessage("browser-test:collect-request");
 
           checkForLeakedGlobalWindows(aResults => {
+            dump("checked\n");
             if (aResults.length == 0) {
+              dump("no leak\n");
               this.finish();
               return;
             }
             // After the first check, if there are reported leaked windows, sleep
             // for a while, to allow off-main-thread work to complete and free up
             // main-thread objects.  Then check again.
-            setTimeout(() => {
-              checkForLeakedGlobalWindows(aResults => {
+            //setTimeout(() => {
+            //  checkForLeakedGlobalWindows(aResults => {
                 reportLeaks(aResults);
                 this.finish();
-              });
-            }, 1000);
+            //  });
+            //}, 1000);
           });
         });
 
