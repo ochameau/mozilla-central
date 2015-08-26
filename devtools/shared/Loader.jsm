@@ -24,6 +24,17 @@ var promise = Cu.import("resource://gre/modules/Promise.jsm", {}).Promise;
 this.EXPORTED_SYMBOLS = ["DevToolsLoader", "devtools", "BuiltinProvider",
                          "SrcdirProvider", "require", "loader"];
 
+// Automatically use local source if chrome pref is turned on
+// and firefox is launched via ./mach run, which set MOZ_SOURCE_DIRECTORY.
+if (Services.appinfo.processType != Ci.nsIXULRuntime.PROCESS_TYPE_CONTENT &&
+    Services.prefs.getBoolPref("devtools.chrome.enabled")) {
+  let env = Cc["@mozilla.org/process/environment;1"].getService(Ci.nsIEnvironment);
+  let topsrcdir = env.get("MOZ_SOURCE_DIRECTORY");
+  if (topsrcdir) {
+    Services.prefs.setCharPref("devtools.loader.srcdir", topsrcdir);
+  }
+}
+
 /**
  * Providers are different strategies for loading the devtools.
  */

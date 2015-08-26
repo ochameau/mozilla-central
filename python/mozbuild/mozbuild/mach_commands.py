@@ -1133,6 +1133,10 @@ class RunProgram(MachCommandBase):
 
         extra_env = {'MOZ_CRASHREPORTER_DISABLE': '1'}
 
+        # Give a way to runtime to find gecko source directory.
+        # Used by devtools for live reload.
+        extra_env["MOZ_SOURCE_DIRECTORY"] = self.topsrcdir
+
         if debug or debugger or debugparams:
             import mozdebug
             if not debugger:
