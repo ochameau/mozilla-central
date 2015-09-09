@@ -1106,6 +1106,8 @@ var DebuggerServer = {
       }
       events.off(aConnection, "closed", destroy);
 
+      aConnection.close();
+
       DebuggerServer._childMessageManagers.delete(mm);
     });
 
