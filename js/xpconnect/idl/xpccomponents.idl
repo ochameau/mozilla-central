@@ -276,6 +276,14 @@ interface nsIXPCComponents_Utils : nsISupports
     /*
      * To be called from JS only.
      *
+     * Return a stack object for the given JS exception.
+     */
+    [implicit_jscontext]
+    jsval getExceptionStack(in jsval obj);
+
+    /*
+     * To be called from JS only.
+     *
      * Force an immediate garbage collection cycle.
      */
     void forceGC();

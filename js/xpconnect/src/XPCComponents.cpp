@@ -2548,6 +2548,18 @@ nsXPCComponents_Utils::GetWeakReference(HandleValue object, JSContext* cx,
 }
 
 NS_IMETHODIMP
+nsXPCComponents_Utils::GetExceptionStack(HandleValue ex, JSContext* cx,
+                                         MutableHandleValue rval)
+{
+    if (!ex.isObject())
+        return NS_ERROR_INVALID_ARG;
+    RootedObject exObj(cx, ex.toObjectOrNull());
+    RootedObject stack(cx, ExceptionStackOrNull(cx, exObj));
+    rval.setObject(*stack);
+    return NS_OK;
+}
+
+NS_IMETHODIMP
 nsXPCComponents_Utils::ForceGC()
 {
     JSRuntime* rt = nsXPConnect::GetRuntimeInstance()->Runtime();
