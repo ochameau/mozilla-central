@@ -207,6 +207,7 @@ static PRLogModuleInfo* gJSDiagnostics;
 void
 xpc::ErrorReport::LogToConsole()
 {
+  printf("LogToConsole()\n");
   LogToConsoleWithStack(nullptr);
 }
 void
@@ -249,13 +250,30 @@ xpc::ErrorReport::LogToConsoleWithStack(JS::HandleObject aStack)
       do_GetService(NS_CONSOLESERVICE_CONTRACTID);
 
     nsCOMPtr<nsIScriptError> errorObject;
-    if (mWindowID && aStack) {
+    if (aStack) {
+      printf("LogToConsoleWithStack(got stack): %s\n", NS_LossyConvertUTF16toASCII(mErrorMsg).get());
       // Only set stack on messages related to a document
       // As we cache messages in the console service,
       // we have to ensure not leaking them after the related
       // context is destroyed and we only track document lifecycle for now.
       errorObject = new nsScriptErrorWithStack(aStack);
     } else {
+      printf("LogToConsoleWithStack(no stack): %s\n", NS_LossyConvertUTF16toASCII(mErrorMsg).get());
+      nsCOMPtr<nsIStackFrame> frame = dom::GetCurrentJSStack();
+      if (frame) {
+        JSContext* cx = nsContentUtils::GetCurrentJSContext();
+        JS::Rooted<JS::Value> stack(cx);
+        nsresult rv = frame->GetNativeSavedFrame(&stack);
+        NS_ENSURE_SUCCESS_VOID(rv);
+        if (stack.isObject()) {
+          printf("LogToConsoleWithStack(no stack, but got one): %s\n", NS_LossyConvertUTF16toASCII(mErrorMsg).get());
+          JS::Rooted<JSObject*> stackObj(cx, &stack.toObject());
+          errorObject = new nsScriptErrorWithStack(stackObj);
+        }
+      }
+    }
+    if (!errorObject) {
+      printf("LogToConsoleWithStack(no stack): %s\n", NS_LossyConvertUTF16toASCII(mErrorMsg).get());
       errorObject = new nsScriptError();
     }
     NS_ENSURE_TRUE_VOID(consoleService && errorObject);

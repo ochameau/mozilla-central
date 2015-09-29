@@ -413,6 +413,7 @@ public:
       if (mError.isObject()) {
         AutoJSAPI jsapi;
         if (NS_WARN_IF(!jsapi.Init(mError.toObjectOrNull()))) {
+          printf("JSEnv 1\n");
           mReport->LogToConsole();
           return NS_OK;
         }
@@ -421,6 +422,7 @@ public:
         JS::RootedObject stack(cx, ExceptionStackOrNull(cx, exObj));
         mReport->LogToConsoleWithStack(stack);
       } else {
+        printf("JSEnv 2\n");
         mReport->LogToConsole();
       }
 
@@ -507,6 +509,7 @@ SystemErrorReporter(JSContext *cx, const char *message, JSErrorReport *report)
         JS::RootedObject stackVal(cx, ExceptionStackOrNull(cx, exObj));
         xpcReport->LogToConsoleWithStack(stackVal);
       } else {
+        printf("JSEnv 3\n");
         xpcReport->LogToConsole();
       }
       return;

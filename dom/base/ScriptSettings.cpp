@@ -470,6 +470,7 @@ WarningOnlyErrorReporter(JSContext* aCx, const char* aMessage, JSErrorReport* aR
   nsPIDOMWindow* win = xpc::CurrentWindowOrNull(aCx);
   xpcReport->Init(aRep, aMessage, nsContentUtils::IsCallerChrome(),
                   win ? win->WindowID() : 0);
+  printf("WarningOnlyErrorReporter\n");
   xpcReport->LogToConsole();
 }
 
