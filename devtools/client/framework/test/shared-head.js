@@ -27,14 +27,21 @@ const DevToolsUtils = require("devtools/shared/DevToolsUtils");
 let promise = require("promise");
 
 const TEST_DIR = gTestPath.substr(0, gTestPath.lastIndexOf("/"));
-const CHROME_URL_ROOT = TEST_DIR + "/";
-const URL_ROOT = CHROME_URL_ROOT.replace("chrome://mochitests/content/",
-                                         "http://example.com/");
-const URL_ROOT_SSL = CHROME_URL_ROOT.replace("chrome://mochitests/content/",
-                                             "https://example.com/");
+var URL_ROOT, URL_ROOT_SSL;
+// Import luciddream test helper
+if ("LUCIDDREAM" in this) {
+  URL_ROOT = TEST_DIR + "/";
+  URL_ROOT_SSL = URL_ROOT;
+} else {
+  const CHROME_URL_ROOT = TEST_DIR + "/";
+  URL_ROOT = CHROME_URL_ROOT.replace("chrome://mochitests/content/",
+                                     "http://example.com/");
+  URL_ROOT_SSL = CHROME_URL_ROOT.replace("chrome://mochitests/content/",
+                                         "https://example.com/");
 
-// All test are asynchronous
-waitForExplicitFinish();
+  // All test are asynchronous
+  waitForExplicitFinish();
+}
 
 // Uncomment this pref to dump all devtools emitted events to the console.
 // Services.prefs.setBoolPref("devtools.dump.emit", true);

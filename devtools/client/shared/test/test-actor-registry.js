@@ -10,21 +10,19 @@ var Ci = Components.interfaces;
 var Cc = Components.classes;
 var CC = Components.Constructor;
 
+var LUCIDDREAM = exports.LUCIDDREAM;
 var { require } = Cu.import("resource://devtools/shared/Loader.jsm", {});
 var { NetUtil } = Cu.import("resource://gre/modules/NetUtil.jsm", {});
 var { fetch } = require("devtools/shared/DevToolsUtils");
 var promise = require("promise");
 
-var TEST_URL_ROOT = "http://example.com/browser/devtools/client/shared/test/";
-var ACTOR_URL = TEST_URL_ROOT + "test-actor.js";
+var ACTOR_URL = Components.stack.filename.replace(/^.*-> /,"").replace("test-actor-registry.js", "test-actor.js");
 
 // Register a test actor that can operate on the remote document
 exports.registerTestActor = Task.async(function* (client) {
   // First, instanciate ActorRegistryFront to be able to dynamically
   // register an actor
-  let deferred = promise.defer();
-  client.listTabs(deferred.resolve);
-  let response = yield deferred.promise;
+  let response = yield client.listTabs();
   let { ActorRegistryFront } = require("devtools/server/actors/actor-registry");
   let registryFront = ActorRegistryFront(client, response);
 
@@ -53,6 +51,9 @@ var loadFront = Task.async(function* () {
 // Ensure fetching a live TabActor form for the targeted app
 // (helps fetching the test actor registered dynamically)
 var getUpdatedForm = function (client, tab) {
+  if (LUCIDDREAM) {
+    return LUCIDDREAM.getUpdatedForm();
+  }
   return client.getTab({tab: tab})
                .then(response => response.tab);
 };
@@ -67,6 +68,9 @@ exports.getTestActor = Task.async(function* (toolbox) {
 // Sometimes, we need the test actor before opening or without a toolbox
 // then just create a front for the given `tab`
 exports.getTestActorWithoutToolbox = Task.async(function* (tab) {
+  if (LUCIDDREAM) {
+    return LUCIDDREAM.getTestActorWithoutToolbox(getTestActor);
+  }
   let { DebuggerServer } = require("devtools/server/main");
   let { DebuggerClient } = require("devtools/shared/client/main");
 
@@ -97,6 +101,11 @@ var getTestActor = Task.async(function* (client, tab, toolbox) {
   // We may have to update the form in order to get the dynamically registered
   // test actor.
   let form = yield getUpdatedForm(client, tab);
+
+  // Ensure not spawning multiple front instances
+  if (client.getActor(form.testActor)) {
+    return client.getActor(form.testActor);
+  }
 
   let { TestActorFront } = yield loadFront();
 

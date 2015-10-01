@@ -158,6 +158,9 @@ var selectNode = Task.async(function*(selector, inspector, reason="test") {
  *         with an object: { tab, toolbox, inspector }.
  */
 var openInspectorForURL = Task.async(function*(url, hostType) {
+  if (typeof(LUCIDDREAM) === "object") {
+    return LUCIDDREAM.openInspector(url, hostType);
+  }
   let tab = yield addTab(url);
   let { inspector, toolbox, testActor } = yield openInspector(hostType);
   return { tab, inspector, toolbox, testActor };
@@ -169,6 +172,9 @@ var openInspectorForURL = Task.async(function*(url, hostType) {
  * @return a promise that resolves when the inspector is ready
  */
 var openInspector = Task.async(function*(hostType) {
+  if (typeof(LUCIDDREAM) === "object") {
+    return LUCIDDREAM.openInspector(hostType);
+  }
   info("Opening the inspector");
 
   let toolbox = yield openToolboxForTab(gBrowser.selectedTab, "inspector", hostType);

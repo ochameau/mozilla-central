@@ -408,8 +408,8 @@ function App(client, webappsActor, manifest) {
 }
 
 App.prototype = {
-  getForm: function () {
-    if (this._form) {
+  getForm: function (byPassCache) {
+    if (this._form && !byPassCache) {
       return promise.resolve(this._form);
     }
     let request = {
