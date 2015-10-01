@@ -1465,6 +1465,10 @@ VARIABLES = {
         """List of manifest files defining marionette-webapi tests.
         """),
 
+    'LUCIDDREAM_MANIFESTS': (StrictOrderingOnAppendList, list,
+        """List of manifest files defining luciddream tests.
+        """),
+
     'METRO_CHROME_MANIFESTS': (StrictOrderingOnAppendList, list,
         """List of manifest files defining metro browser chrome tests.
         """),

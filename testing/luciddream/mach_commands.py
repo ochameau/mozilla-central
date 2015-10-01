@@ -20,11 +20,6 @@ from mach.decorators import (
     Command,
 )
 
-class LucidDreamRunner(MozbuildObject):
-    """Run luciddream tests."""
-    def run_tests(self, **kwargs):
-        self._run_make(target='jetpack-tests')
-
 @CommandProvider
 class MachCommands(MachCommandBase):
     @Command('luciddream', category='testing',
@@ -67,7 +62,7 @@ class MachCommands(MachCommandBase):
                 browser_path = binary_path
 
         if not browser_path:
-            print "Need firefox binary path via --browser_path argument"
+            print "Need firefox binary path via --browser argument"
             return 1
         elif not os.path.exists(browser_path):
             print "Firefox binary doesn't exists: " + browser_path
@@ -80,10 +75,6 @@ class MachCommands(MachCommandBase):
             print "B2G desktop binary doesn't exists: " + b2g_desktop_path
             return 1
 
-        if not test_paths or len(test_paths) == 0:
-            print "Please specify a test manifest to run"
-            return 1
-
         browser_args = None
         if consoles:
             browser_args = ["-jsconsole"]
@@ -92,6 +83,29 @@ class MachCommands(MachCommandBase):
             else:
                 params["app_args"] = ["-jsconsole"]
 
-        for test in test_paths:
-          luciddream.runluciddream.run(browser_path=browser_path, b2g_desktop_path=b2g_desktop_path,
-            manifest=test, browser_args=browser_args, **params)
+        # Check if we passed only explicit paths to existing test file
+        # or if we received directories or incomplete paths that match
+        # multiple files and needs additional computing
+        explicitPaths = len(test_paths) > 0 and \
+                        all(os.path.exists(path) and \
+                            os.path.splitext(path)[1] in [".js", ".py"] \
+                            for path in test_paths)
+
+        if not explicitPaths:
+            # Resolve eventual (partial) paths
+            from mozbuild.testing import TestResolver
+            resolver = self._spawn(TestResolver)
+            test_paths = list(resolver.resolve_tests(paths=test_paths, flavor="luciddream", cwd=self._mach_context.cwd))
+
+            # Spawn a TestManifest instance in order to ignore disabled tests
+            from manifestparser import TestManifest
+            manifest = TestManifest()
+            manifest.tests.extend(test_paths)
+            import mozinfo
+
+            # Accept disabled path only when we explicitely pass disabled file
+            tests = manifest.active_tests(disabled=False, **mozinfo.info)
+            test_paths = [t["path"] for t in tests]
+
+        luciddream.runluciddream.run(browser_path=browser_path, b2g_desktop_path=b2g_desktop_path,
+          test_paths=test_paths, browser_args=browser_args, **params)

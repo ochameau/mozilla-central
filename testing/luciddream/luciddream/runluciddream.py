@@ -33,9 +33,10 @@ def validate_options(options):
                                '--emulator-path')
     if not options.browser_path:
         raise CommandLineError('You must specify --browser-path')
-    if not os.path.isfile(options.manifest):
-        raise CommandLineError('The manifest at "%s" does not exist!'
-                               % options.manifest)
+    for path in options.test_paths:
+        if not os.path.isfile(path):
+            raise CommandLineError('The test path at "%s" does not exist!'
+                                   % path)
 
 
 # BaseMarionetteOptions has a lot of stuff we don't care about, and
@@ -58,8 +59,8 @@ def parse_args(in_args):
     parser.add_argument('--startup-timeout', dest='startup_timeout', action='store',
                         default=60,  type=int,
                         help='max time to wait for Marionette to be available after launching binary')
-    parser.add_argument('manifest', metavar='MANIFEST', action='store',
-                        help='path to manifest of tests to run')
+    parser.add_argument('test_paths', action='store', nargs='+',
+                        help='path to manifest(s) or test(s) to run')
     mozlog.commandline.add_logging_group(parser)
 
     args = parser.parse_args(in_args)
@@ -105,15 +106,15 @@ def start_browser(browser_path, app_args, startup_timeout):
 #TODO: make marionette/client/marionette/runtests.py importable so we can
 # just use cli from there. A lot of this is copy/paste from that function.
 def run(browser_path=None, b2g_desktop_path=None, emulator_path=None,
-        emulator_arch=None, gaia_profile=None, manifest=None, browser_args=None,
-        **kwargs):
+        emulator_arch=None, gaia_profile=None, test_paths=None, browser_args=None,
+        startup_timeout=None, **kwargs):
     # It's sort of debatable here whether the marionette instance managed
     # by the test runner should be the browser or the emulator. Right now
     # it's the emulator because it feels like there's more fiddly setup around
     # that, but longer-term if we want to run tests against different
     # (non-B2G) targets this won't match up very well, so maybe it ought to
     # be the browser?
-    browser = start_browser(browser_path, browser_args, kwargs['startup_timeout'])
+    browser = start_browser(browser_path, browser_args, startup_timeout)
 
     kwargs["browser"] = browser
     if not "logger" in kwargs:
@@ -143,15 +144,17 @@ def run(browser_path=None, b2g_desktop_path=None, emulator_path=None,
                 'gaia',
                 'profile'
             )
+
     runner = LucidDreamTestRunner(**kwargs)
-    runner.run_tests([manifest])
-    if runner.failed > 0:
-        sys.exit(10)
-    sys.exit(0)
+    runner.run_tests(test_paths)
+    return runner
 
 def main():
     args = parse_args(sys.argv[1:])
-    run(**vars(args))
+    runner = run(**vars(args))
+    if runner.failed > 0:
+        sys.exit(10)
+    sys.exit(0)
 
 if __name__ == '__main__':
     main()

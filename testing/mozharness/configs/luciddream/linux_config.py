@@ -36,8 +36,7 @@ config = {
                 "--log-raw=%(raw_log_file)s",
                 "--log-errorsummary=%(error_summary_file)s",
                 "--browser-path=%(browser_path)s",
-                "--b2gpath=%(emulator_path)s",
-                "%(test_manifest)s"
+                "--b2gpath=%(emulator_path)s"
             ],
         },
         "luciddream-b2gdt": {
@@ -47,8 +46,7 @@ config = {
                 "--log-errorsummary=%(error_summary_file)s",
                 "--browser-path=%(browser_path)s",
                 "--b2g-desktop-path=%(fxos_desktop_path)s",
-                "--gaia-profile=%(gaia_profile)s",
-                "%(test_manifest)s"
+                "--gaia-profile=%(gaia_profile)s"
             ],
         },
     },
