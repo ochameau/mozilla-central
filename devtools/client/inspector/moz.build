@@ -19,3 +19,4 @@ DevToolsModules(
 )
 
 BROWSER_CHROME_MANIFESTS += ['test/browser.ini']
+LUCIDDREAM_MANIFESTS += ['test/luciddream.ini']
