@@ -125,7 +125,7 @@ function synthesizeKeyFromKeyTag(key) {
   };
 
   info("Synthesizing key " + name + " " + JSON.stringify(modifiers));
-  EventUtils.synthesizeKey(name, modifiers);
+  EventUtils.synthesizeKey(name, modifiers, key.ownerDocument.defaultView);
 }
 
 /**

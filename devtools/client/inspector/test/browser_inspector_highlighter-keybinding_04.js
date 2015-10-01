@@ -39,7 +39,10 @@ add_task(function*() {
   // should be after the picker was stopped.
   EventUtils.synthesizeKey("VK_ESCAPE", {}, inspector.panelWin);
   yield onSplitConsole;
-  yield onConsoleReady;
+  if (!toolbox.getPanel("webconsole")) { // On luciddream, the console is already loaded
+                                         // and doesn't emit this event
+    yield onConsoleReady;
+  }
   ok(toolbox.splitConsole, "The split console is shown.");
 
   // Hide the split console.

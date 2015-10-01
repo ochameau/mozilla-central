@@ -16,7 +16,9 @@ add_task(function* () {
      "Rule View is selected by default");
 
   info("Selecting computed view.");
+  let onInspectorUpdated = inspector.once("inspector-updated");
   inspector.sidebar.select("computedview");
+  yield onInspectorUpdated;
 
   info("Closing inspector.");
   yield toolbox.destroy();

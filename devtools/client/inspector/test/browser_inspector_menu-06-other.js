@@ -21,7 +21,10 @@ add_task(function* () {
 
     info("Triggering 'Show DOM Properties' and waiting for inspector open");
     dispatchCommandEvent(showDOMPropertiesNode);
-    yield consoleOpened;
+    if (!toolbox.getPanel("webconsole")) { // On luciddream, the console is already loaded
+                                           // and doesn't emit this event
+      yield consoleOpened;
+    }
 
     let webconsoleUI = toolbox.getPanel("webconsole").hud.ui;
     let messagesAdded = webconsoleUI.once("new-messages");

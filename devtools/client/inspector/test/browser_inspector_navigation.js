@@ -7,11 +7,10 @@
 
 // Test that inspector updates when page is navigated.
 
-const TEST_URL_FILE = "browser/devtools/client/inspector/test/" +
-  "doc_inspector_breadcrumbs.html";
+const TEST_URL = TEST_URL_ROOT + "doc_inspector_breadcrumbs.html";
 
-const TEST_URL_1 = "http://test1.example.org/" + TEST_URL_FILE;
-const TEST_URL_2 = "http://test2.example.org/" + TEST_URL_FILE;
+const TEST_URL_1 = TEST_URL + "?1";
+const TEST_URL_2 = TEST_URL + "?2";
 
 add_task(function* () {
   let { inspector, toolbox, testActor } = yield openInspectorForURL(TEST_URL_1);

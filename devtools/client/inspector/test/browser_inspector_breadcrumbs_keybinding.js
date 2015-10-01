@@ -97,7 +97,7 @@ add_task(function*() {
       onUpdated = inspector.once("breadcrumbs-navigation-cancelled");
     }
 
-    EventUtils.synthesizeKey(key, {});
+    EventUtils.synthesizeKey(key, {}, inspector.panelWin);
     yield onUpdated;
 
     let newNodeFront = yield getNodeFront(newSelection, inspector);

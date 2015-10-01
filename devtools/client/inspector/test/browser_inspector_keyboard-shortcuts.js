@@ -32,7 +32,7 @@ add_task(function* () {
     info("Pressing " + key + " to select " + selectedNode);
 
     let updated = inspector.once("inspector-updated");
-    EventUtils.synthesizeKey(key, {});
+    EventUtils.synthesizeKey(key, {}, inspector.panelWin);
     yield updated;
 
     let selectedNodeFront = yield getNodeFront(selectedNode, inspector);
