@@ -1,9 +1,9 @@
 # Any copyright is dedicated to the Public Domain.
 # http://creativecommons.org/publicdomain/zero/1.0/
 
-from luciddream import LucidDreamTestCase
+from luciddream import LucidDreamPythonTestCase
 
-class TestSample(LucidDreamTestCase):
+class TestSample(LucidDreamPythonTestCase):
     def test_sample(self):
         #TODO: make this better
         self.assertIsNotNone(self.marionette.session)

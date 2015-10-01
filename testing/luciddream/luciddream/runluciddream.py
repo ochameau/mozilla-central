@@ -8,9 +8,11 @@
 from __future__ import print_function
 import argparse
 import os
+import re
 import sys
 
-from luciddream import LucidDreamTestCase
+from luciddream import LucidDreamJavascriptTestCase
+from luciddream import LucidDreamPythonTestCase
 from marionette import Marionette
 from marionette.runner import BaseMarionetteTestRunner
 import marionette
@@ -74,10 +76,11 @@ def parse_args(in_args):
 
 
 class LucidDreamTestRunner(BaseMarionetteTestRunner):
+    test_re = re.compile(r"^(test|browser)_.+\.(py|js)$")
+
     def __init__(self, **kwargs):
         BaseMarionetteTestRunner.__init__(self, **kwargs)
-        #TODO: handle something like MarionetteJSTestCase
-        self.test_handlers = [LucidDreamTestCase]
+        self.test_handlers = [LucidDreamJavascriptTestCase, LucidDreamPythonTestCase]
 
 
 def start_browser(browser_path, app_args, startup_timeout):
