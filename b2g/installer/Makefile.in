@@ -128,17 +128,3 @@ locale-manifest.in: $(GLOBAL_DEPS) FORCE
 
 GARBAGE += locale-manifest.in
 endif
-
-ifdef FXOS_SIMULATOR
-export MAKE
-
-.PHONY: simulator
-simulator: make-package
-	@echo 'Building simulator addon...'
-	$(PYTHON) $(topsrcdir)/b2g/simulator/build_xpi.py $(MOZ_PKG_PLATFORM)
-
-libs:: simulator
-
-# Ensure copying Simulator xpi to ftp
-UPLOAD_EXTRA_FILES += fxos-simulator-*-*.xpi
-endif
