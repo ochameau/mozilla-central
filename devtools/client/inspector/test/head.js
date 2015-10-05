@@ -48,10 +48,39 @@ registerCleanupFunction(function*() {
   }
 });
 
-var navigateTo = function (toolbox, url) {
+/**
+ * Add a new test tab in the browser and load the given url.
+ * @param {String} url The url to be loaded in the new tab
+ * @return a promise that resolves to the tab object when the url is loaded
+ */
+var addTab = Task.async(function* (url) {
+  info("Adding a new tab with URL: '" + url + "'");
+
+  window.focus();
+
+  let tab = gBrowser.selectedTab = gBrowser.addTab(url);
+  let browser = tab.linkedBrowser;
+
+  yield once(browser, "load", true);
+  info("URL '" + url + "' loading complete");
+
+  return tab;
+});
+
+var navigateTo = Task.async(function* (toolbox, url) {
   let activeTab = toolbox.target.activeTab;
-  return activeTab.navigateTo(url);
-};
+  let navigated = toolbox.target.once("navigate");
+  let inspector = toolbox.getPanel("inspector");
+  let updated = inspector.once("inspector-updated");
+
+  yield activeTab.navigateTo(url);
+
+  info("Waiting for 'navigate' event from toolbox target.");
+  yield navigated;
+
+  info("Waiting for 'inspector-updated' after navigation change.");
+  yield updated;
+});
 
 /**
  * Simple DOM node accesor function that takes either a node or a string css

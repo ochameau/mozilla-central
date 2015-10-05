@@ -12,11 +12,7 @@ add_task(function* () {
   let { toolbox } = yield openInspectorForURL(URL_1);
 
   info("Navigating to different URL.");
-  let navigated = toolbox.target.once("navigate");
-  navigateTo(toolbox, URL_2);
-
-  info("Waiting for 'navigate' event from toolbox target.");
-  yield navigated;
+  yield navigateTo(toolbox, URL_2);
 
   info("Destroying toolbox");
   try {

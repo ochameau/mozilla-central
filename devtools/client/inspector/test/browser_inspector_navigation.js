@@ -14,6 +14,7 @@ const TEST_URL_2 = TEST_URL + "?2";
 
 add_task(function* () {
   let { inspector, toolbox, testActor } = yield openInspectorForURL(TEST_URL_1);
+
   let markuploaded = inspector.once("markuploaded");
 
   yield selectNode("#i1", inspector);
@@ -23,6 +24,8 @@ add_task(function* () {
 
   info("Waiting for markup view to load after navigation.");
   yield markuploaded;
+
+  is((yield testActor.eval("location.href;")), TEST_URL_2, "URL is correct.");
 
   ok(true, "New page loaded");
   yield selectNode("#i1", inspector);

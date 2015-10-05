@@ -47,6 +47,9 @@ add_task(function*() {
     let style = yield getRootNodeStyle(testActor);
     is(style, expected, "The style attribute of the root element is correct");
   }
+
+  // Reset page zoom before leaving!
+  yield testActor.zoomPageTo(1);
 });
 
 function* hoverElement(selector, inspector) {
