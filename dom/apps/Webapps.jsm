@@ -400,6 +400,7 @@ this.DOMApplicationRegistry = {
   // Ensure that the .to property in redirects is a relative URL.
   sanitizeRedirects: function sanitizeRedirects(aSource) {
     if (!aSource) {
+      dump("no source\n");
       return null;
     }
 
@@ -412,6 +413,7 @@ this.DOMApplicationRegistry = {
         res.push(redirect);
       }
     }
+    dump("redirects >> "+JSON.stringify(res, null, 2)+"\n");
     return res.length > 0 ? res : null;
   },
 
@@ -2079,9 +2081,14 @@ this.DOMApplicationRegistry = {
   // Updates the redirect mapping, activities and system message handlers.
   // aOldManifest can be null if we don't have any handler to unregister.
   updateAppHandlers: function(aOldManifest, aNewManifest, aApp) {
+    dump("updateAppHandlers "+aApp.id + "/" + aApp.manifestURL+"\n");
+    let inParent = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULRuntime)
+                    .processType == Ci.nsIXULRuntime.PROCESS_TYPE_DEFAULT;
+    dump("inParent?"+inParent+"\n");
     debug("updateAppHandlers: old=" + uneval(aOldManifest) +
           " new=" + uneval(aNewManifest));
     this.notifyAppsRegistryStart();
+    dump("updateAppHandlers status: "+aApp.appStatus+"\n");
     if (aApp.appStatus >= Ci.nsIPrincipal.APP_STATUS_PRIVILEGED) {
       aApp.redirects = this.sanitizeRedirects(aNewManifest.redirects);
     }

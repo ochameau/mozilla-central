@@ -254,6 +254,7 @@ WebappsActor.prototype = {
   },
 
   _registerApp: function wa_actorRegisterApp(aDeferred, aApp, aId, aDir) {
+    dump("webapps actor.registerApp "+aId+"\n");
     debug("registerApp");
     let reg = DOMApplicationRegistry;
     let self = this;
@@ -287,6 +288,8 @@ WebappsActor.prototype = {
       aApp.name = manifest.name;
       aApp.csp = manifest.csp || "";
       aApp.role = manifest.role || "";
+    dump("webapps actor.registerApp >> updateAppHandlers\n");
+    dump("manifest: "+JSON.stringify(manifest, null, 2)+"\n");
       reg.updateAppHandlers(null, manifest, aApp);
 
       reg._saveApps().then(() => {
