@@ -316,6 +316,46 @@ var steps = [
     });
   },
   function() {
+    ok(true, "== TEST == Install packaged app with redirects");
+    let appId = "test-app-id-redirect";
+    let url = SimpleTest.getTestFileURL("data/app-redirect.zip");
+    installTestApp(url, appId,
+      function (aResponse, aApp) {
+        ok(true, "Installed redirects");
+        is(aResponse.appId, appId, "Got same app id");
+        if ("error" in aResponse) {
+          ok(false, "Error: " + aResponse.error);
+        }
+        if ("message" in aResponse) {
+          ok(false, "Error message: " + aResponse.message);
+        }
+        ok(!("error" in aResponse), "app installed without any error");
+
+        let redirects = [{
+          from: "http://example.com/redirection-target.html",
+          to: "/redirected.html"
+        }];
+        is(JSON.stringify(aApp.manifest.redirects), JSON.stringify(redirects),
+           "Got expected `redirects` in manifest");
+
+        // Check that, if we load a remote document being redirect
+        // that match our redirects rules, we end up on the app document,
+        // i.e. /redirected.html
+        let iframe = document.createElement("iframe");
+        iframe.setAttribute("mozbrowser", "true");
+        iframe.setAttribute("mozapp", aApp.manifestURL);
+        iframe.setAttribute("src", "http://test/tests/devtools/shared/apps/tests/redirect.sjs");
+        iframe.onload = function () {
+          is(SpecialPowers.wrap(iframe.contentWindow).location.href,
+             aApp.origin + "/redirected.html");
+          document.body.removeChild(iframe);
+          next();
+        };
+        document.body.appendChild(iframe);
+      }
+    );
+  },
+  function() {
     ok(true, "all done!\n");
     mm.sendAsyncMessage("cleanup");
     SpecialPowers.flushPrefEnv(finish);
