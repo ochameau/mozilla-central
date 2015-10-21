@@ -343,7 +343,7 @@ var steps = [
         // i.e. /redirected.html
         let iframe = document.createElement("iframe");
         iframe.setAttribute("mozbrowser", "true");
-        iframe.setAttribute("mozapp", aApp.manifestURL);
+        iframe.setAttribute("mozapp", "app://test-app-id-redirect/manifest.webapp");
         iframe.setAttribute("src", "http://test/tests/devtools/shared/apps/tests/redirect.sjs");
         iframe.onload = function () {
           is(SpecialPowers.wrap(iframe.contentWindow).location.href,
