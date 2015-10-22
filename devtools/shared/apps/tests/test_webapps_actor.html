@@ -322,7 +322,7 @@ var steps = [
     installTestApp(url, appId,
       function (aResponse, aApp) {
         ok(true, "Installed redirects");
-        is(aResponse.appId, appId, "Got same app id: " + appId);
+        is(aResponse.appId, appId, "Got same app id");
         if ("error" in aResponse) {
           ok(false, "Error: " + aResponse.error);
         }

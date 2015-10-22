@@ -5,7 +5,7 @@
 "use strict"
 
 function debug(s) {
-  dump("-*- AppsService.js: " + s + "\n");
+  //dump("-*- AppsService.js: " + s + "\n");
 }
 
 const Cc = Components.classes;
@@ -114,23 +114,15 @@ AppsService.prototype = {
   getRedirect: function getRedirect(aLocalId, aURI) {
     debug("getRedirect for " + aLocalId + " " + aURI.spec);
     if (this.isInvalidId(aLocalId)) {
-    debug("is invalid id");
       return null;
     }
 
     let app = DOMApplicationRegistry.getAppByLocalId(aLocalId);
-    debug("app > "+app+" inParent?"+this.inParent);
-    if (app) {
-      debug("redirects > "+app.redirects + " // "+app.manifestURL);
-    }
     if (app && app.redirects) {
       let spec = aURI.spec;
-    debug("has redirects: "+JSON.stringify(redirects, null, 2));
-    debug("spec: "+spec);
       for (let i = 0; i < app.redirects.length; i++) {
         let redirect = app.redirects[i];
         if (spec.startsWith(redirect.from)) {
-          debug("starts with");
           // Prepend the app origin to the redirection. We need that since
           // the origin of packaged apps is a uuid created at install time.
           let to = app.origin + redirect.to;

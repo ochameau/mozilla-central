@@ -6631,8 +6631,6 @@ nsDocShell::DoAppRedirectIfNeeded(nsIURI* aURI,
                                   bool aFirstParty)
 {
   uint32_t appId = nsIDocShell::GetAppId();
-  printf("DoAppRedirectIfNeeded %d\n", appId);
-  __android_log_print(ANDROID_LOG_INFO, "Gecko", "DoAppRedirectIfNeeded %d", appId);
 
   if (appId != nsIScriptSecurityManager::NO_APP_ID &&
       appId != nsIScriptSecurityManager::UNKNOWN_APP_ID) {
@@ -6642,16 +6640,11 @@ nsDocShell::DoAppRedirectIfNeeded(nsIURI* aURI,
     nsCOMPtr<nsIURI> redirect;
     nsresult rv = appsService->GetRedirect(appId, aURI, getter_AddRefs(redirect));
     if (NS_SUCCEEDED(rv) && redirect) {
-  printf("get redirect ok\n");
-  __android_log_print(ANDROID_LOG_INFO, "Gecko", "get redirect ok");
       rv = LoadURI(redirect, aLoadInfo, nsIWebNavigation::LOAD_FLAGS_NONE,
                    aFirstParty);
       if (NS_SUCCEEDED(rv)) {
         return true;
       }
-    } else {
-  printf("get redirect nok\n");
-  __android_log_print(ANDROID_LOG_INFO, "Gecko", "get redirect nok");
     }
   }
 
