@@ -420,11 +420,6 @@ var DebuggerServer = {
       constructor: "HeapSnapshotFileActor",
       type: { global: true }
     });
-    this.registerModule("devtools/server/actors/about-memory", {
-      prefix: "aboutMemory",
-      constructor: "AboutMemoryActor",
-      type: { global: true }
-    });
   },
 
   /**
