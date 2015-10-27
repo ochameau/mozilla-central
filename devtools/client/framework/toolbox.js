@@ -1651,7 +1651,18 @@ Toolbox.prototype = {
     }
 
     // clean up the toolbox if its window is closed
-    let newHost = new Hosts[hostType](this.target.tab, options);
+    let tab = this.target.tab;
+    if (!tab) {
+      // If there is no tab, use current one.
+      // (about:debugging usecase with remote target)
+      let win = Services.wm.getMostRecentWindow("navigator:browser");
+      // When running firefox with -webide argument,
+      // there is no firefox window
+      if (win && win.gBrowser) {
+        tab = win.gBrowser.mCurrentTab;
+      }
+    }
+    let newHost = new Hosts[hostType](tab, options);
     newHost.on("window-closed", this.destroy);
     return newHost;
   },
