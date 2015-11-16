@@ -47,7 +47,7 @@ function resetUI() {
 
   document.querySelector("#errorslist").innerHTML = "";
   document.querySelector("#warningslist").innerHTML = "";
-  document.querySelector("#fetchButton").hidden = true;
+
 }
 
 function updateUI() {
@@ -109,13 +109,6 @@ function updateUI() {
     });
   }
 
-  if (project.type === "runtimeApp" &&
-      (project.app.kind !== "packaged" || AppManager.supportsFetchPackagedApp())) {
-    let fetchBtn = document.querySelector("#fetchButton");
-    fetchBtn.hidden = false;
-    fetchBtn.onclick = fetchProject;
-  }
-
   let errorsNode = document.querySelector("#errorslist");
   let warningsNode = document.querySelector("#warningslist");
 
@@ -144,8 +137,4 @@ function showPrepackageLog() {
 
 function removeProject() {
   AppManager.removeSelectedProject();
-}
-
-function fetchProject() {
-  window.parent.UI.fetchProject();
 }

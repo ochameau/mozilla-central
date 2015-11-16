@@ -303,26 +303,6 @@ add_test(function testInstallEngineeringMode() {
     });
 });
 
-add_test(function testFetch() {
-  let appId = "actor-test"; // Match app.zip id
-
-  let packageFile = do_get_file("data/app.zip");
-  gActorFront.watchApps()
-             .then(() => {
-    dump("apps: "+gActorFront.apps.length+"\n");
-    return;
-    installPackaged(packageFile.path, appId)
-    .then(function ({ appId }) {
-      do_throw("App with engineering mode permission was accepted.");
-    }, function (e) {
-      do_check_eq(e.message, "Installing apps with any of these permissions is forbidden: " +
-                             Services.prefs.getCharPref("devtools.apps.forbidden-permissions"));
-      run_next_test();
-    });
-
-  });
-});
-
 function run_test() {
   setup();
 

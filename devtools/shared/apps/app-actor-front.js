@@ -478,28 +478,6 @@ App.prototype = {
     });
 
     return deferred.promise;
-  },
-
-  fetch: function () {
-    let deferred = promise.defer();
-    let request = this.client.request({
-      to: this.webappsActor,
-      type: "fetch",
-      manifestURL: this.manifest.manifestURL
-    });
-    request.on("bulk-reply", ({length, copyTo}) => {
-      let outputFile = FileUtils.getDir("TmpD", [], true);
-      outputFile.append("application.zip");
-      outputFile.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, parseInt("666", 8));
-
-      let output = FileUtils.openSafeFileOutputStream(outputFile);
-
-      copyTo(output).then(() => {
-        FileUtils.closeSafeFileOutputStream(output);
-        deferred.resolve(outputFile.path);
-      });
-    });
-    return deferred.promise;
   }
 };
 

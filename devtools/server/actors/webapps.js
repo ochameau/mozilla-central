@@ -1094,26 +1094,6 @@ WebappsActor.prototype = {
                        manifestURL: app.manifestURL
                      });
     }
-  },
-
-  fetch: function ({to, type, manifestURL}) {
-    let reg = DOMApplicationRegistry;
-    let id = reg._appIdForManifestURL(manifestURL);
-    let info = reg.getAppInfo(id);
-    let packagePath = OS.Path.join(info.path, "application.zip");
-    let packageFile = FileUtils.File(packagePath);
-    let fileSize = packageFile.fileSize;
-    this.conn.startBulkSend({
-      actor: to,
-      type: type,
-      length: fileSize
-    }).then(({copyFrom}) => {
-      NetUtil.asyncFetch(packageFile, input => {
-        copyFrom(input).then(() => {
-          input.close();
-        });
-      });
-    });
   }
 };
 
@@ -1132,8 +1112,7 @@ WebappsActor.prototype.requestTypes = {
   "getAppActor": WebappsActor.prototype.getAppActor,
   "watchApps": WebappsActor.prototype.watchApps,
   "unwatchApps": WebappsActor.prototype.unwatchApps,
-  "getIconAsDataURL": WebappsActor.prototype.getIconAsDataURL,
-  "fetch": WebappsActor.prototype.fetch,
+  "getIconAsDataURL": WebappsActor.prototype.getIconAsDataURL
 };
 
 exports.WebappsActor = WebappsActor;

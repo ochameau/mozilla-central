@@ -10,7 +10,6 @@ Cu.import("resource://devtools/client/framework/gDevTools.jsm");
 Cu.import("resource://gre/modules/Task.jsm");
 
 const {require} = Cu.import("resource://devtools/shared/Loader.jsm", {});
-const ZipUtils = Cu.import("resource://gre/modules/ZipUtils.jsm", {});
 const {Toolbox} = require("devtools/client/framework/toolbox");
 const Services = require("Services");
 const {AppProjects} = require("devtools/client/webide/modules/app-projects");
@@ -26,7 +25,6 @@ const Telemetry = require("devtools/client/shared/telemetry");
 const {RuntimeScanners} = require("devtools/client/webide/modules/runtimes");
 const {showDoorhanger} = require("devtools/client/shared/doorhanger");
 const {Simulators} = require("devtools/client/webide/modules/simulators");
-const {FileUtils} = Cu.import("resource://gre/modules/FileUtils.jsm");
 
 const Strings = Services.strings.createBundle("chrome://devtools/locale/webide.properties");
 
@@ -1009,33 +1007,6 @@ var UI = {
   prePackageLog: function (msg) {
     if (msg == "start") {
       UI.selectDeckPanel("logs");
-    }
-  },
-
-  fetchProject: function() {
-    let project = AppManager.selectedProject;
-
-    if (!project || project.type !== "runtimeApp") {
-      return promise.resolve();
-    }
-    if (project.app.kind === "packaged") {
-      return UI.busyUntil(Task.spawn(function* () {
-        let packagePath = yield AppManager.fetchPackagedApp(project);
-        let directory = utils.getPackagedDirectory(window);
-
-        if (!directory) {
-          // User cancelled directory selection
-          return;
-        }
-
-        // Extract package into the selected directory
-        let target = FileUtils.File(packagePath);
-        ZipUtils.extractFiles(target, directory);
-
-        yield UI.importAndSelectApp(directory);
-      }), "importing packaged app");
-    } else {
-      return Cmds.importHostedApp(project.app.manifestURL);
     }
   }
 };

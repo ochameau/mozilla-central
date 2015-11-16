@@ -458,15 +458,6 @@ var AppManager = exports.AppManager = {
     return this._selectedRuntime;
   },
 
-  supportsFetchPackagedApp: function () {
-    return this.connection.client.mainRoot.traits.fetchPackagedApp;
-  },
-
-  fetchPackagedApp: function (project) {
-    let app = this._getProjectFront(project);
-    return app.fetch();
-  },
-
   connectToRuntime: function(runtime) {
 
     if (this.connected && this.selectedRuntime === runtime) {

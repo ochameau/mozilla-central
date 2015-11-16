@@ -180,10 +180,7 @@ RootActor.prototype = {
     heapSnapshots: true,
     // Whether or not the timeline actor can emit DOMContentLoaded and Load
     // markers, currently in use by the network monitor. Fx45+
-    documentLoadingMarkers: true,
-    // Whether the webapps actor implements `fetch` request
-    // that allows retrieving app sources locally
-    fetchPackagedApp: true,
+    documentLoadingMarkers: true
   },
 
   /**
