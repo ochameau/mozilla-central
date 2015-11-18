@@ -545,6 +545,13 @@ class MochitestArguments(ArgumentContainer):
           "help": "Enable logging of unsafe CPOW usage, which is disabled by default for tests",
           "suppress": True,
           }],
+        [["--packaged"],
+         {"action": "store_true",
+          "dest": "packaged",
+          "default": None,
+          "help": "Runs mochitests with tests files being packaged in a jar.",
+          "suppress": True,
+          }],
     ]
 
     defaults = {

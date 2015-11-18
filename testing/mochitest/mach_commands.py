@@ -260,6 +260,22 @@ class MochitestRunner(MozbuildObject):
         'chrome', 'browser', 'a11y', 'jetpack-package', 'jetpack-addon',
         'webapprt-chrome', 'webapprt-content').
         """
+        # Run the test with test files being packaged in a jar
+        if kwargs["packaged"]:
+            # Build the tests.jar file
+            self._run_make(directory=self.topobjdir, allow_parallel=False,
+                           target='package-tests-mochitest')
+            # Loads mochitest runtests.py from dist package tests folder
+            # as it will look for tests.jar next to runtests.py file
+            self.mochitest_dir = os.path.join(self.topobjdir, "dist",
+                                              "test-package-stage", "mochitest")
+            # We have to remove mozinfo.json file that confuses mozbuild/base.py
+            # introducing two different obj dirs
+            try:
+              os.remove(os.path.join(self.mochitest_dir, "mozinfo.json"))
+            except:
+              ()
+
         # runtests.py is ambiguous, so we load the file/module manually.
         if 'mochitest' not in sys.modules:
             import imp
