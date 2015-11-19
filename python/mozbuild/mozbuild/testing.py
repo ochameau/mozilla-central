@@ -269,7 +269,7 @@ TEST_MANIFESTS = dict(
     MARIONETTE_UPDATE=('marionette', 'marionette', '.', False),
     MARIONETTE_WEBAPI=('marionette', 'marionette', '.', False),
 
-    LUCIDDREAM=('luciddream', 'testing/mochitest', 'luciddream', True),
+    LUCIDDREAM=('luciddream', 'testing/luciddream', 'tests', True),
     METRO_CHROME=('metro-chrome', 'testing/mochitest', 'metro', True),
     MOCHITEST=('mochitest', 'testing/mochitest', 'tests', True),
     MOCHITEST_CHROME=('chrome', 'testing/mochitest', 'chrome', True),

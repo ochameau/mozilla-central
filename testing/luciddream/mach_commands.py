@@ -86,10 +86,10 @@ class MachCommands(MachCommandBase):
         # Check if we passed only explicit paths to existing test file
         # or if we received directories or incomplete paths that match
         # multiple files and needs additional computing
-        explicitPaths = len(test_paths) > 0 and \
-                        all(os.path.exists(path) and \
-                            os.path.splitext(path)[1] in [".js", ".py"] \
-                            for path in test_paths)
+        explicitPaths = (len(test_paths) > 0 and
+                         all(os.path.exists(path) and
+                             os.path.splitext(path)[1] in [".js", ".py"]
+                             for path in test_paths))
 
         if not explicitPaths:
             # Resolve eventual (partial) paths

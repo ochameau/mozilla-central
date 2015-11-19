@@ -142,10 +142,6 @@ TEST_FLAVORS = {
         'mach_command': 'marionette-test',
         'kwargs': {'tests': []},
     },
-    'luciddream': {
-        'mach_command': 'luciddream',
-        'kwargs': {'test_paths': []},
-    },
     'mochitest': {
         'mach_command': 'mochitest',
         'kwargs': {'flavor': 'mochitest', 'test_paths': []},
