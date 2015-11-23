@@ -16,15 +16,12 @@ CCAnalyzer.prototype = {
     this.listener = null;
   },
 
-  run: function (aCallback, aWantAllTraces) {
+  run: function (aCallback) {
     this.clear();
     this.callback = aCallback;
 
     this.listener = Cc["@mozilla.org/cycle-collector-logger;1"].
       createInstance(Ci.nsICycleCollectorListener);
-    if (aWantAllTraces) {
-      this.listener = this.listener.allTraces();
-    }
 
     this.listener.disableLog = true;
     this.listener.wantAfterProcessing = true;
@@ -66,12 +63,11 @@ CCAnalyzer.prototype = {
     o.name = aObjectDescription;
   },
 
-  noteGCedObject: function (aAddress, aMarked, aObjectDescription, aCompartmentAddr) {
+  noteGCedObject: function (aAddress, aMarked, aObjectDescription) {
     let o = this.ensureObject(aAddress);
     o.address = aAddress;
     o.gcmarked = aMarked;
     o.name = aObjectDescription;
-    o.compartment = aCompartmentAddr;
   },
 
   noteEdge: function (aFromAddress, aToAddress, aEdgeName) {

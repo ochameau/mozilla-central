@@ -9,7 +9,7 @@
 
 "use strict";
 
-const TEST_URI = "http://example.com/browser/browser/devtools/webconsole/" +
+const TEST_URI = "http://example.com/browser/devtools/client/webconsole/" +
                  "test/test-eval-in-stackframe.html";
 
 var gWebConsole, gJSTerm, gDebuggerWin, gThread, gDebuggerController;
@@ -21,17 +21,7 @@ function test() {
   });
 }
 
-var plop;
 function consoleOpened(hud) {
-  plop = content;
-  Services.foo = content;
-  const sb = Components.utils.Sandbox([content]);
-  sb.bar = content;
-  Services.sb = sb;
-  dump("OK!\n");
-  ok(true, "hey");
-  executeSoon(finishTest);
-  return;
   gWebConsole = hud;
   gJSTerm = hud.jsterm;
   gJSTerm.execute("foo").then(onExecuteFoo);
