@@ -1317,7 +1317,6 @@ WebConsoleActor.prototype =
    */
   onConsoleServiceMessage: function WCA_onConsoleServiceMessage(aMessage)
   {
-    dump("onConsoleServiceMessage: "+aMessage+ " scriptError?:"+(aMessage instanceof Ci.nsIScriptError)+" stack:"+aMessage.stack+"\n");
     let packet;
     if (aMessage instanceof Ci.nsIScriptError) {
       packet = {
@@ -1350,7 +1349,6 @@ WebConsoleActor.prototype =
     let stack = null;
     // Convert stack objects to the JSON attributes expected by client code
     if (aPageError.stack) {
-      dump("hasStack!\n");
       stack = [];
       let s = aPageError.stack;
       while (s !== null) {
@@ -1362,7 +1360,6 @@ WebConsoleActor.prototype =
         });
         s = s.parent;
       }
-      dump("stack>"+stack.length+"\n"+stack+"\n");
     }
     let lineText = aPageError.sourceLine;
     if (lineText && lineText.length > DebuggerServer.LONG_STRING_INITIAL_LENGTH) {

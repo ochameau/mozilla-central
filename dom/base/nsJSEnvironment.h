@@ -195,13 +195,10 @@ public:
   // aWindow may be null if this error report is not associated with a window
   explicit AsyncErrorReporter(xpc::ErrorReport* aReport)
     : mReport(aReport)
-  {
-    printf("AsyncErrorReporter\n");
-  }
+  {}
 
   NS_IMETHOD Run() override
   {
-    printf("AsyncErrorReporter->LogToConsole()\n");
     mReport->LogToConsole();
     return NS_OK;
   }
