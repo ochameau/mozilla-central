@@ -52,7 +52,7 @@ const PREF_NAV_WIDTH = "devtools.styleeditor.navSidebarWidth";
  * @param {Document} panelDoc
  *        Document of the toolbox panel to populate UI in.
  */
-function StyleEditorUI(debuggee, target, panelDoc, options) {
+function StyleEditorUI(debuggee, target, panelDoc) {
   EventEmitter.decorate(this);
 
   this._debuggee = debuggee;
@@ -79,8 +79,6 @@ function StyleEditorUI(debuggee, target, panelDoc, options) {
   this._prefObserver = new PrefObserver("devtools.styleeditor.");
   this._prefObserver.on(PREF_ORIG_SOURCES, this._onNewDocument);
   this._prefObserver.on(PREF_MEDIA_SIDEBAR, this._onMediaPrefChanged);
-
-  this._doNotLoadExistings = options ? options.doNotLoadExistings : false;
 }
 this.StyleEditorUI = StyleEditorUI;
 
@@ -122,12 +120,6 @@ StyleEditorUI.prototype = {
     yield this.initializeHighlighter();
 
     this.createUI();
-
-    if (this._doNotLoadExistings) {
-      this._resetStyleSheetList([]);
-      this._debuggee.addStyleSheet(null).then(this._onStyleSheetCreated);
-      return;
-    }
 
     let styleSheets = yield this._debuggee.getStyleSheets();
     yield this._resetStyleSheetList(styleSheets);

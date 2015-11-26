@@ -20,7 +20,6 @@ devtools.jar:
     content/webconsole/webconsole.xul (webconsole/webconsole.xul)
 *   content/scratchpad/scratchpad.xul (scratchpad/scratchpad.xul)
     content/scratchpad/scratchpad.js (scratchpad/scratchpad.js)
-*   content/addoneditor/addoneditor.xul (addoneditor/addoneditor.xul)
     content/shared/splitview.css (shared/splitview.css)
     content/shared/theme-switching.js (shared/theme-switching.js)
     content/shared/frame-script-utils.js (shared/frame-script-utils.js)

@@ -24,7 +24,6 @@ loader.lazyGetter(this, "PerformancePanel", () => require("devtools/client/perfo
 loader.lazyGetter(this, "NetMonitorPanel", () => require("devtools/client/netmonitor/panel").NetMonitorPanel);
 loader.lazyGetter(this, "StoragePanel", () => require("devtools/client/storage/panel").StoragePanel);
 loader.lazyGetter(this, "ScratchpadPanel", () => require("devtools/client/scratchpad/scratchpad-panel").ScratchpadPanel);
-loader.lazyGetter(this, "AddonEditorPanel", () => require("devtools/addoneditor/addoneditor-panel").AddonEditorPanel);
 
 // Strings
 const toolboxProps = "chrome://devtools/locale/toolbox.properties";
@@ -395,37 +394,11 @@ Tools.scratchpad = {
   }
 };
 
-Tools.addonEditor = {
-  id: "addoneditor",
-  //key: l10n("open.commandkey", styleEditorStrings),
-  ordinal: 4,
-  //accesskey: l10n("open.accesskey", styleEditorStrings),
-  //modifiers: "shift",
-  icon: "chrome://devtools/skin/themes/images/tool-styleeditor.svg",
-  invertIconForLightTheme: true,
-  url: "chrome://devtools/content/addoneditor/addoneditor.xul",
-  label: "Addon editor", //l10n("ToolboxStyleEditor.label", styleEditorStrings),
-  panelLabel: "Addon editor", //l10n("ToolboxStyleEditor.panelLabel", styleEditorStrings),
-  tooltip: "Addon editor", //l10n("ToolboxStyleEditor.tooltip2", styleEditorStrings),
-  inMenu: true,
-  //commands: "devtools/client/addoneditor/addoneditor-commands",
-
-  isTargetSupported: function(target) {
-    return true;
-  },
-
-  build: function(iframeWindow, toolbox) {
-    return new AddonEditorPanel(iframeWindow, toolbox);
-  }
-};
-
-
-let defaultTools = [
+var defaultTools = [
   Tools.options,
   Tools.webConsole,
   Tools.inspector,
   Tools.jsdebugger,
-  Tools.addonEditor,
   Tools.styleEditor,
   Tools.shaderEditor,
   Tools.canvasDebugger,
