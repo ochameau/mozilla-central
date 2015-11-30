@@ -2003,6 +2003,12 @@ Toolbox.prototype = {
       this._host = null;
       this._toolPanels.clear();
 
+      // Clean all references to the elements to prevent leaking the toolbox
+      // document if we happen to leak Toolbox object
+      this.closeButton = null;
+      this.textboxContextMenuPopup = null;
+      this.webconsolePanel = null;
+
       // Force GC to prevent long GC pauses when running tests and to free up
       // memory in general when the toolbox is closed.
       if (DevToolsUtils.testing) {
