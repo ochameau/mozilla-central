@@ -304,7 +304,19 @@ BrowserTabList.prototype._getBrowsers = function* () {
 
 BrowserTabList.prototype._getChildren = function (window) {
   if (!window.gBrowser) {
-    return [];
+    // When we aren't on Firefox browser.xul, look for all iframes
+    let frames = [];
+    let getDeepChilds = function (window) {
+      [...window.document.querySelectorAll("iframe")]
+        .forEach(frame => {
+          frames.push(frame);
+          if (frame.contentWindow) {
+            getDeepChilds(frame.contentWindow);
+          }
+        });
+    }
+    getDeepChilds(window);
+    return frames;
   }
   let { gBrowser } = window;
   if (!gBrowser.browsers) {
