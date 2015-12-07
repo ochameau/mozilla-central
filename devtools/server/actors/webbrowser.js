@@ -289,8 +289,22 @@ BrowserTabList.prototype._getBrowsers = function*() {
 };
 
 BrowserTabList.prototype._getChildren = function(aWindow) {
-  let children = aWindow.gBrowser ? aWindow.gBrowser.browsers : [];
-  return children ? children : [];
+  if (aWindow.gBrowser) {
+    return aWindow.gBrowser.browsers || [];
+  } else {
+    let frames = [];
+    let getDeepChilds = function (window) {
+      [...window.document.querySelectorAll("iframe")]
+        .forEach(frame => {
+          frames.push(frame);
+          if (frame.contentWindow) {
+            getDeepChilds(frame.contentWindow);
+          }
+        });
+    }
+    getDeepChilds(aWindow);
+    return frames;
+  }
 };
 
 BrowserTabList.prototype._isRemoteBrowser = function(browser) {
