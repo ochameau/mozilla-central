@@ -588,6 +588,7 @@ WEBIDL_FILES = [
     'VTTRegion.webidl',
     'WaveShaperNode.webidl',
     'WebComponents.webidl',
+    'WebExtensionsUI.webidl',
     'WebGL2RenderingContext.webidl',
     'WebGLRenderingContext.webidl',
     'WebKitCSSMatrix.webidl',

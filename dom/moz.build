@@ -114,6 +114,7 @@ DIRS += [
     'manifest',
     'vr',
     'newapps',
+    'webextensions',
 ]
 
 if CONFIG['OS_ARCH'] == 'WINNT':

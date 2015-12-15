@@ -1,0 +1,2 @@
+component {b7bcd9e4-9cf8-11e5-a117-28d2444736c9} WebExtensionsUIGlue.js
+contract @mozilla.org/webextensions/ui-glue;1 {b7bcd9e4-9cf8-11e5-a117-28d2444736c9}
