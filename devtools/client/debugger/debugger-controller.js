@@ -1182,66 +1182,6 @@ StackFrames.prototype = {
   }
 };
 
-/*
-  takeCensus: function () {
-    DebuggerController.HitCounts.clear();
-    gTarget.activeTab.takeCensus(this.onCensus.bind(this), this.onCensus.bind(this));
-  },
-
-  onCensus: function (aResponse) {
-    dump("got census...\n");
-    dump(JSON.stringify(aResponse)+"\n");
-
-    // Merge all counts into just one column otherwise we get too many counts on the side
-    let objects = aResponse;
-    let counts = objects.counts;
-    
-    dump("TOTAL:\n");
-    for (let url in counts) {
-      let a = counts[url];
-      for (let line in a) {
-        let count = a[line];
-        dump(url + ":"+ line + " = "+count+"\n");
-        // column 0 is for total
-        DebuggerController.HitCounts.set({url: url, line: line, column: 0}, count);
-      }
-    }
-    if (this.counts) {
-      dump("DIFF:\n");
-      for (let url in counts) {
-        let a = counts[url];
-        for (let line in a) {
-          let count = a[line];
-          if (this.counts[url] && (line in this.counts[url])) {
-            count -= this.counts[url][line];
-          }
-          if (count != 0) {
-            dump(url + ":"+ line + " = "+count+"\n");
-          }
-          // column 1 is for diff
-          DebuggerController.HitCounts.set({url: url, line: line, column: 1}, count);
-        }
-      }
-      // Display objects that have been collected
-      for (let url in this.counts) {
-        let a = this.counts[url];
-        for (let line in a) {
-          if (!counts[url] || !(line in counts[url])) {
-            let count = this.counts[url][line];
-            dump(url + ":"+ line + " = --"+count+"\n");
-            // column 0 is for total
-            DebuggerController.HitCounts.set({url: url, line: line, column: 0}, 0);
-            // column 1 is for diff
-            DebuggerController.HitCounts.set({url: url, line: line, column: 1}, -1*count);
-          }
-        }
-      }
-    }
-    this.counts = counts;
-    DebuggerController.HitCounts.updateEditorHitCounts();
-  },
-*/
-
 /**
  * Shortcuts for accessing various debugger preferences.
  */

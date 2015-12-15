@@ -109,7 +109,7 @@ TabSources.prototype = {
    * @returns a SourceActor representing the source or null.
    */
   source: function  ({ source, originalUrl, generatedSource,
-                       isInlineSource, contentType, forceAccept }) {
+                       isInlineSource, contentType }) {
     assert(source || (originalUrl && generatedSource),
            "TabSources.prototype.source needs an originalUrl or a source");
 
@@ -117,7 +117,7 @@ TabSources.prototype = {
       // If a source is passed, we are creating an actor for a real
       // source, which may or may not be sourcemapped.
 
-      if (!this.allowSource(source) && !forceAccept) {
+      if (!this.allowSource(source)) {
         return null;
       }
 

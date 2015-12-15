@@ -1717,9 +1717,6 @@ TabActor.prototype = {
       threadActor.clearDebuggees();
       threadActor.dbg.enabled = true;
       threadActor.maybePauseOnExceptions();
-      threadActor.dbg.memory.trackingAllocationSites = true;
-      threadActor.dbg.addDebuggee(window);
-      dump("Track allocation\n");
       // Update the global no matter if the debugger is on or off,
       // otherwise the global will be wrong when enabled later.
       threadActor.global = window;
@@ -1899,140 +1896,6 @@ TabActor.prototype = {
       delete this._extraActors[aName];
     }
   },
-
-  onTakeCensus: function () {
-    // Force some garbage collection first...
-    Cu.forceGC();
-    Cu.forceCC();
-    Cu.forceGC();
-    Cu.forceCC();
-    Cu.forceGC();
-
-    const {MemoryProfiler} = require("devtools/toolkit/memory/memory-profiler");
-    this._profiler = new MemoryProfiler(this.window);
-    this._profiler.start();
-    this._profiler.snapshot()
-        .then(profile => {
-          //dump("PROFILE > "+JSON.stringify(profile)+"\n");
-        });
-
-    return {};
-/*
-
-    let counts = {}; // COUNTS[URL][LINE][COLUMN]
-    // Take a census
-    let logs = this.threadActor.dbg.memory.drainAllocationsLog();
-    let o = {
-      breakdown: {
-        by: 'objectClass',
-        then: {
-          by: 'allocationStack',
-          then: {
-            by: 'count',
-            label: 'haz stack'
-          },
-          noStack: {
-            by: 'count',
-            label: 'no haz stack'
-          }
-        }
-      }
-    };
-    function bump(table, frame, count) {
-      if (!table[frame.source])
-        table[frame.source] = {};
-      if (!table[frame.source][frame.line])
-        table[frame.source][frame.line] = 0;
-      table[frame.source][frame.line] += count;
-    }
-    let census = this.threadActor.dbg.memory.takeCensus(o);
-    let censusCount = {};
-    for(var i in census) {
-      dump(i+" = "+census[i]+"\n");
-      let map = census[i];
-      if (map && map.forEach) {
-        map.forEach((v, k) => {
-          dump(" - ");
-          if (k == "noStack") {
-            dump(k);
-          } else {
-            dump(k.source+":"+k.line);
-          }
-          dump(" : ");
-          dump(JSON.stringify(v)+"\n");
-          if (k!="noStack") {
-            bump(censusCount, k, v.count);
-          }
-        });
-      } else {
-        dump(JSON.stringify(map)+"\n");
-      }
-    }
-    let drainCount = {};
-    logs.forEach(l => {
-      if (l.frame) {
-        bump(drainCount, l.frame, 1);
-      }
-    });
-    dump("Census >> "+JSON.stringify(censusCount, null, 2)+"\n");
-    dump("Drain >> "+JSON.stringify(drainCount, null, 2)+"\n");
-    return {counts: censusCount};
-    /*
-    let census = this.threadActor.dbg.memory.takeCensus();
-    console.log("census", census);
-
-    // Parse the census in order to highlight allocation sites count per line
-    // Compute a dictionary of files (indexed by their URL),
-    // each containing another dictionary of lines (indexed by line number)
-    // which contains a final dictionary of columns (indexed by column number)
-    // whose values are the number of still allocated JSObject per file/line/column.
-    let objects = census.objects;
-    let counts = {};
-    let urls = {};
-    for (let key in objects) {
-      // Parse SavedFrame allocation site string
-      dump(">> "+key+"\n");
-      let m = key.match(/@(.+):([0-9]+):([0-9]+)/);
-      if (m) {
-        let url = m[1];
-        let line = m[2];
-        let column = m[3];
-        let count = objects[key].count;
-        if (!(url in counts)) {
-          counts[url] = {};
-        }
-        if (!(line in counts[url])) {
-          counts[url][line] = {};
-        }
-        if (!(column in counts[url][line])) {
-          counts[url][line][column] = 0;
-        }
-        counts[url][line][column] += count;
-
-        // Also compute a dictionnary of all files being considered
-        urls[url] = true;
-      }
-    }
-
-    // Wait a tick in order to first reply to takeCensus request
-    DevToolsUtils.executeSoon(() => {
-      // Then, send a newSource message for each file having allocations
-      // so that we ensure displaying them in the debugger panel!
-      Object.keys(urls).forEach(url => {
-        // Create a SourceActor for each file
-        let source = this.threadActor.sources.source({url: url, forceAccept: true});
-
-        this.conn.send({
-          from: this.threadActor.actorID,
-          type: "newSource",
-          source: source.form()
-        });
-      });
-    });
-
-    return counts;
-    */
-  }
 };
 
 /**
@@ -2046,8 +1909,7 @@ TabActor.prototype.requestTypes = {
   "reconfigure": TabActor.prototype.onReconfigure,
   "switchToFrame": TabActor.prototype.onSwitchToFrame,
   "listFrames": TabActor.prototype.onListFrames,
-  "listWorkers": TabActor.prototype.onListWorkers,
-  "takeCensus": TabActor.prototype.onTakeCensus
+  "listWorkers": TabActor.prototype.onListWorkers
 };
 
 exports.TabActor = TabActor;

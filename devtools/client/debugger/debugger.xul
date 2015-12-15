@@ -292,10 +292,6 @@
       <vbox id="stackframes" flex="1"/>
       <textbox id="searchbox"
                class="devtools-searchinput" type="search"/>
-      <toolbarbutton id="take-census"
-                     oncommand="DebuggerController.SourceScripts.takeCensus()"
-                     tabindex="0"
-                     label="M"/>
       <toolbarbutton id="instruments-pane-toggle"
                      class="devtools-toolbarbutton"
                      tooltiptext="&debuggerUI.panesButton.tooltip;"
