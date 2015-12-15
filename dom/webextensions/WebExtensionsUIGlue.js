@@ -41,13 +41,67 @@ function WebExtensionsUIGlue() {
 WebExtensionsUIGlue.prototype = {
   classID: Components.ID("{b7bcd9e4-9cf8-11e5-a117-28d2444736c9}"),
   contractID: "@mozilla.org/webextensions/ui-glue;1",
-  QueryInterface: XPCOMUtils.generateQI([Ci.nsISupports]),
+  QueryInterface: XPCOMUtils.generateQI([Ci.nsIDOMGlobalPropertyInitializer]),
+
+  init: function(window) {
+    this.window = window;
+    this.listeners = new WeakMap();
+  },
 
   // WebExtensionsUIGlue
   registerAPI: function(api) {
+    Management.registerAPI((extension, context) => {
+      let a = api(wrapExtension(this.window, extension), wrapContext(this.window, context));
+      if (a.wrappedJSObject.browserAction)
+      dump("register api result > "+a.wrappedJSObject.browserAction+" / "+a.wrappedJSObject.browserAction.wrappedJSObject+"\n");
+      return a.wrappedJSObject;
+    });
+  },
+
+  registerWebIDLImplementation(name, impl) {
+    let classID = Cc["@mozilla.org/uuid-generator;1"].getService(Ci.nsIUUIDGenerator).generateUUID();
+    let classDescription = "JS WebIDL";
+    let contractID;
+    if (name == "WebExtensionBrowserAction")
+      contractID = "@mozilla.org/webextensions/browserAction;1";
+    else if (name == "WebExtensionTabs")
+      contractID = "@mozilla.org/webextensions/tabs;1";
+    else if (name == "WebExtensionEventListener")
+      contractID = "@mozilla.org/webextensions/eventListener;1";
+
+    let cls = impl;
+    const factory = {
+      createInstance: function(outer, iid) {
+        if (outer) {
+          throw Cr.NS_ERROR_NO_AGGREGATION;
+        }
+        return new cls();
+      }
+    };
+    let Cm = Components.manager.QueryInterface(Ci.nsIComponentRegistrar);
+    Cm.registerFactory(classID, classDescription, contractID, factory);
+  },
+
+  registerPrivilegedAPI(permission, api) {
+    // TODO
   },
 
   on: function(type, callback) {
+    if (type == "manifest_browser_action") {
+      let listener = (type, directive, extension, manifest) => {
+        callback(type, directive, wrapExtension(this.window, extension), Cu.cloneInto(manifest, this.window));
+      };
+      Management.on(type, listener);
+      this.listeners.set(callback, listener);
+    } else if (type == "shutdown") {
+      let listener = (type, extension) => {
+        callback(wrapExtension(this.window, extension));
+      };
+      Management.on(type, listener);
+      this.listeners.set(callback, listener);
+    } else {
+      throw new Error("Not implemented");
+    }
   },
 
   off: function(type, callback) {

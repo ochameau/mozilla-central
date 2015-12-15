@@ -73,5 +73,4 @@ interface WebExtensionsUIGlue {
   void off(DOMString type, ExtCallback callback);
 
   any instanciateAddon(DOMString id, object manifest);
-
 };
