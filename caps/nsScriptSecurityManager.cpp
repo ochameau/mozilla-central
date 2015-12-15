@@ -70,6 +70,7 @@
 
 // This should be probably defined on some other place... but I couldn't find it
 #define WEBAPPS_PERM_NAME "webapps-manage"
+#define BROWSERAPI_PERM_NAME "browser"
 
 using namespace mozilla;
 using namespace mozilla::dom;
@@ -863,6 +864,12 @@ nsScriptSecurityManager::CheckLoadURIWithPrincipal(nsIPrincipal* aPrincipal,
         return NS_OK;
     }
 
+    bool allowedByBrowserAPI =
+      nsContentUtils::IsExactSitePermAllow(aPrincipal, BROWSERAPI_PERM_NAME);
+    if (allowedByBrowserAPI) {
+      return NS_OK;
+    }
+
     // If the schemes don't match, the policy is specified by the protocol
     // flags on the target URI.
     return CheckLoadURIFlags(sourceURI, aTargetURI, sourceBaseURI,
@@ -898,11 +905,11 @@ nsScriptSecurityManager::CheckLoadURIFlags(nsIURI *aSourceURI,
     rv = DenyAccessIfURIHasFlags(aTargetURI,
                                  nsIProtocolHandler::URI_DANGEROUS_TO_LOAD);
     if (NS_FAILED(rv)) {
-        // Deny access, since the origin principal is not system
-        if (reportErrors) {
-            ReportError(nullptr, errorTag, aSourceURI, aTargetURI);
-        }
-        return rv;
+      // Deny access, since the origin principal is not system
+      if (reportErrors) {
+          ReportError(nullptr, errorTag, aSourceURI, aTargetURI);
+      }
+      return rv;
     }
 
     // Check for chrome target URI
