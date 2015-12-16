@@ -182,7 +182,12 @@ WebConsoleActor.prototype =
   _getWindowForBrowserConsole: function WCA__getWindowForBrowserConsole()
   {
     // Check if our last used chrome window is still live.
-    let window = this._lastChromeWindow && this._lastChromeWindow.get();
+    let window;
+    try {
+      window = this._lastChromeWindow && this._lastChromeWindow.get();
+    } catch(e) {
+      // Throws for unknown reason on browser.html where the chrome window is content
+    }
     // If not, look for a new one.
     if (!window || window.closed) {
       window = this.parentActor.window;
