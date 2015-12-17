@@ -210,6 +210,12 @@ public:
     rv = mChannel->FinishSynthesizedResponse(mResponseURLSpec);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to finish synthesized response");
 
+    // Pass some information to identify the request has been through a
+    // service worker
+    nsCOMPtr<nsIHttpChannelInternal> internalChannel = do_QueryInterface(underlyingChannel);
+    NS_ENSURE_TRUE(internalChannel, NS_ERROR_NOT_AVAILABLE);
+    internalChannel->SetServiceWorkerInfo(mInfo);
+
     nsCOMPtr<nsIObserverService> obsService = services::GetObserverService();
     if (obsService) {
       obsService->NotifyObservers(underlyingChannel, "service-worker-synthesized-response", nullptr);

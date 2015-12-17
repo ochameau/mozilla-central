@@ -34,6 +34,7 @@
 #include "nsITraceableChannel.h"
 #include "nsILoadContext.h"
 #include "nsILoadInfo.h"
+#include "mozilla/dom/workers/ServiceWorkerManager.h"
 #include "mozilla/net/NeckoCommon.h"
 #include "nsThreadUtils.h"
 #include "PrivateBrowsingChannel.h"
@@ -218,6 +219,8 @@ public:
   NS_IMETHOD GetTopWindowURI(nsIURI **aTopWindowURI) override;
   NS_IMETHOD GetProxyURI(nsIURI **proxyURI) override;
   virtual void SetCorsPreflightParameters(const nsTArray<nsCString>& unsafeHeaders) override;
+  NS_IMETHOD GetServiceWorkerInfo(nsIServiceWorkerInfo **aServiceWorkerSpec) override;
+  NS_IMETHOD SetServiceWorkerInfo(nsIServiceWorkerInfo *aServiceWorkerSpec) override;
 
   inline void CleanRedirectCacheChainIfNecessary()
   {
@@ -363,6 +366,7 @@ protected:
   nsCOMPtr<nsILoadGroup>            mLoadGroup;
   nsCOMPtr<nsISupports>             mOwner;
   nsCOMPtr<nsILoadInfo>             mLoadInfo;
+  nsCOMPtr<nsIServiceWorkerInfo>    mServiceWorkerInfo;
   nsCOMPtr<nsIInterfaceRequestor>   mCallbacks;
   nsCOMPtr<nsIProgressEventSink>    mProgressSink;
   nsCOMPtr<nsIURI>                  mReferrer;

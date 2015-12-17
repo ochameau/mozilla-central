@@ -406,6 +406,21 @@ HttpBaseChannel::GetLoadInfo(nsILoadInfo **aLoadInfo)
 }
 
 NS_IMETHODIMP
+HttpBaseChannel::GetServiceWorkerInfo(nsIServiceWorkerInfo **aServiceWorkerInfo)
+{
+  NS_IF_ADDREF(*aServiceWorkerInfo = mServiceWorkerInfo);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+HttpBaseChannel::SetServiceWorkerInfo(nsIServiceWorkerInfo *aServiceWorkerInfo)
+{
+  NS_ENSURE_ARG_POINTER(aServiceWorkerInfo);
+  mServiceWorkerInfo = aServiceWorkerInfo;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 HttpBaseChannel::GetNotificationCallbacks(nsIInterfaceRequestor **aCallbacks)
 {
   *aCallbacks = mCallbacks;

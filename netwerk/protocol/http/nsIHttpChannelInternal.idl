@@ -21,6 +21,7 @@ interface nsIProxyInfo;
 interface nsISecurityConsoleMessage;
 interface nsISocketTransport;
 interface nsIURI;
+interface nsIServiceWorkerInfo;
 
 /**
  * The callback interface for nsIHttpChannelInternal::HTTPUpgrade()
@@ -273,4 +274,10 @@ interface nsIHttpChannelInternal : nsISupports
      */
     [infallible]
     attribute boolean blockAuthPrompt;
+
+    /**
+     * If this request is intercepted by a service worker,
+     * indicates which one did it.
+     */
+    attribute nsIServiceWorkerInfo serviceWorkerInfo;
 };
