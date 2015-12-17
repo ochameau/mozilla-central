@@ -82,10 +82,10 @@ FetchEvent::~FetchEvent()
 
 void
 FetchEvent::PostInit(nsMainThreadPtrHandle<nsIInterceptedChannel>& aChannel,
-                     const nsACString& aScriptSpec)
+                     ServiceWorkerInfo *aInfo)
 {
   mChannel = aChannel;
-  mScriptSpec.Assign(aScriptSpec);
+  mInfo = aInfo;
 }
 
 /*static*/ already_AddRefed<FetchEvent>
@@ -150,20 +150,20 @@ class FinishResponse final : public nsRunnable
   nsMainThreadPtrHandle<nsIInterceptedChannel> mChannel;
   RefPtr<InternalResponse> mInternalResponse;
   ChannelInfo mWorkerChannelInfo;
-  const nsCString mScriptSpec;
   const nsCString mResponseURLSpec;
+  ServiceWorkerInfo *mInfo;
 
 public:
   FinishResponse(nsMainThreadPtrHandle<nsIInterceptedChannel>& aChannel,
                  InternalResponse* aInternalResponse,
                  const ChannelInfo& aWorkerChannelInfo,
-                 const nsACString& aScriptSpec,
+                 ServiceWorkerInfo *aInfo,
                  const nsACString& aResponseURLSpec)
     : mChannel(aChannel)
     , mInternalResponse(aInternalResponse)
     , mWorkerChannelInfo(aWorkerChannelInfo)
-    , mScriptSpec(aScriptSpec)
     , mResponseURLSpec(aResponseURLSpec)
+    , mInfo(aInfo)
   {
   }
 
@@ -229,7 +229,7 @@ public:
     mInternalResponse->GetUnfilteredUrl(url);
     if (url.IsEmpty()) {
       // Synthetic response. The buck stops at the worker script.
-      url = mScriptSpec;
+      url = mInfo->ScriptSpec();
     }
     rv = NS_NewURI(getter_AddRefs(uri), url, nullptr, nullptr);
     NS_ENSURE_SUCCESS(rv, false);
@@ -250,19 +250,19 @@ class RespondWithHandler final : public PromiseNativeHandler
   const RequestMode mRequestMode;
   const DebugOnly<bool> mIsClientRequest;
   const bool mIsNavigationRequest;
-  const nsCString mScriptSpec;
   const nsString mRequestURL;
   const nsCString mRespondWithScriptSpec;
   const uint32_t mRespondWithLineNumber;
   const uint32_t mRespondWithColumnNumber;
   bool mRequestWasHandled;
+  ServiceWorkerInfo *mInfo;
 public:
   NS_DECL_ISUPPORTS
 
   RespondWithHandler(nsMainThreadPtrHandle<nsIInterceptedChannel>& aChannel,
                      RequestMode aRequestMode, bool aIsClientRequest,
                      bool aIsNavigationRequest,
-                     const nsACString& aScriptSpec,
+                     ServiceWorkerInfo* aInfo,
                      const nsAString& aRequestURL,
                      const nsACString& aRespondWithScriptSpec,
                      uint32_t aRespondWithLineNumber,
@@ -271,12 +271,12 @@ public:
     , mRequestMode(aRequestMode)
     , mIsClientRequest(aIsClientRequest)
     , mIsNavigationRequest(aIsNavigationRequest)
-    , mScriptSpec(aScriptSpec)
     , mRequestURL(aRequestURL)
     , mRespondWithScriptSpec(aRespondWithScriptSpec)
     , mRespondWithLineNumber(aRespondWithLineNumber)
     , mRespondWithColumnNumber(aRespondWithColumnNumber)
     , mRequestWasHandled(false)
+    , mInfo(aInfo)
   {
   }
 
@@ -316,17 +316,17 @@ struct RespondWithClosure
   nsMainThreadPtrHandle<nsIInterceptedChannel> mInterceptedChannel;
   RefPtr<InternalResponse> mInternalResponse;
   ChannelInfo mWorkerChannelInfo;
-  const nsCString mScriptSpec;
   const nsCString mResponseURLSpec;
   const nsString mRequestURL;
   const nsCString mRespondWithScriptSpec;
   const uint32_t mRespondWithLineNumber;
   const uint32_t mRespondWithColumnNumber;
+  ServiceWorkerInfo *mInfo;
 
   RespondWithClosure(nsMainThreadPtrHandle<nsIInterceptedChannel>& aChannel,
                      InternalResponse* aInternalResponse,
                      const ChannelInfo& aWorkerChannelInfo,
-                     const nsCString& aScriptSpec,
+                     ServiceWorkerInfo *aInfo,
                      const nsACString& aResponseURLSpec,
                      const nsAString& aRequestURL,
                      const nsACString& aRespondWithScriptSpec,
@@ -335,12 +335,12 @@ struct RespondWithClosure
     : mInterceptedChannel(aChannel)
     , mInternalResponse(aInternalResponse)
     , mWorkerChannelInfo(aWorkerChannelInfo)
-    , mScriptSpec(aScriptSpec)
     , mResponseURLSpec(aResponseURLSpec)
     , mRequestURL(aRequestURL)
     , mRespondWithScriptSpec(aRespondWithScriptSpec)
     , mRespondWithLineNumber(aRespondWithLineNumber)
     , mRespondWithColumnNumber(aRespondWithColumnNumber)
+    , mInfo(aInfo)
   {
   }
 };
@@ -353,7 +353,7 @@ void RespondWithCopyComplete(void* aClosure, nsresult aStatus)
     event = new FinishResponse(data->mInterceptedChannel,
                                data->mInternalResponse,
                                data->mWorkerChannelInfo,
-                               data->mScriptSpec,
+                               data->mInfo,
                                data->mResponseURLSpec);
   } else {
     AsyncLog(data->mInterceptedChannel, data->mRespondWithScriptSpec,
@@ -612,7 +612,7 @@ RespondWithHandler::ResolvedCallback(JSContext* aCx, JS::Handle<JS::Value> aValu
 
   nsAutoPtr<RespondWithClosure> closure(new RespondWithClosure(mInterceptedChannel, ir,
                                                                worker->GetChannelInfo(),
-                                                               mScriptSpec,
+                                                               mInfo,
                                                                responseURL,
                                                                mRequestURL,
                                                                mRespondWithScriptSpec,
@@ -705,7 +705,7 @@ FetchEvent::RespondWith(JSContext* aCx, Promise& aArg, ErrorResult& aRv)
   mWaitToRespond = true;
   RefPtr<RespondWithHandler> handler =
     new RespondWithHandler(mChannel, mRequest->Mode(), ir->IsClientRequest(),
-                           ir->IsNavigationRequest(), mScriptSpec,
+                           ir->IsNavigationRequest(), mInfo,
                            NS_ConvertUTF8toUTF16(requestURL),
                            spec, line, column);
   aArg.AppendNativeHandler(handler);

@@ -105,13 +105,13 @@ class FetchEvent final : public ExtendableEvent
 {
   nsMainThreadPtrHandle<nsIInterceptedChannel> mChannel;
   RefPtr<Request> mRequest;
-  nsCString mScriptSpec;
   nsCString mPreventDefaultScriptSpec;
   nsString mClientId;
   uint32_t mPreventDefaultLineNumber;
   uint32_t mPreventDefaultColumnNumber;
   bool mIsReload;
   bool mWaitToRespond;
+  ServiceWorkerInfo *mInfo;
 protected:
   explicit FetchEvent(EventTarget* aOwner);
   ~FetchEvent();
@@ -130,7 +130,7 @@ public:
   }
 
   void PostInit(nsMainThreadPtrHandle<nsIInterceptedChannel>& aChannel,
-                const nsACString& aScriptSpec);
+                ServiceWorkerInfo *aInfo);
 
   static already_AddRefed<FetchEvent>
   Constructor(const GlobalObject& aGlobal,

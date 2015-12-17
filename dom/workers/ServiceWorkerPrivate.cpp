@@ -991,7 +991,6 @@ namespace {
 class FetchEventRunnable : public ExtendableFunctionalEventWorkerRunnable
                          , public nsIHttpHeaderVisitor {
   nsMainThreadPtrHandle<nsIInterceptedChannel> mInterceptedChannel;
-  const nsCString mScriptSpec;
   nsTArray<nsCString> mHeaderNames;
   nsTArray<nsCString> mHeaderValues;
   nsCString mSpec;
@@ -1005,20 +1004,20 @@ class FetchEventRunnable : public ExtendableFunctionalEventWorkerRunnable
   nsContentPolicyType mContentPolicyType;
   nsCOMPtr<nsIInputStream> mUploadStream;
   nsCString mReferrer;
+  ServiceWorkerInfo* mInfo;
 public:
   FetchEventRunnable(WorkerPrivate* aWorkerPrivate,
                      KeepAliveToken* aKeepAliveToken,
                      nsMainThreadPtrHandle<nsIInterceptedChannel>& aChannel,
                      // CSP checks might require the worker script spec
                      // later on.
-                     const nsACString& aScriptSpec,
+                     ServiceWorkerInfo *aInfo,
                      nsMainThreadPtrHandle<ServiceWorkerRegistrationInfo>& aRegistration,
                      const nsAString& aDocumentId,
                      bool aIsReload)
     : ExtendableFunctionalEventWorkerRunnable(
         aWorkerPrivate, aKeepAliveToken, aRegistration)
     , mInterceptedChannel(aChannel)
-    , mScriptSpec(aScriptSpec)
     , mClientId(aDocumentId)
     , mIsReload(aIsReload)
     , mIsHttpChannel(false)
@@ -1029,6 +1028,7 @@ public:
     , mRequestCredentials(RequestCredentials::Same_origin)
     , mContentPolicyType(nsIContentPolicy::TYPE_INVALID)
     , mReferrer(kFETCH_CLIENT_REFERRER_STR)
+    , mInfo(aInfo)
   {
     MOZ_ASSERT(aWorkerPrivate);
   }
@@ -1241,7 +1241,7 @@ private:
       return false;
     }
 
-    event->PostInit(mInterceptedChannel, mScriptSpec);
+    event->PostInit(mInterceptedChannel, mInfo);
     event->SetTrusted(true);
 
     RefPtr<EventTarget> target = do_QueryObject(aWorkerPrivate->GlobalScope());
@@ -1363,7 +1363,7 @@ ServiceWorkerPrivate::SendFetchEvent(nsIInterceptedChannel* aChannel,
 
   RefPtr<FetchEventRunnable> r =
     new FetchEventRunnable(mWorkerPrivate, mKeepAliveToken, handle,
-                           mInfo->ScriptSpec(), regInfo,
+                           mInfo, regInfo,
                            aDocumentId, aIsReload);
   rv = r->Init();
   if (NS_WARN_IF(NS_FAILED(rv))) {
