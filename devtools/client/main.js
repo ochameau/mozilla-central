@@ -9,6 +9,7 @@ Cu.import("resource://gre/modules/Services.jsm");
 const { gDevTools } = require("resource://devtools/client/framework/gDevTools.jsm");
 
 const { defaultTools, defaultThemes } = require("devtools/client/definitions");
+const AboutDevtools = require("devtools/client/framework/about-devtools-panel");
 
 defaultTools.forEach(definition => gDevTools.registerTool(definition));
 defaultThemes.forEach(definition => gDevTools.registerTheme(definition));
@@ -26,6 +27,8 @@ Object.defineProperty(exports, "TargetFactory", {
   get: () => require("devtools/client/framework/target").TargetFactory
 });
 
+AboutDevtools.register();
+
 const unloadObserver = {
   observe: function(subject, topic, data) {
     if (subject.wrappedJSObject === require("@loader/unload")) {
@@ -36,6 +39,7 @@ const unloadObserver = {
       for (let definition of gDevTools.getThemeDefinitionArray()) {
         gDevTools.unregisterTheme(definition.id);
       }
+      AboutDevtools.unregister();
     }
   }
 };

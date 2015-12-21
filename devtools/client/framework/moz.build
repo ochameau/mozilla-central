@@ -8,6 +8,7 @@ BROWSER_CHROME_MANIFESTS += ['test/browser.ini']
 XPCSHELL_TESTS_MANIFESTS += ['test/xpcshell.ini']
 
 DevToolsModules(
+    'about-devtools-panel.js',
     'attach-thread.js',
     'gDevTools.jsm',
     'selection.js',

@@ -178,7 +178,7 @@ Toolbox.HostType = {
 };
 
 Toolbox.prototype = {
-  _URL: "chrome://devtools/content/framework/toolbox.xul",
+  _URL: "about:devtools-panel",
 
   _prefs: {
     LAST_HOST: "devtools.toolbox.host",
@@ -353,7 +353,9 @@ Toolbox.prototype = {
       let iframe = yield this._host.create();
       let domReady = promise.defer();
 
-      iframe.setAttribute("src", this._URL);
+      if (iframe.getAttribute("src") != this._URL) {
+        iframe.setAttribute("src", this._URL);
+      }
       iframe.setAttribute("aria-label", toolboxStrings("toolbox.label"));
       let domHelper = new DOMHelpers(iframe.contentWindow);
       domHelper.onceDOMReady(() => domReady.resolve(), this._URL);
@@ -696,7 +698,10 @@ Toolbox.prototype = {
     zoomValue = Math.max(zoomValue, MIN_ZOOM);
     zoomValue = Math.min(zoomValue, MAX_ZOOM);
 
-    let contViewer = this.frame.docShell.contentViewer;
+    let docShell = this.frame.contentWindow.QueryInterface(Ci.nsIInterfaceRequestor)
+      .getInterface(Ci.nsIWebNavigation)
+      .QueryInterface(Ci.nsIDocShell);
+    let contViewer = docShell.contentViewer;
 
     contViewer.fullZoom = zoomValue;
 
