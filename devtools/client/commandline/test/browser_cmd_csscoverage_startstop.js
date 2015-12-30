@@ -4,6 +4,7 @@
 // Tests that the addon commands works as they should
 
 const csscoverage = require("devtools/server/actors/csscoverage");
+const { gDevTools } = Cu.import("resource://devtools/client/framework/gDevTools.jsm", {});
 
 const PAGE_1 = TEST_BASE_HTTPS + "browser_cmd_csscoverage_page1.html";
 const PAGE_2 = TEST_BASE_HTTPS + "browser_cmd_csscoverage_page2.html";
@@ -49,7 +50,13 @@ function* navigate(usage, options) {
   yield helpers.listenOnce(options.browser, "load", true);
   is(options.window.location.href, PAGE_3, "page 3 loaded");
 
+  let onToolboxReady = new Promise(done => {
+    gDevTools.once("toolbox-ready", function (e, toolbox) {
+      done(toolbox);
+    });
+  });
   yield usage.stop();
+  yield onToolboxReady;
 
   ok(!usage.isRunning(), "csscoverage not is running");
 }
