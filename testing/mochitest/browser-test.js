@@ -963,8 +963,9 @@ function testScope(aTester, aTest, expected) {
   this.__expected = expected;
   this.__num_failed = 0;
 
-  this.ok = (condition, name, diag, stack) => {
-    if (this.__expected == 'fail') {
+  var self = this;
+  this.ok = function test_ok(condition, name, diag, stack) {
+    if (self.__expected == 'fail') {
         if (!condition) {
           self.__num_failed++;
           condition = true;
@@ -974,35 +975,31 @@ function testScope(aTester, aTest, expected) {
     aTest.addResult(new testResult(condition, name, diag, false,
                                    stack ? stack : Components.stack.caller));
   };
-  this.is = (a, b, name) => {
-    this.ok(a == b, name, "Got " + a + ", expected " + b, false,
+  this.is = function test_is(a, b, name) {
+    self.ok(a == b, name, "Got " + a + ", expected " + b, false,
             Components.stack.caller);
   };
-  this.isnot = (a, b, name) => {
-    this.ok(a != b, name, "Didn't expect " + a + ", but got it", false,
+  this.isnot = function test_isnot(a, b, name) {
+    self.ok(a != b, name, "Didn't expect " + a + ", but got it", false,
             Components.stack.caller);
   };
-  this.ise = (a, b, name) => {
-    this.ok(a === b, name, "Got " + a + ", strictly expected " + b, false,
-            Components.stack.caller);
-  };
-  this.todo = (condition, name, diag, stack) => {
+  this.todo = function test_todo(condition, name, diag, stack) {
     aTest.addResult(new testResult(!condition, name, diag, true,
                                    stack ? stack : Components.stack.caller));
   };
-  this.todo_is = (a, b, name) => {
-    this.todo(a == b, name, "Got " + a + ", expected " + b,
+  this.todo_is = function test_todo_is(a, b, name) {
+    self.todo(a == b, name, "Got " + a + ", expected " + b,
               Components.stack.caller);
   };
-  this.todo_isnot = (a, b, name) => {
-    this.todo(a != b, name, "Didn't expect " + a + ", but got it",
+  this.todo_isnot = function test_todo_isnot(a, b, name) {
+    self.todo(a != b, name, "Didn't expect " + a + ", but got it",
               Components.stack.caller);
   };
-  this.info = (name) => {
+  this.info = function test_info(name) {
     aTest.addResult(new testMessage(name));
   };
 
-  this.executeSoon = (func) => {
+  this.executeSoon = function test_executeSoon(func) {
     Services.tm.mainThread.dispatch({
       run: function() {
         func();
@@ -1010,46 +1007,46 @@ function testScope(aTester, aTest, expected) {
     }, Ci.nsIThread.DISPATCH_NORMAL);
   };
 
-  this.waitForExplicitFinish = () => {
-    this.__done = false;
+  this.waitForExplicitFinish = function test_waitForExplicitFinish() {
+    self.__done = false;
   };
 
-  this.waitForFocus = (callback, targetWindow, expectBlankPage) => {
-    this.SimpleTest.waitForFocus(callback, targetWindow, expectBlankPage);
+  this.waitForFocus = function test_waitForFocus(callback, targetWindow, expectBlankPage) {
+    self.SimpleTest.waitForFocus(callback, targetWindow, expectBlankPage);
   };
 
-  this.waitForClipboard = (expected, setup, success, failure, flavor) => {
-    this.SimpleTest.waitForClipboard(expected, setup, success, failure, flavor);
+  this.waitForClipboard = function test_waitForClipboard(expected, setup, success, failure, flavor) {
+    self.SimpleTest.waitForClipboard(expected, setup, success, failure, flavor);
   };
 
-  this.registerCleanupFunction = (aFunction) => {
-    this.__cleanupFunctions.push(aFunction);
+  this.registerCleanupFunction = function test_registerCleanupFunction(aFunction) {
+    self.__cleanupFunctions.push(aFunction);
   };
 
-  this.requestLongerTimeout = (aFactor) => {
-    this.__timeoutFactor = aFactor;
+  this.requestLongerTimeout = function test_requestLongerTimeout(aFactor) {
+    self.__timeoutFactor = aFactor;
   };
 
-  this.copyToProfile = (filename) => {
-    this.SimpleTest.copyToProfile(filename);
+  this.copyToProfile = function test_copyToProfile(filename) {
+    self.SimpleTest.copyToProfile(filename);
   };
 
-  this.expectUncaughtException = (aExpecting) => {
-    this.SimpleTest.expectUncaughtException(aExpecting);
+  this.expectUncaughtException = function test_expectUncaughtException(aExpecting) {
+    self.SimpleTest.expectUncaughtException(aExpecting);
   };
 
-  this.ignoreAllUncaughtExceptions = (aIgnoring) => {
-    this.SimpleTest.ignoreAllUncaughtExceptions(aIgnoring);
+  this.ignoreAllUncaughtExceptions = function test_ignoreAllUncaughtExceptions(aIgnoring) {
+    self.SimpleTest.ignoreAllUncaughtExceptions(aIgnoring);
   };
 
-  this.thisTestLeaksUncaughtRejectionsAndShouldBeFixed = (...rejections) => {
+  this.thisTestLeaksUncaughtRejectionsAndShouldBeFixed = function(...rejections) {
     if (!aTester._toleratedUncaughtRejections) {
       aTester._toleratedUncaughtRejections = [];
     }
     aTester._toleratedUncaughtRejections.push(...rejections);
   };
 
-  this.expectAssertions = (aMin, aMax) => {
+  this.expectAssertions = function test_expectAssertions(aMin, aMax) {
     let min = aMin;
     let max = aMax;
     if (typeof(max) == "undefined") {
@@ -1059,31 +1056,31 @@ function testScope(aTester, aTest, expected) {
         min < 0 || max < min) {
       throw "bad parameter to expectAssertions";
     }
-    this.__expectedMinAsserts = min;
-    this.__expectedMaxAsserts = max;
+    self.__expectedMinAsserts = min;
+    self.__expectedMaxAsserts = max;
   };
 
-  this.setExpected = () => {
-    this.__expected = 'fail';
+  this.setExpected = function test_setExpected() {
+    self.__expected = 'fail';
   };
 
-  this.finish = () => {
-    this.__done = true;
-    if (this.__waitTimer) {
-      this.executeSoon(function() {
-        if (this.__done && this.__waitTimer) {
-          clearTimeout(this.__waitTimer);
-          this.__waitTimer = null;
-          this.__tester.nextTest();
+  this.finish = function test_finish() {
+    self.__done = true;
+    if (self.__waitTimer) {
+      self.executeSoon(function() {
+        if (self.__done && self.__waitTimer) {
+          clearTimeout(self.__waitTimer);
+          self.__waitTimer = null;
+          self.__tester.nextTest();
         }
       });
     }
   };
 
-  this.requestCompleteLog = () => {
-    this.__tester.dumper.structuredLogger.deactivateBuffering();
-    this.registerCleanupFunction(function() {
-      this.__tester.dumper.structuredLogger.activateBuffering();
+  this.requestCompleteLog = function test_requestCompleteLog() {
+    self.__tester.dumper.structuredLogger.deactivateBuffering();
+    self.registerCleanupFunction(function() {
+      self.__tester.dumper.structuredLogger.activateBuffering();
     })
   };
 }
