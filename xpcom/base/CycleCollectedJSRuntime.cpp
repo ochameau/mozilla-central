@@ -408,26 +408,6 @@ void JSObjectsTenuredCb(JSRuntime* aRuntime, void* aData)
   static_cast<CycleCollectedJSRuntime*>(aData)->JSObjectsTenured();
 }
 
-static JSContext* mDebugContext;
-static JS::PersistentRooted<JSObject*> mDebugGlobal;
-static JSClass sDebugContextGlobalClass = {
-  "DebugContextGlobalClass",
-  JSCLASS_GLOBAL_FLAGS | JSCLASS_HAS_PRIVATE | JSCLASS_PRIVATE_IS_NSISUPPORTS,
-  nullptr,
-  nullptr,
-  nullptr,
-  nullptr,
-  nullptr,
-  nullptr,
-  nullptr,
-  nullptr,
-  nullptr,
-  nullptr,
-  nullptr,
-  nullptr,
-  JS_GlobalObjectTraceHook
-};
-
 CycleCollectedJSRuntime::CycleCollectedJSRuntime(JSRuntime* aParentRuntime,
                                                  uint32_t aMaxBytes,
                                                  uint32_t aMaxNurseryBytes)
@@ -518,34 +498,6 @@ CycleCollectedJSRuntime::~CycleCollectedJSRuntime()
   NS_RELEASE(mOwningThread);
 }
 
-static JSContext*
-GetDebugContext(JSRuntime* rt) {
-  if (!mDebugContext) {
-    mDebugContext = JS_NewContext(rt, 8192);
-  }
-  return mDebugContext;
-}
-
-static JSObject*
-GetDebugGlobal(JSContext* cx, JSContext* dcx) {
-  if (!mDebugGlobal) {
-    JSAutoRequest ar(dcx);
-    // We have to ensure creating another context, otherwise we would trigger
-    // an infinite loop by triggering this method for the metadata object
-    // itself... Also we have to register this context in the same zone
-    // to please the gc.
-    JS::CompartmentOptions options;
-    options.setInvisibleToDebugger(true);
-    //options.setSameZoneAs(JS::CurrentGlobalOrNull(cx));
-    mDebugGlobal.init(dcx, JS_NewGlobalObject(dcx, &sDebugContextGlobalClass,
-                                              nullptr, JS::DontFireOnNewGlobalHook, options));
-    JS::Rooted<JSObject*> g(dcx, mDebugGlobal);
-    JSAutoCompartment ac1(dcx, g);
-    nsCOMPtr<nsIGlobalObject> global = xpc::NativeGlobal(JS::CurrentGlobalOrNull(cx));
-    JS_SetPrivate(g, global.forget().take());
-  }
-  return mDebugGlobal;
-}
 size_t
 CycleCollectedJSRuntime::SizeOfExcludingThis(MallocSizeOf aMallocSizeOf) const
 {
@@ -582,15 +534,11 @@ CycleCollectedJSRuntime::DescribeGCThing(bool aIsMarked, JS::GCCellPtr aThing,
   if (aThing.is<JSObject>()) {
     JSObject* obj = &aThing.as<JSObject>();
     compartmentAddress = (uint64_t)js::GetObjectCompartment(obj);
-    nsAutoString description;
     const js::Class* clasp = js::GetObjectClass(obj);
-    description.AssignLiteral("JS Object");
 
     // Give the subclass a chance to do something
     if (DescribeCustomObjects(obj, clasp, name)) {
       // Nothing else to do!
-    } else if (strcmp(clasp->name, "Proxy") == 0 && JS_IsDeadWrapper(obj)) {
-      description.AppendLiteral(" (DeadWrapper)");
     } else if (js::IsFunctionObject(obj)) {
       JSFunction* fun = JS_GetObjectFunction(obj);
       JSString* str = JS_GetFunctionDisplayId(fun);
@@ -599,40 +547,12 @@ CycleCollectedJSRuntime::DescribeGCThing(bool aIsMarked, JS::GCCellPtr aThing,
         nsAutoString chars;
         AssignJSFlatString(chars, flat);
         NS_ConvertUTF16toUTF8 fname(chars);
-        description.AppendLiteral(" (Function - ");
-        description.AppendASCII(fname.get());
-        description.AppendLiteral(")");
+        snprintf_literal(name, "JS Object (Function - %s)", fname.get());
       } else {
-        description.AppendLiteral(" (Function)");
+        snprintf_literal(name, "JS Object (Function)");
       }
     } else {
-      description.AppendLiteral(" (");
-      description.AppendASCII(clasp->name);
-      description.AppendLiteral(")");
-    }
-
-    JSObject *parent = js::GetGlobalForObjectCrossCompartment(obj);
-    if (parent) {
-      description.AppendLiteral(" parent:0x");
-      description.AppendInt((uint64_t)parent, 16);
-    }
-
-    char long_name[description.Length() + 1];
-    snprintf_literal(long_name, "%s", NS_ConvertUTF16toUTF8(description).get());
-    aCb.DescribeGCedNode(aIsMarked, long_name);
-    return;
-  } else if (aThing.is<JSScript>()) {
-    JSContext *dcx = GetDebugContext(mJSRuntime);
-    JS::RootedScript s(dcx, &aThing.as<JSScript>());
-    const char* filename = JS_GetScriptFilename(s);
-    if (filename) {
-      char long_name[strlen(filename) + 13];
-      JS_snprintf(long_name, sizeof(long_name), "JS Script (%s)", filename);
-      snprintf_literal(long_name, "JS Script (%s)", filename);
-      aCb.DescribeGCedNode(aIsMarked, long_name);
-      return;
-    } else {
-      snprintf_literal(name, "JS Script");
+      snprintf_literal(name, "JS Object (%s)", clasp->name);
     }
   } else {
     snprintf_literal(name, "JS %s", JS::GCTraceKindToAscii(aThing.kind()));
