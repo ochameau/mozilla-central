@@ -11,6 +11,7 @@ DevToolsModules(
     'about-devtools-panel.js',
     'attach-thread.js',
     'browser.js',
+    'devtools.js',
     'gDevTools.jsm',
     'selection.js',
     'sidebar.js',
