@@ -22,6 +22,8 @@ XPCOMUtils.defineLazyModuleGetter(this, "CustomizableUI",
 
 const bundle = Services.strings.createBundle("chrome://devtools/locale/toolbox.properties");
 
+var prefObserverRegistered = false;
+
 /**
  * gDevToolsBrowser exposes functions to connect the gDevTools instance with a
  * Firefox instance.
@@ -123,11 +125,9 @@ var gDevToolsBrowser = {
     }
   },
 
-  _prefObserverRegistered: false,
-
   ensurePrefObserver: function() {
-    if (!this._prefObserverRegistered) {
-      this._prefObserverRegistered = true;
+    if (!prefObserverRegistered) {
+      prefObserverRegistered = true;
       Services.prefs.addObserver("devtools.", this, false);
     }
   },

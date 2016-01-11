@@ -490,7 +490,6 @@ DevTools.prototype = {
     JsonView.destroy();
 
     this._pingTelemetry();
-    this._telemetry = null;
 
     // Cleaning down the toolboxes: i.e.
     //   for (let [target, toolbox] of this._toolboxes) toolbox.destroy();
