@@ -10,6 +10,7 @@ XPCSHELL_TESTS_MANIFESTS += ['test/xpcshell.ini']
 DevToolsModules(
     'about-devtools-panel.js',
     'attach-thread.js',
+    'browser.js',
     'gDevTools.jsm',
     'selection.js',
     'sidebar.js',
