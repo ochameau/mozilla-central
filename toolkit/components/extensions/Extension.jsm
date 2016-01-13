@@ -50,6 +50,8 @@ XPCOMUtils.defineLazyModuleGetter(this, "Task",
                                   "resource://gre/modules/Task.jsm");
 XPCOMUtils.defineLazyModuleGetter(this, "AppConstants",
                                   "resource://gre/modules/AppConstants.jsm");
+XPCOMUtils.defineLazyModuleGetter(this, "AddonManager",
+                                  "resource://gre/modules/AddonManager.jsm");
 
 Cu.import("resource://gre/modules/ExtensionManagement.jsm");
 
@@ -106,6 +108,21 @@ var Management = {
   lazyInit() {
     if (this.initialized) {
       return this.initialized;
+    }
+
+    // Firefox contributors can start prototyping ext-*.js files
+    // with bootstraped addons by setting a pref that delay
+    // WebExtensions startup only once all addons are loaded.
+    const ADDON_PREF = "extensions.webextensions.addon_implementation";
+    if (Preferences.get(ADDON_PREF, false) && !AddonManager.isReady) {
+      return new Promise(done => {
+        let listener = {
+          onStartup() {
+            done(Management.lazyInit());
+          }
+        };
+        AddonManager.addManagerListener(listener);
+      });
     }
 
     let promises = [];
