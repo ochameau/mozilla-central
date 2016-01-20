@@ -34,7 +34,7 @@ DebuggerPanel.prototype = {
    * @return object
    *         A promise that is resolved when the Debugger completes opening.
    */
-  open: function(options) {
+  open: function() {
     let targetPromise;
 
     // Local debugging needs to make the target remote.
@@ -50,12 +50,6 @@ DebuggerPanel.prototype = {
     return targetPromise
       .then(() => this._controller.startupDebugger())
       .then(() => this._controller.connect())
-      .then(() => {
-        if (options && options.source) {
-          this._view.Sources.addSource(options.source, { staged: false });
-          return this._view.setEditorLocation(options.source.actor);
-        }
-      })
       .then(() => {
         this._toolbox.on("host-changed", this.handleHostChanged);
         // Add keys from this document's keyset to the toolbox, so they

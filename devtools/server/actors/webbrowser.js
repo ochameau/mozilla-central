@@ -1082,16 +1082,12 @@ TabActor.prototype = {
     this._updateChildDocShells();
   },
 
-  getFrameWindow: function (windowId) {
-    try {
-      return Services.wm.getOuterWindowWithId(windowId);
-    } catch(e) {}
-    return null;
-  },
-
   onSwitchToFrame: function BTA_onSwitchToFrame(aRequest) {
     let windowId = aRequest.windowId;
-    let win = this.getFrameWindow(windowId);
+    let win;
+    try {
+      win = Services.wm.getOuterWindowWithId(windowId);
+    } catch(e) {}
     if (!win) {
       return { error: "noWindow",
                message: "The related docshell is destroyed or not found" };

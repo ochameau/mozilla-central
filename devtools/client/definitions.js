@@ -24,7 +24,6 @@ loader.lazyGetter(this, "PerformancePanel", () => require("devtools/client/perfo
 loader.lazyGetter(this, "NetMonitorPanel", () => require("devtools/client/netmonitor/panel").NetMonitorPanel);
 loader.lazyGetter(this, "StoragePanel", () => require("devtools/client/storage/panel").StoragePanel);
 loader.lazyGetter(this, "ScratchpadPanel", () => require("devtools/client/scratchpad/scratchpad-panel").ScratchpadPanel);
-loader.lazyGetter(this, "ToolboxPanel", () => require("devtools/client/toolbox/toolbox-panel").ToolboxPanel);
 
 // Strings
 const toolboxProps = "chrome://devtools/locale/toolbox.properties";
@@ -395,30 +394,8 @@ Tools.scratchpad = {
   }
 };
 
-Tools.toolbox = {
-  id: "toolbox-panel",
-  ordinal: 1,
-  icon: "chrome://devtools/skin/themes/images/tool-styleeditor.svg",
-  invertIconForLightTheme: true,
-  url: "chrome://devtools/content/toolbox/toolbox.html",
-  label: "Toolbox",
-  panelLabel: "Toolbox",
-  tooltip: "Toolbox",
-  inMenu: true,
-
-  isTargetSupported: function(target) {
-    return target.isLocalTab;
-  },
-
-  build: function(iframeWindow, toolbox) {
-    return new ToolboxPanel(iframeWindow, toolbox);
-  }
-};
-
-
-let defaultTools = [
+var defaultTools = [
   Tools.options,
-  Tools.toolbox,
   Tools.webConsole,
   Tools.inspector,
   Tools.jsdebugger,

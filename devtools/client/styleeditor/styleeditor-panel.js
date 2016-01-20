@@ -47,7 +47,7 @@ StyleEditorPanel.prototype = {
   /**
    * open is effectively an asynchronous constructor
    */
-  open: Task.async(function* (uiOptions) {
+  open: Task.async(function* () {
     // We always interact with the target as if it were remote
     if (!this.target.isRemote) {
       yield this.target.makeRemote();
@@ -55,18 +55,16 @@ StyleEditorPanel.prototype = {
 
     this.target.on("close", this.destroy);
 
-    if (!this._debuggee) {
-      if (this.target.form.styleSheetsActor) {
-        this._debuggee = StyleSheetsFront(this.target.client, this.target.form);
-      }
-      else {
-        /* We're talking to a pre-Firefox 29 server-side */
-        this._debuggee = StyleEditorFront(this.target.client, this.target.form);
-      }
+    if (this.target.form.styleSheetsActor) {
+      this._debuggee = StyleSheetsFront(this.target.client, this.target.form);
+    }
+    else {
+      /* We're talking to a pre-Firefox 29 server-side */
+      this._debuggee = StyleEditorFront(this.target.client, this.target.form);
     }
 
     // Initialize the UI
-    this.UI = new StyleEditorUI(this._debuggee, this.target, this._panelDoc, uiOptions);
+    this.UI = new StyleEditorUI(this._debuggee, this.target, this._panelDoc);
     this.UI.on("error", this._showError);
     yield this.UI.initialize();
 

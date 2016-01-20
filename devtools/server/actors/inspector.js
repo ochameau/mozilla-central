@@ -1638,25 +1638,6 @@ var WalkerActor = protocol.ActorClass({
   }),
 
   /**
-   * Return the document node for the given frame.
-   * @param Number windowID
-   *        The window id used in TabActor to identify a given iframe.
-   */
-  setFrameDocument: method(function (windowId) {
-    this.onFrameUnload({ window: this.rootWin });
-    let win = this.tabActor.getFrameWindow(windowId);
-    this.rootDoc = null;
-    this.rootNode = null;
-    require("sdk/timers").setTimeout(() => {
-      this.onFrameLoad({ window: win, isTopLevel: true });
-    }, 0);
-  }, {
-    request: { node: Arg(0, "number") },
-    response: { },
-  }),
-
-
-  /**
    * Return all parents of the given node, ordered from immediate parent
    * to root.
    * @param NodeActor node
