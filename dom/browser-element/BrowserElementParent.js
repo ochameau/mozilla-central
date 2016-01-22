@@ -13,9 +13,6 @@ var Cr = Components.results;
  * child.  We then listen to messages from the child script and take
  * appropriate action here in the parent.
  */
-let listener = Components.classes["@mozilla.org/cycle-collector-logger;1"]
-                 .createInstance(Components.interfaces.nsICycleCollectorListener);
-listener.enableAllocationMetadata(this);
 
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");

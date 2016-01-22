@@ -247,9 +247,6 @@ const Sandbox = iced(function Sandbox(options) {
   }
 
   let sandbox = Cu.Sandbox(options.principal, options);
-  let listener = Cc["@mozilla.org/cycle-collector-logger;1"]
-                   .createInstance(Ci.nsICycleCollectorListener);
-  listener.enableAllocationMetadata(sandbox);
 
   // Each sandbox at creation gets set of own properties that will be shadowing
   // ones from it's prototype. We override delete such `sandbox` properties

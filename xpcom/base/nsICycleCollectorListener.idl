@@ -118,7 +118,7 @@ interface nsICycleCollectorLogSink : nsISupports
  *   on objects however it pleases: the cycle collector has finished its
  *   work, and the JS code is simply consuming recorded data.
  */
-[scriptable, builtinclass, uuid(a355ba5d-534c-44c6-9ac0-a5e76874924e)]
+[scriptable, builtinclass, uuid(703b53b6-24f6-40c6-9ea9-aeb2dc53d170)]
 interface nsICycleCollectorListener : nsISupports
 {
     // Return a listener that directs the cycle collector to traverse
@@ -138,11 +138,6 @@ interface nsICycleCollectorListener : nsISupports
 
     // True if this listener will behave like one returned by allTraces().
     readonly attribute boolean wantAllTraces;
-
-    [implicit_jscontext]
-    void enableAllocationMetadata(in jsval target);
-    [implicit_jscontext]
-    void disableAllocationMetadata(in jsval target);
 
     // If true, do not log each method call to a temporary file.
     // Initially false.

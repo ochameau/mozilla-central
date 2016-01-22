@@ -12,9 +12,6 @@ Cu.import("resource://gre/modules/NotificationDB.jsm");
 Cu.import("resource:///modules/RecentWindow.jsm");
 Cu.import("resource:///modules/UserContextUI.jsm");
 
-let listener = Components.classes["@mozilla.org/cycle-collector-logger;1"]
-                 .createInstance(Components.interfaces.nsICycleCollectorListener);
-listener.enableAllocationMetadata(this);
 
 XPCOMUtils.defineLazyModuleGetter(this, "Preferences",
                                   "resource://gre/modules/Preferences.jsm");

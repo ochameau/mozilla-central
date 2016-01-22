@@ -552,7 +552,7 @@ JS_PCToLineNumber(JSScript* script, jsbytecode* pc, unsigned* columnp)
 JS_FRIEND_API(bool)
 JS_IsDeadWrapper(JSObject* obj)
 {
-    return js::IsDeadProxyObject(obj);
+    return IsDeadProxyObject(obj);
 }
 
 void
