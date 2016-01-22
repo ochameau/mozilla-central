@@ -526,9 +526,6 @@ GetWeakmapKeyDelegate(JSObject* key);
 JS_FRIEND_API(JS::TraceKind)
 GCThingTraceKind(void* thing);
 
-JS_FRIEND_API(JSCompartment*)
-GCThingCompartment(void* thing);
-
 /**
  * Invoke cellCallback on every gray JS_OBJECT in the given zone.
  */

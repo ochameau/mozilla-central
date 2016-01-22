@@ -179,8 +179,6 @@
 #include "nsDumpUtils.h"
 #include "xpcpublic.h"
 #include "GeckoProfiler.h"
-#include "jsapi.h"
-#include "jsfriendapi.h"
 #include <stdint.h>
 #include <stdio.h>
 
@@ -1290,7 +1288,6 @@ private:
 
   uint32_t mUnmergedNeeded;
   uint32_t mMergedInARow;
-  uint64_t mSelectedCompartment;
 
   RefPtr<JSPurpleBuffer> mJSPurpleBuffer;
 
@@ -1308,7 +1305,6 @@ public:
     CheckThreadSafety();
     mBeforeUnlinkCB = aBeforeUnlinkCB;
   }
-  void SetSelectedCompartment(uint64_t aCompartment);
 
   void SetForgetSkippableCallback(CC_ForgetSkippableCallback aForgetSkippableCB)
   {
@@ -1731,7 +1727,6 @@ public:
     , mDisableLog(false)
     , mWantAfterProcessing(false)
     , mCCLog(nullptr)
-    , mSelectedCompartment(0)
   {
   }
 
@@ -1760,44 +1755,6 @@ public:
       CollectorData *data = sCollectorData.get();
       if (data && data->mRuntime)
           data->mRuntime->DisableAllocationMetadata(target, cx);
-      return NS_OK;
-  }
-
-  NS_IMETHOD CompartmentAddress(const JS::HandleValue targetArg, JSContext* cx, uint64_t *address)
-  {
-      JS::RootedValue target(cx, targetArg);
-      JS::RootedObject obj(cx);
-      if (!JS_ValueToObject(cx, target, &obj))
-        return NS_OK;
-      if (!obj) {
-        *address = 0;
-        return NS_OK;
-      }
-      obj = JS_FindCompilationScope(cx, obj);
-      *address = (uint64_t)js::GetObjectCompartment(obj);
-      return NS_OK;
-  }
-
-  NS_IMETHOD TraceCompartment(const JS::HandleValue targetArg, JSContext* cx)
-  {
-      JS::RootedValue target(cx, targetArg);
-      JS::RootedObject obj(cx);
-      if (!JS_ValueToObject(cx, target, &obj))
-        return NS_OK;
-      if (!obj) {
-        mSelectedCompartment = 0;
-        return NS_OK;
-      }
-      obj = JS_FindCompilationScope(cx, obj);
-      uint64_t compartment = (uint64_t)js::GetObjectCompartment(obj);
-      mSelectedCompartment = compartment;
-      CollectorData *data = sCollectorData.get();
-      if (data && data->mCollector) {
-        printf("setCompartment to %ld\n", compartment);
-        data->mCollector->SetSelectedCompartment(compartment);
-      } else {
-        printf("unable to set zone\n");
-      }
       return NS_OK;
   }
 
@@ -2056,7 +2013,6 @@ private:
   nsCString mCurrentAddress;
   mozilla::LinkedList<CCGraphDescriber> mDescribers;
   FILE* mCCLog;
-  uint64_t mSelectedCompartment;
 };
 
 NS_IMPL_ISUPPORTS(nsCycleCollectorLogger, nsICycleCollectorListener)
@@ -2108,15 +2064,13 @@ private:
   RefPtr<nsCycleCollectorLogger> mLogger;
   bool mMergeZones;
   nsAutoPtr<NodePool::Enumerator> mCurrNode;
-  uint64_t mSelectedCompartment;
 
 public:
   CCGraphBuilder(CCGraph& aGraph,
                  CycleCollectorResults& aResults,
                  CycleCollectedJSRuntime* aJSRuntime,
                  nsCycleCollectorLogger* aLogger,
-                 bool aMergeZones,
-                 uint64_t aSelectedCompartment);
+                 bool aMergeZones);
   virtual ~CCGraphBuilder();
 
   bool WantAllTraces() const
@@ -2214,8 +2168,7 @@ CCGraphBuilder::CCGraphBuilder(CCGraph& aGraph,
                                CycleCollectorResults& aResults,
                                CycleCollectedJSRuntime* aJSRuntime,
                                nsCycleCollectorLogger* aLogger,
-                               bool aMergeZones,
-                               uint64_t aSelectedCompartment)
+                               bool aMergeZones)
   : mGraph(aGraph)
   , mResults(aResults)
   , mNodeBuilder(aGraph.mNodes)
@@ -2224,7 +2177,6 @@ CCGraphBuilder::CCGraphBuilder(CCGraph& aGraph,
   , mJSZoneParticipant(nullptr)
   , mLogger(aLogger)
   , mMergeZones(aMergeZones)
-  , mSelectedCompartment(aSelectedCompartment)
 {
   if (aJSRuntime) {
     mJSParticipant = aJSRuntime->GCThingParticipant();
@@ -2456,14 +2408,6 @@ CCGraphBuilder::NoteJSChild(JS::GCCellPtr aChild)
 {
   if (!aChild) {
     return;
-  }
-
-  if (aChild.is<JSObject>() && mSelectedCompartment) {
-    printf("NoteJSChild %p -- %p\n", (void*)js::GetObjectCompartment(&aChild.as<JSObject>()), (void*)mSelectedCompartment);
-    if ((uint64_t)js::GetObjectCompartment(&aChild.as<JSObject>()) != mSelectedCompartment) {
-      printf("filters out\n");
-      return;
-    }
   }
 
   nsCString edgeName;
@@ -3453,8 +3397,7 @@ nsCycleCollector::nsCycleCollector() :
   mBeforeUnlinkCB(nullptr),
   mForgetSkippableCB(nullptr),
   mUnmergedNeeded(0),
-  mMergedInARow(0),
-  mSelectedCompartment(0)
+  mMergedInARow(0)
 {
 }
 
@@ -3484,12 +3427,6 @@ nsCycleCollector::ForgetJSRuntime()
 {
   MOZ_RELEASE_ASSERT(mJSRuntime, "Forgetting JS runtime in cycle collector before a JS runtime was registered");
   mJSRuntime = nullptr;
-}
-
-void
-nsCycleCollector::SetSelectedCompartment(uint64_t aCompartment)
-{
-    mSelectedCompartment = aCompartment;
 }
 
 #ifdef DEBUG
@@ -3890,7 +3827,7 @@ nsCycleCollector::BeginCollection(ccType aCCType,
 
   MOZ_ASSERT(!mBuilder, "Forgot to clear mBuilder");
   mBuilder = new CCGraphBuilder(mGraph, mResults, mJSRuntime, mLogger,
-                                mergeZones, mSelectedCompartment);
+                                mergeZones);
   timeLog.Checkpoint("BeginCollection prepare graph builder");
 
   if (mJSRuntime) {
