@@ -2480,11 +2480,6 @@ private:
 
     RefPtr<ServiceWorkerManager> swm = ServiceWorkerManager::GetInstance();
 
-    // Could it be that we are shutting down.
-    if (swm->mActor) {
-      swm->mActor->SendUnregister(principalInfo, NS_ConvertUTF8toUTF16(mScope));
-    }
-
     nsAutoCString scopeKey;
     nsresult rv = swm->PrincipalToScopeKey(mPrincipal, scopeKey);
     if (NS_WARN_IF(NS_FAILED(rv))) {
