@@ -26,8 +26,6 @@ let idbGenerator = function*() {
     request.onupgradeneeded = event => {
       let db = event.target.result;
       let store1 = db.createObjectStore("obj-s1", { keyPath: "id" });
-      store1.add({id: 6, name: "foo", email: "foo@bar.com"});
-      store1.add({id: 7, name: "foo2", email: "foo2@bar.com"});
       store1.transaction.oncomplete = () => {
         done(db);
       };
@@ -36,8 +34,7 @@ let idbGenerator = function*() {
   yield new Promise(done => {
     request.onsuccess = done;
   });
-  db.close();
-/*
+
   let transaction = db.transaction(["obj-s1"], "readwrite");
   let store1 = transaction.objectStore("obj-s1");
   store1.add({id: 6, name: "foo", email: "foo@bar.com"});
@@ -45,7 +42,8 @@ let idbGenerator = function*() {
   yield new Promise(success => {
     transaction.oncomplete = success;
   });
-  */
+
+  db.close();
 
   request = indexedDB.open("idb-s2", 1);
   let db2 = yield new Promise(done => {
@@ -54,7 +52,6 @@ let idbGenerator = function*() {
       let store3 =
         db2.createObjectStore("obj-s2", { keyPath: "id3", autoIncrement: true });
       store3.createIndex("name2", "name2", { unique: true });
-      store3.add({id3: 16, name2: "foo", email: "foo@bar.com"});
       store3.transaction.oncomplete = () => {
         done(db2);
       };
@@ -62,6 +59,13 @@ let idbGenerator = function*() {
   });
   yield new Promise(done => {
     request.onsuccess = done;
+  });
+
+  transaction = db2.transaction(["obj-s2"], "readwrite");
+  let store3 = transaction.objectStore("obj-s2");
+  store3.add({id3: 16, name2: "foo", email: "foo@bar.com"});
+  yield new Promise(success => {
+    transaction.oncomplete = success;
   });
 
   db2.close();
