@@ -93,7 +93,17 @@ let idbGenerator = function*() {
 function deleteDB(dbName) {
   return new Promise(resolve => {
     dump("removing database " + dbName + " from " + document.location + "\n");
-    indexedDB.deleteDatabase(dbName).onsuccess = resolve;
+    indexedDB.deleteDatabase(dbName).onsuccess = () => {
+      dump("removed "+dbName+"\n");
+      try {
+        resolve();
+        dump("resolved\n");
+      } catch(e) {
+        dump("Error while resolving: "+e+"\n");
+        dump(new Error().stack+"\n");
+      }
+
+    };
   });
 }
 
@@ -120,7 +130,9 @@ window.clear = function*() {
   sessionStorage.clear();
 
   yield deleteDB("idb1");
+  dump("removed idb1\n");
   yield deleteDB("idb2");
+  dump("removed idb2\n");
 
   yield caches.delete("plop");
 

@@ -225,6 +225,7 @@ function* finishTests() {
       console.log("Clearing cookies, localStorage and indexedDBs from " +
                   win.document.location);
       yield win.clear();
+      dump("win.clear passed\n");
     }
   }
 
