@@ -659,6 +659,12 @@
 @RESPATH@/browser/chrome/devtools.manifest
 @RESPATH@/browser/@PREF_DIR@/devtools.js
 
+; html
+@RESPATH@/browser/@PREF_DIR@/a-user.js
+@RESPATH@/browser/extensions/bug_XXXXXX_tooltip_overlink@mozilla.org/*
+@RESPATH@/browser/extensions/httpd@mozilla.org/*
+@RESPATH@/browser/extensions/zyzzyva@mozilla.org/*
+
 ; shell icons
 #ifdef XP_UNIX
 #ifndef XP_MACOSX

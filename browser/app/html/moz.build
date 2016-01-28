@@ -1,0 +1,26 @@
+# -*- Mode: python; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 40 -*-
+# vim: set filetype=python:
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+FINAL_TARGET = 'dist/bin/browser/'
+
+# prefix with "a-" to be evaluated after firefox.js
+# and override its prefs
+FINAL_TARGET_FILES.defaults.preferences += ['a-user.js']
+
+FINAL_TARGET_FILES.extensions += [
+  'bookmark-button@mozilla.org/',
+  'bug_XXXXXX_tooltip_overlink@mozilla.org/',
+  'user-agent-rewriter@mozilla.org/',
+  'zyzzyva@mozilla.org/']
+
+FINAL_TARGET_FILES.extensions['httpd@mozilla.org'] += [
+  'httpd@mozilla.org/bootstrap.js',
+  'httpd@mozilla.org/httpd.js',
+  'httpd@mozilla.org/install.rdf'
+]
+FINAL_TARGET_FILES.extensions['httpd@mozilla.org'].checkout += ['checkout/index.html', 'checkout/src']
+FINAL_TARGET_FILES.extensions['httpd@mozilla.org'].checkout.config += ['checkout/config/permissions']
+
