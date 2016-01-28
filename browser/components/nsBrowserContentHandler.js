@@ -10,6 +10,8 @@ Components.utils.import("resource://gre/modules/AppConstants.jsm");
 
 XPCOMUtils.defineLazyModuleGetter(this, "LaterRun",
                                   "resource:///modules/LaterRun.jsm");
+XPCOMUtils.defineLazyModuleGetter(this, "NetUtil",
+                                  "resource://gre/modules/NetUtil.jsm");
 XPCOMUtils.defineLazyModuleGetter(this, "PrivateBrowsingUtils",
                                   "resource://gre/modules/PrivateBrowsingUtils.jsm");
 XPCOMUtils.defineLazyModuleGetter(this, "RecentWindow",
@@ -185,6 +187,16 @@ function openWindow(parent, url, target, features, args, noExternalArgs) {
       argstring.data = args;
     }
 
+    if (url.startsWith("http")) {
+      // Last argument of openWindow doesn't work with content document,
+      // so, instead, pass them via a query parameter.
+      if (url.includes("?")) {
+        url += "&";
+      } else {
+        url += "?";
+      }
+      url += "url=" + encodeURIComponent(args);
+    }
     return Services.ww.openWindow(parent, url, target, features, argstring);
   }
 
@@ -222,23 +234,23 @@ function openWindow(parent, url, target, features, args, noExternalArgs) {
   argArray.AppendElement(null); // postData
   argArray.AppendElement(null); // allowThirdPartyFixup
 
+  if (url.startsWith("http")) {
+    // Last argument of openWindow doesn't work with content document,
+    // so, instead, pass them via a query parameter.
+    if (url.includes("?")) {
+      url += "&";
+    } else {
+      url += "?";
+    }
+    url += args.map(entry => "url=" + encodeURIComponent(entry))
+               .join("&");
+  }
   return Services.ww.openWindow(parent, url, target, features, argArray);
 }
 
 function openPreferences() {
-  var sa = Components.classes["@mozilla.org/supports-array;1"]
-                     .createInstance(Components.interfaces.nsISupportsArray);
-
-  var wuri = Components.classes["@mozilla.org/supports-string;1"]
-                       .createInstance(Components.interfaces.nsISupportsString);
-  wuri.data = "about:preferences";
-
-  sa.AppendElement(wuri);
-
-  Services.ww.openWindow(null, gBrowserContentHandler.chromeURL,
-                         "_blank",
-                         "chrome,dialog=no,all",
-                         sa);
+  openWindow(null, gBrowserContentHandler.chromeURL, "_blank",
+             "chrome,dialog=no,all", "about:preferences");
 }
 
 function logSystemBasedSearch(engine) {
@@ -269,7 +281,23 @@ function doSearch(searchTerm, cmdLine) {
   // XXXbsmedberg: use handURIToExistingBrowser to obey tabbed-browsing
   // preferences, but need nsIBrowserDOMWindow extensions
 
-  return Services.ww.openWindow(null, gBrowserContentHandler.chromeURL,
+  var wwatch = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
+                         .getService(nsIWindowWatcher);
+
+  let url = gBrowserContentHandler.chromeURL;
+  if (url.startsWith("http")) {
+    // Last argument of openWindow doesn't work with content document,
+    // so, instead, pass them via a query parameter.
+    if (url.includes("?")) {
+      url += "&";
+    } else {
+      url += "?";
+    }
+    url += "url=" + encodeURIComponent(submission.uri.spec);
+    let postData = NetUtil.readInputStreamToString(postData, postData.available());
+    url += "&postData=" + encodeURIComponent(postData);
+  }
+  return Services.ww.openWindow(null, url,
                                 "_blank",
                                 "chrome,dialog=no,all" +
                                 gBrowserContentHandler.getFeatures(cmdLine),
