@@ -25,6 +25,25 @@ add_task(function* () {
 
   yield waitForMutation(serviceWorkersElement, { childList: true });
 
+  // Ensure that the registration resolved
+  let frameScript = function () {
+    // Retrieve the `sw` promise created in the html page
+    let { sw } = content.wrappedJSObject;
+    sw.then(function (registration) {
+      sendAsyncMessage("sw-registered");
+    });
+  };
+  let mm = swTab.linkedBrowser.messageManager;
+  mm.loadFrameScript("data:,(" + encodeURIComponent(frameScript) + ")()", true);
+
+  yield new Promise(done => {
+    mm.addMessageListener("sw-registered", function listener() {
+      mm.removeMessageListener("sw-registered", listener);
+      done();
+    });
+  });
+  ok(true, "Service worker registration resolved");
+
   // Check that the service worker appears in the UI
   let names = [...document.querySelectorAll("#service-workers .target-name")];
   names = names.map(element => element.textContent);
