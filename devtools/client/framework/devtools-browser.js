@@ -337,6 +337,22 @@ var gDevToolsBrowser = exports.gDevToolsBrowser = {
         doc.getElementById("PanelUI-multiView").appendChild(view);
       }
     });
+    // On Dev edition put the Developer widget in the navbar, right after the
+    // search box
+    if (AppConstants.MOZ_DEV_EDITION) {
+      let widgets = CustomizableUI.getWidgetIdsInArea(CustomizableUI.AREA_NAVBAR);
+      let btn = widgets.indexOf("search-container");
+      if (btn > -1) {
+        CustomizableUI.moveWidgetWithinArea(id, btn + 1);
+      }
+    } else {
+      // Otherwise put it in the hamburger menu, after add-ons
+      let widgets = CustomizableUI.getWidgetIdsInArea(CustomizableUI.AREA_PANEL);
+      let btn = widgets.indexOf("add-ons-button");
+      if (btn > -1) {
+        CustomizableUI.moveWidgetWithinArea(id, btn + 1);
+      }
+    }
   },
 
   /**
