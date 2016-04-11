@@ -476,13 +476,17 @@
      * Delivers the packet to this.hooks.onPacket.
      */
     _onJSONObjectReady: function (object) {
-      DevToolsUtils.executeSoon(DevToolsUtils.makeInfallible(() => {
-      // Ensure the transport is still alive by the time this runs.
-        if (this.active) {
-          this.emit("packet", object);
-          this.hooks.onPacket(object);
+      DevToolsUtils.executeSoon(() => {
+        // Ensure the transport is still alive by the time this runs.
+        try {
+          if (this.active) {
+            this.emit("packet", object);
+            this.hooks.onPacket(object);
+          }
+        } catch(e) {
+          console.error("DebuggerTransport instance's this.hooks.onPacket", e)
         }
-      }, "DebuggerTransport instance's this.hooks.onPacket"));
+      });
     },
 
     /**
@@ -560,16 +564,20 @@
       this._deepFreeze(packet);
       let other = this.other;
       if (other) {
-        DevToolsUtils.executeSoon(DevToolsUtils.makeInfallible(() => {
-          // Avoid the cost of JSON.stringify() when logging is disabled.
-          if (flags.wantLogging) {
-            dumpn("Received packet " + serial + ": " + JSON.stringify(packet, null, 2));
+        DevToolsUtils.executeSoon(function () {
+          try {
+            // Avoid the cost of JSON.stringify() when logging is disabled.
+            if (flags.wantLogging) {
+              dumpn("Received packet " + serial + ": " + JSON.stringify(packet, null, 2));
+            }
+            if (other.hooks) {
+              other.emit("packet", packet);
+              other.hooks.onPacket(packet);
+            }
+          } catch(e) {
+            console.error("LocalDebuggerTransport instance's this.other.hooks.onPacket", e);
           }
-          if (other.hooks) {
-            other.emit("packet", packet);
-            other.hooks.onPacket(packet);
-          }
-        }, "LocalDebuggerTransport instance's this.other.hooks.onPacket"));
+        });
       }
     },
 
