@@ -218,4 +218,7 @@
     </html:div>
 
   </box>
+
+  <script type="application/javascript;version=1.8"
+          src="chrome://devtools/content/inspector/inspector-init.js"/>
 </window>

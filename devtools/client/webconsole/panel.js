@@ -40,22 +40,17 @@ WebConsolePanel.prototype = {
    * @return object
    *         A promise that is resolved when the Web Console completes opening.
    */
-  open: function () {
-    let parentDoc = this._toolbox.doc;
-    let iframe = parentDoc.getElementById("toolbox-panel-iframe-webconsole");
-
+  open: function() {
     // Make sure the iframe content window is ready.
     let deferredIframe = promise.defer();
-    let win, doc;
-    if ((win = iframe.contentWindow) &&
-        (doc = win.document) &&
-        doc.readyState == "complete") {
+    if (this._frameWindow.document.readyState == "complete") {
       deferredIframe.resolve(null);
     } else {
-      iframe.addEventListener("load", function onIframeLoad() {
-        iframe.removeEventListener("load", onIframeLoad, true);
+      let onIframeLoad = () => {
+        this._frameWindow.removeEventListener("load", onIframeLoad, true);
         deferredIframe.resolve(null);
-      }, true);
+      };
+      this._frameWindow.addEventListener("load", onIframeLoad, true);
     }
 
     // Local debugging needs to make the target remote.
@@ -74,8 +69,8 @@ WebConsolePanel.prototype = {
       .then((target) => {
         this._frameWindow._remoteTarget = target;
 
-        let webConsoleUIWindow = iframe.contentWindow.wrappedJSObject;
-        let chromeWindow = iframe.ownerDocument.defaultView;
+        let webConsoleUIWindow = this._frameWindow;
+        let chromeWindow = this._frameWindow.top;
         return HUDService.openWebConsole(this.target, webConsoleUIWindow,
                                          chromeWindow);
       })
