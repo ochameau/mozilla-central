@@ -26,6 +26,7 @@ loader.lazyRequireGetter(this, "ObjectClient", "devtools/shared/client/main", tr
 loader.lazyImporter(this, "VariablesView", "resource://devtools/client/shared/widgets/VariablesView.jsm");
 loader.lazyImporter(this, "VariablesViewController", "resource://devtools/client/shared/widgets/VariablesViewController.jsm");
 loader.lazyRequireGetter(this, "gDevTools", "devtools/client/framework/devtools", true);
+loader.lazyRequireGetter(this, "KeyShortcuts", "devtools/client/shared/key-shortcuts", true);
 
 const STRINGS_URI = "chrome://devtools/locale/webconsole.properties";
 var l10n = new WebConsoleUtils.L10n(STRINGS_URI);
@@ -65,7 +66,7 @@ function JSTerm(webConsoleFrame) {
   this._keyPress = this._keyPress.bind(this);
   this._inputEventHandler = this._inputEventHandler.bind(this);
   this._focusEventHandler = this._focusEventHandler.bind(this);
-  this._onKeypressInVariablesView = this._onKeypressInVariablesView.bind(this);
+  this._onEscapeInVariableView = this._onEscapeInVariableView.bind(this);
   this._blurEventHandler = this._blurEventHandler.bind(this);
 
   EventEmitter.decorate(this);
@@ -592,7 +593,8 @@ JSTerm.prototype = {
         view = this._createVariablesView(viewOptions);
         if (!options.targetElement) {
           this._variablesView = view;
-          window.addEventListener("keypress", this._onKeypressInVariablesView);
+          let shortcuts = new KeyShortcuts({ window });
+          shortcuts.on("Escape", this._onEscapeInVariableView);
         }
       }
       options.view = view;
@@ -678,18 +680,16 @@ JSTerm.prototype = {
   },
 
   /**
-   * The keypress event handler for the Variables View sidebar. Currently this
-   * is used for removing the sidebar when Escape is pressed.
+   * Escape key listener in the variable view document.
+   * Removes the sidebar, except when on an input field is focused.
    *
    * @private
    * @param nsIDOMEvent event
-   *        The keypress DOM event object.
+   *        The keydown DOM event object.
    */
-  _onKeypressInVariablesView: function (event) {
+  _onEscapeInVariableView: function (name, event) {
     let tag = event.target.nodeName;
-    if (event.keyCode != KeyCodes.DOM_VK_ESCAPE || event.shiftKey ||
-        event.altKey || event.ctrlKey || event.metaKey ||
-        ["input", "textarea", "select", "textbox"].indexOf(tag) > -1) {
+    if (["input", "textarea", "select", "textbox"].includes(tag)) {
       return;
     }
 
