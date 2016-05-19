@@ -233,15 +233,8 @@ let SourceActor = ActorClass(sourceSpec, {
   },
 
   _mapSourceToAddon: function () {
-    let url = this.url.split(" -> ").pop();
-    // Ignore any builtin browser resource
-    if (url.startsWith("chrome://browser/") ||
-        url.startsWith("resource://gre/") ||
-        url.startsWith("resource:///modules/")) {
-      return;
-    }
     try {
-      var nsuri = Services.io.newURI(url, null, null);
+      var nsuri = Services.io.newURI(this.url.split(" -> ").pop(), null, null);
     }
     catch (e) {
       // We can't do anything with an invalid URI
