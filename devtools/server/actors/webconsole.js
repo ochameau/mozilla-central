@@ -1315,10 +1315,20 @@ WebConsoleActor.prototype =
     }
     else {
       result = dbgWindow.executeInGlobalWithBindings(aString, bindings, evalOptions);
+      if (!result) {
+        try {
+          dump(" >>>> result > "+result+"\n");
+          dump("makeGlobalObjectReference("+typeof(this.evalWindow)+")\n");
+          dump("makeGlobalObjectReference("+Object.keys(this.evalWindow)+")\n");
+          dump("makeGlobalObjectReference("+Object.getOwnPropertyNames(this.evalWindow)+")\n");
+        } catch(e) {
+          dump(" >>>> result > exception: "+e+"\n");
+        }
+      }
       // Attempt to initialize any declarations found in the evaluated string
       // since they may now be stuck in an "initializing" state due to the
       // error. Already-initialized bindings will be ignored.
-      if ("throw" in result) {
+      if (result && "throw" in result) {
         let ast;
         // Parse errors will raise an exception. We can/should ignore the error
         // since it's already being handled elsewhere and we are only interested
