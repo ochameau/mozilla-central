@@ -266,6 +266,7 @@ var AppManager = exports.AppManager = {
     this.selectedProject.location = tab.url;
     this.selectedProject.name = tab.name;
     this.selectedProject.icon = tab.favicon;
+    dump("TabNavigate > project validated\n");
     this.update("project-validated");
   },
 
@@ -705,7 +706,9 @@ var AppManager = exports.AppManager = {
   /* PROJECT VALIDATION */
 
   validateAndUpdateProject: function (project) {
+    dump("ValidatedAndUpdateProject\n");
     if (!project) {
+    dump("ValidatedAndUpdateProject.rejected\n");
       return promise.reject();
     }
 
@@ -785,6 +788,7 @@ var AppManager = exports.AppManager = {
         yield AppProjects.update(project);
       }
 
+      dump("ValidateAndUpdatedProject > send update: "+(AppManager.selectedProject === project)+"\n");
       if (AppManager.selectedProject === project) {
         AppManager.update("project-validated");
       }
