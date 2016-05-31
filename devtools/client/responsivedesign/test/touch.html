@@ -19,6 +19,7 @@
   var initX, initY;
   var previousEvent = "", touchendTime = 0;
   var updatePreviousEvent = function(e){
+    dump("updatedpreviousEvent("+e.type+") at "+new Date().getTime()+"\n");
     previousEvent = e.type;
   };
 
@@ -68,6 +69,7 @@
   }, true);
 
   div.addEventListener("mousedown", function(evt){
+    dump("onMouseDown, previousEvent:"+previousEvent+" touchEndTime:"+touchendTime+" elapsed:"+(new Date().getTime() - touchendTime)+"\n");
     if (previousEvent === "touchend" && touchendTime !== 0) {
       let now = performance.now();
       div.dataset.isDelay = ((now - touchendTime) >= 300) ? true : false;
