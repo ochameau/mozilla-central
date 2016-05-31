@@ -45,12 +45,15 @@
           }
 
           win = yield openWebIDE();
+          dump("openedWebIDE\n");
           let docRuntime = getRuntimeDocument(win);
           let docProject = getProjectDocument(win);
           let winProject = getProjectWindow(win);
+          dump("getters\n");
 
           win.AppManager.runtimeList.usb.push({
             connect: function(connection) {
+          dump("usb.connect\n");
               is(connection, win.AppManager.connection, "connection is valid");
               connection.host = null; // force connectPipe
               connection.connect();
@@ -64,6 +67,7 @@
 
           win.AppManager.runtimeList.usb.push({
             connect: function(connection) {
+          dump("usb2.connect\n");
               let deferred = promise.defer();
               return deferred.promise;
             },
@@ -75,6 +79,7 @@
 
           win.AppManager.runtimeList.usb.push({
             connect: function(connection) {
+          dump("usb3.connect\n");
               let deferred = promise.defer();
               return deferred.promise;
             },
@@ -86,12 +91,17 @@
             }
           });
 
+          dump("update(runtime-list)\n");
           win.AppManager.update("runtime-list");
+          dump("update(runtime-list) end\n");
 
           let packagedAppLocation = getTestFilePath("app");
 
+          dump("importPackagedApp\n");
           yield winProject.projectList.importPackagedApp(packagedAppLocation);
+          dump("importPackagedApp end\n");
           yield waitForUpdate(win, "project-validated");
+          dump("project-validated\n");
 
           let panelNode = docRuntime.querySelector("#runtime-panel");
           let items = panelNode.querySelectorAll(".runtime-panel-item-usb");
