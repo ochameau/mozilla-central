@@ -129,6 +129,22 @@ var Management = {
       return this.initialized;
     }
 
+    // Firefox contributors can start prototyping ext-*.js files
+    // with bootstraped addons by setting a pref that delay
+    // WebExtensions startup only once all addons are loaded.
+    const ADDON_PREF = "extensions.webextensions.addon_implementation";
+    if (Preferences.get(ADDON_PREF, false) && !AddonManager.isReady) {
+      return new Promise(done => {
+        let listener = {
+          onStartup() {
+            done(Management.lazyInit());
+          }
+        };
+        AddonManager.addManagerListener(listener);
+      });
+    }
+
+
     // Load order matters here. The base manifest defines types which are
     // extended by other schemas, so needs to be loaded first.
     let promise = Schemas.load(BASE_SCHEMA).then(() => {
