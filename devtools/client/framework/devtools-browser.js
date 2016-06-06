@@ -403,6 +403,9 @@ var gDevToolsBrowser = exports.gDevToolsBrowser = {
    *        The document to which devtools should be hooked to.
    */
   _registerBrowserWindow: function (win) {
+    if (!win.gBrowser) {
+      return;
+    }
     if (gDevToolsBrowser._trackedBrowserWindows.has(win)) {
       return;
     }
