@@ -144,6 +144,32 @@
             }
           },
 
+          "browser_ui": {
+            "type": "object",
+
+            "optional": true,
+
+            "properties": {
+              "tabs": {
+                "$ref": "ExtensionURL",
+                "optional": true
+              },
+              "deck": {
+                "$ref": "ExtensionURL",
+                "optional": true
+              },
+              "urlbar": {
+                "$ref": "ExtensionURL",
+                "optional": true
+              }
+            },
+
+            "additionalProperties": {
+              "type": "any",
+              "deprecated": "An unexpected property was found in the WebExtension manifest"
+            }
+          },
+
           "content_scripts": {
             "type": "array",
             "optional": true,

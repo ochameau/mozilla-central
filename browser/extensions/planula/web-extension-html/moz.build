@@ -1,0 +1,15 @@
+FINAL_TARGET = 'dist/bin/browser/extensions/web-extension-html@mozilla.org'
+
+FINAL_TARGET_FILES += [
+  'bootstrap.js',
+  'chrome.manifest',
+  'install.rdf',
+  'TweakMozbrowserIframes.jsm',
+]
+
+FINAL_TARGET_FILES.api += [
+  'api/browserAction.js',
+  'api/glue.jsm',
+  'api/tabs.js',
+  'api/utils.js',
+]
