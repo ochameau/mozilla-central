@@ -12,7 +12,9 @@ FINAL_TARGET_FILES.defaults.preferences += ['a-user.js']
 
 FINAL_TARGET_FILES.extensions += [
   'bookmark-button@mozilla.org/',
+  'bookmarks@mozilla.org/',
   'bug_XXXXXX_tooltip_overlink@mozilla.org/',
+  'sessionrestore@mozilla.org/',
   'user-agent-rewriter@mozilla.org/',
   'zyzzyva@mozilla.org/']
 
