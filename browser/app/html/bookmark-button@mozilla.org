@@ -1,0 +1,1 @@
+checkout/config/profile/extensions/bookmark-button@mozilla.org

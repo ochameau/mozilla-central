@@ -1,0 +1,22 @@
+{
+  "description": "implements the bookmark list",
+  "manifest_version": 2,
+  "name": "bookmarks",
+  "version": "1.0",
+
+  "applications": {
+    "gecko": {
+      "id": "bookmarks@mozilla.org"
+    }
+  },
+
+  "permissions": [
+    "bookmarks"
+  ],
+
+  "browser_action": {
+    "default_icon": "bookmarks.png",
+    "default_title": "List bookmarks",
+    "default_popup": "bookmarks.html"
+  }
+}

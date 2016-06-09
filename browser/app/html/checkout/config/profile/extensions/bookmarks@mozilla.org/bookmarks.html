@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      html, body {
+        width: 200px; height: 200px;
+        margin: 0; padding: 0;
+        font-size: 12px;
+        font-family: sans-serif;
+      }
+      ul {
+        margin: 0;
+        padding: 5px;
+      }
+      li {
+        margin: 0; padding: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="bookmarks"></ul>
+    <script>
+    chrome.bookmarks.getTree(function (results) {
+      let list = function (container, node) {
+        let li = document.createElement("li");
+        li.textContent = node.title || node.url;
+        li.title = node.url;
+        if (node.url) {
+          li.setAttribute("url", node.url);
+        }
+
+        if (node.children) {
+          let ul = document.createElement("ul");
+          node.children.forEach(list.bind(null, ul));
+          li.appendChild(ul);
+        }
+
+        container.appendChild(li);
+      };
+
+      let ul = document.getElementById("bookmarks");
+      ul.innerHTML = "";
+      results.forEach(list.bind(null, ul));
+    });
+    window.onclick = function (event) {
+      let url = event.target.getAttribute("url");
+      if (url) {
+        chrome.tabs.create({
+          "url": url
+        });
+        /*
+        Use that once tabs.update is implemented
+        chrome.tabs.getCurrent(function(tab) {
+          chrome.tabs.update(tab.id, {url: url});
+        });
+        */
+        window.close();
+      }
+    };
+    </script>
+  </body>
+</html>
