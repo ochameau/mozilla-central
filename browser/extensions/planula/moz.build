@@ -1,0 +1,4 @@
+DIRS = [
+  'browserui',
+  'web-extension-html',
+]

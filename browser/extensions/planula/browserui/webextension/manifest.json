@@ -1,0 +1,16 @@
+{
+  "description": "Browser UI",
+  "manifest_version": 2,
+  "name": "Browser UI",
+  "version": "1.0",
+
+  "applications": {
+    "gecko": {
+      "id": "browserui@mozilla.org"
+    }
+  },
+
+  "permissions": [
+    "storage"
+  ]
+}
