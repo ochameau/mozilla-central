@@ -645,6 +645,10 @@
 #endif
 @RESPATH@/browser/features/*
 
+; [Planula addon]
+@RESPATH@/browser/extensions/web-extension-html@mozilla.org/*
+@RESPATH@/browser/extensions/html-runner@mozilla.org/*
+
 ; [Webide Files]
 @RESPATH@/browser/chrome/webide@JAREXT@
 @RESPATH@/browser/chrome/webide.manifest
