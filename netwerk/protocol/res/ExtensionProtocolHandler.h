@@ -23,7 +23,9 @@ public:
   NS_FORWARD_NSIPROTOCOLHANDLER(SubstitutingProtocolHandler::)
   NS_FORWARD_NSISUBSTITUTINGPROTOCOLHANDLER(SubstitutingProtocolHandler::)
 
-  ExtensionProtocolHandler() : SubstitutingProtocolHandler("moz-extension") {}
+  ExtensionProtocolHandler() : SubstitutingProtocolHandler("moz-extension",
+    URI_STD | URI_IS_UI_RESOURCE | URI_IS_LOCAL_RESOURCE,
+    /* aEnforceFileOrJar = */ false) {}
 
 protected:
   ~ExtensionProtocolHandler() {}
