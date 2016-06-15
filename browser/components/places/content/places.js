@@ -96,8 +96,14 @@ var PlacesOrganizer = {
     this._initFolderTree();
 
     var leftPaneSelection = "AllBookmarks"; // default to all-bookmarks
-    if (window.arguments && window.arguments[0])
+    if (window.arguments && window.arguments[0]) {
       leftPaneSelection = window.arguments[0];
+    } else if (location.search) {
+      let searchParams = new URLSearchParams(location.search.substring(1));
+      if (searchParams.has("entrypoint")) {
+        leftPaneSelection = searchParams.get("entrypoint");
+      }
+    }
 
     this.selectLeftPaneContainerByHierarchy(leftPaneSelection);
     if (leftPaneSelection === "History") {

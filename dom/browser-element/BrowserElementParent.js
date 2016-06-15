@@ -343,6 +343,15 @@ BrowserElementParent.prototype = {
                          .ownerIsWidget;
     this._mm.addMessageListener('browser-element-api:call', this);
     this._mm.loadFrameScript("chrome://global/content/extensions.js", true);
+    this._mm.addMessageListener("Forms:ShowDropDown", this._showDropDown.bind(this));
+  },
+
+  _showDropDown: function(aMsg) {
+    if (!this._isAlive() || this._isWidget) {
+      return;
+    }
+
+    this._fireSelectMenuEvent(aMsg.data);
   },
 
   receiveMessage: function(aMsg) {
@@ -512,6 +521,21 @@ BrowserElementParent.prototype = {
       this._domRequestReady = true;
       this._runPendingAPICall();
     }
+  },
+
+  _fireSelectMenuEvent: function(data) {
+    let evt = this._createEvent('selectmenu', data, /* cancellable */ true);
+    var self = this;
+
+    Cu.exportFunction(function(index) {
+      self._mm.sendAsyncMessage('Forms:SelectDropDownItem', {value: index});
+    }, evt.detail, { defineAs: 'select' });
+
+    Cu.exportFunction(function(index) {
+      self._mm.sendAsyncMessage('Forms:DismissedDropDown', {});
+    }, evt.detail, { defineAs: 'close' });
+
+    return !this._frameElement.dispatchEvent(evt);
   },
 
   _fireCtxMenuEvent: function(data) {
