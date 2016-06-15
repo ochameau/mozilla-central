@@ -22,6 +22,8 @@ XPCOMUtils.defineLazyModuleGetter(this, "ManifestFinder",
                                   "resource://gre/modules/ManifestFinder.jsm");
 XPCOMUtils.defineLazyModuleGetter(this, "ManifestObtainer",
                                   "resource://gre/modules/ManifestObtainer.jsm");
+XPCOMUtils.defineLazyModuleGetter(this, "SelectContentHelper",
+                                  "resource://gre/modules/SelectContentHelper.jsm");
 
 
 var kLongestReturnedString = 128;
@@ -237,6 +239,11 @@ BrowserElementChild.prototype = {
     // is not what we want!
     addEventListener('unload',
                      this._unloadHandler.bind(this),
+                     /* useCapture = */ false,
+                     /* wantsUntrusted = */ false);
+
+    addEventListener('mozshowdropdown',
+                    this._dropdownMenuHandler.bind(this),
                      /* useCapture = */ false,
                      /* wantsUntrusted = */ false);
 
@@ -817,6 +824,11 @@ BrowserElementChild.prototype = {
     e.preventDefault();
   },
 
+  _dropdownMenuHandler: function(e) {
+    debug("Got dropdown");
+    new SelectContentHelper(e.target, global);
+  },
+
   _contextmenuHandler: function(e) {
     debug("Got contextmenu");
 
@@ -1041,7 +1053,13 @@ BrowserElementChild.prototype = {
       }
     }
 
-    let sandbox = new Cu.Sandbox([content], {
+    let principal = content.document.nodePrincipal;
+    let isSystemPrincipal = Services.scriptSecurityManager.isSystemPrincipal(principal);
+    if (!isSystemPrincipal) {
+      principal = [principal];
+    }
+
+    let sandbox = new Cu.Sandbox(principal, {
       sandboxPrototype: content,
       sandboxName: "browser-api-execute-script",
       allowWaivers: false,
@@ -1106,6 +1124,13 @@ BrowserElementChild.prototype = {
   },
 
   _getContentDimensions: function() {
+    if (!content.document.body) {
+      return {
+        width: 0,
+        height: 0
+      }
+    }
+
     return {
       width: content.document.body.scrollWidth,
       height: content.document.body.scrollHeight

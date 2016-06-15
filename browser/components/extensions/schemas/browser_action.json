@@ -28,6 +28,14 @@
                 "optional": true,
                 "preprocess": "localize"
               },
+              "default_panel": {
+                "type": "string",
+                "optional": true
+              },
+              "default_orientation": {
+                "type": "string",
+                "optional": true
+              },
               "browser_style": {
                 "type": "boolean",
                 "optional": true

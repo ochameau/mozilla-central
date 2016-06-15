@@ -23,6 +23,8 @@ using namespace mozilla::dom;
 bool
 AddonManagerWebAPI::IsValidSite(nsIURI* uri)
 {
+  return true;
+
   if (!uri) {
     return false;
   }

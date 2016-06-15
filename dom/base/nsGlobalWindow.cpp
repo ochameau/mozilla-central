@@ -4522,9 +4522,30 @@ nsGlobalWindow::GetOwnPropertyNames(JSContext* aCx, nsTArray<nsString>& aNames,
 /* static */ bool
 nsGlobalWindow::IsPrivilegedChromeWindow(JSContext* aCx, JSObject* aObj)
 {
+
+  nsIPrincipal* principal = nsContentUtils::ObjectPrincipal(aObj);
+
   // For now, have to deal with XPConnect objects here.
-  return xpc::WindowOrNull(aObj)->IsChromeWindow() &&
-         nsContentUtils::ObjectPrincipal(aObj) == nsContentUtils::GetSystemPrincipal();
+  if (xpc::WindowOrNull(aObj)->IsChromeWindow() &&
+      principal == nsContentUtils::GetSystemPrincipal()) {
+    return true;
+  }
+
+  nsCOMPtr<nsIPermissionManager> permMgr =
+    services::GetPermissionManager();
+  if (!permMgr) {
+    NS_ERROR("No PermissionManager available!");
+    return false;
+  }
+
+  uint32_t permission = nsIPermissionManager::DENY_ACTION;
+  permMgr->TestExactPermissionFromPrincipal(principal, "root-window", &permission);
+
+  if (permission == nsIPermissionManager::ALLOW_ACTION) {
+    return true;
+  }
+
+  return false;
 }
 
 /* static */ bool
@@ -8483,7 +8504,8 @@ nsGlobalWindow::CloseOuter(bool aTrustedCaller)
       !StringBeginsWith(url, NS_LITERAL_STRING("about:neterror")) &&
       !mHadOriginalOpener && !aTrustedCaller) {
     bool allowClose = mAllowScriptsToClose ||
-      Preferences::GetBool("dom.allow_scripts_to_close_windows", true);
+      Preferences::GetBool("dom.allow_scripts_to_close_windows", true) ||
+      url.EqualsASCII(Preferences::GetCString("browser.chromeURL"));
     if (!allowClose) {
       // We're blocking the close operation
       // report localized error msg in JS console

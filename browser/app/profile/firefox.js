@@ -62,7 +62,7 @@ pref("extensions.systemAddon.update.url", "https://aus5.mozilla.org/update/3/Sys
 
 // Disable add-ons that are not installed by the user in all scopes by default.
 // See the SCOPE constants in AddonManager.jsm for values to use here.
-pref("extensions.autoDisableScopes", 15);
+pref("extensions.autoDisableScopes", 0);
 
 // Add-on content security policies.
 pref("extensions.webextensions.base-content-security-policy", "script-src 'self' https://* moz-extension: blob: filesystem: 'unsafe-eval' 'unsafe-inline'; object-src 'self' https://* moz-extension: blob: filesystem:;");
@@ -1493,3 +1493,10 @@ pref("print.use_simplify_page", true);
 // Space separated list of URLS that are allowed to send objects (instead of
 // only strings) through webchannels. This list is duplicated in mobile/android/app/mobile.js
 pref("webchannel.allowObject.urlWhitelist", "https://accounts.firefox.com https://content.cdn.mozilla.net https://input.mozilla.org https://support.mozilla.org https://install.mozilla.org");
+
+pref("extensions.webextensions.addon_implementation", true);
+pref("browser.cache.disk.enable", false);
+pref("browser.dom.window.dump.enabled", true);
+pref("toolkit.startup.max_resumed_crashes", -1);
+pref("toolkit.startup.max_resumed_crashes", -1);
+pref("xpinstall.signatures.required", false);

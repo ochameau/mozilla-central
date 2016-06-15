@@ -586,7 +586,9 @@ this.MessageChannel = {
     // owner instead of a message manager, so make sure to convert it to a
     // message manager first if necessary.
     let {target} = data;
-    if (!(target instanceof Ci.nsIMessageSender)) {
+    if (target instanceof Ci.nsIDOMHTMLIFrameElement) {
+      target = target.QueryInterface(Ci.nsIFrameLoaderOwner).frameLoader.messageManager;
+    } else if (!(target instanceof Ci.nsIMessageSender)) {
       target = target.messageManager;
     }
 
