@@ -652,7 +652,7 @@ nsContainerFrame::SyncWindowProperties(nsPresContext*       aPresContext,
     return;
 
   Element* rootElement = aPresContext->Document()->GetRootElement();
-  if (!rootElement || !rootElement->IsXULElement()) {
+  if (!rootElement /*|| !rootElement->IsXULElement()*/) {
     // Scrollframes use native widgets which don't work well with
     // translucent windows, at least in Windows XP. So if the document
     // has a root scrollrame it's useless to try to make it transparent,
@@ -696,11 +696,13 @@ nsContainerFrame::SyncWindowProperties(nsPresContext*       aPresContext,
     return;
   }
 
-  nsBoxLayoutState aState(aPresContext, aRC);
-  nsSize minSize = rootFrame->GetXULMinSize(aState);
-  nsSize maxSize = rootFrame->GetXULMaxSize(aState);
+  if (rootElement->IsXULElement()) {
+    nsBoxLayoutState aState(aPresContext, aRC);
+    nsSize minSize = rootFrame->GetXULMinSize(aState);
+    nsSize maxSize = rootFrame->GetXULMaxSize(aState);
 
-  SetSizeConstraints(aPresContext, windowWidget, minSize, maxSize);
+    SetSizeConstraints(aPresContext, windowWidget, minSize, maxSize);
+  }
 #endif
 }
 
