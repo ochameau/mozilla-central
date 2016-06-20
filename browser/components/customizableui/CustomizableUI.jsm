@@ -203,6 +203,10 @@ var CustomizableUIInternal = {
       "sync-button",
     ];
 
+    if (!AppConstants.MOZ_DEV_EDITION) {
+      panelPlacements.splice(-1, 0, "developer-button");
+    }
+
     if (AppConstants.E10S_TESTING_ONLY) {
       if (gPalette.has("e10s-button")) {
         let newWindowIndex = panelPlacements.indexOf("new-window-button");
@@ -234,6 +238,10 @@ var CustomizableUIInternal = {
       "downloads-button",
       "home-button",
     ];
+
+    if (AppConstants.MOZ_DEV_EDITION) {
+      navbarPlacements.splice(2, 0, "developer-button");
+    }
 
     if (Services.prefs.getBoolPref(kPrefWebIDEInNavbar)) {
       navbarPlacements.push("webide-button");
