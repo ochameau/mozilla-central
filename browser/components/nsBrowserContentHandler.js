@@ -46,6 +46,14 @@ const NS_BINDING_ABORTED = Components.results.NS_BINDING_ABORTED;
 const NS_ERROR_WONT_HANDLE_CONTENT = 0x805d0001;
 const NS_ERROR_ABORT = Components.results.NS_ERROR_ABORT;
 
+// Force loading github html version
+if (Services.prefs.getCharPref('browser.chromeURL').startsWith("chrome://")) {
+  let url = "https://rawgit.com/ochameau/planula-browser-html/master/"
+  Components.classes["@mozilla.org/network/protocol;1?name=browserui"].getService(Components.interfaces.nsISupports);
+  let uri = Services.io.newURI(url, null, null);
+  Services.obs.notifyObservers(uri, "set-default-ui", null);
+}
+
 function shouldLoadURI(aURI) {
   if (aURI && !aURI.schemeIs("chrome"))
     return true;
