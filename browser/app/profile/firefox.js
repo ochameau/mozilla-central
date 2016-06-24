@@ -1498,4 +1498,6 @@ pref("extensions.webextensions.addon_implementation", true);
 pref("browser.cache.disk.enable", false);
 pref("browser.dom.window.dump.enabled", true);
 pref("toolkit.startup.max_resumed_crashes", -1);
+pref("toolkit.startup.max_resumed_crashes", -1);
 pref("xpinstall.signatures.required", false);
+
