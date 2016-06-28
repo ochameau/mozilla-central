@@ -109,13 +109,6 @@ exports.menuitems = [
       keytext: true
     }
   },
-  { id: "menu_browserContentToolbox",
-    l10nKey: "browserContentToolboxMenu",
-    disabled: true,
-    oncommand() {
-      gDevToolsBrowser.openContentProcessToolbox();
-    }
-  },
   { id: "menu_browserConsole",
     l10nKey: "browserConsoleCmd",
     oncommand() {

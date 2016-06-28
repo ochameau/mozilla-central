@@ -366,6 +366,54 @@ function removeTopLevelItems(doc) {
 }
 
 /**
+ * Add menu before the browser console entry to list the browser content
+ * toolboxes. It open a dynamic menu which list all the currently active
+ * content processes. You may get more than just one content process by
+ * setting dom.ipc.processCount to something higher than 1 and opening
+ * more than one tab.
+ *
+ * @param {XULDocument} doc
+ *        The document to which keys and menus are to be added.
+ */
+function addContentProcessToolboxes(doc) {
+  let contentToolboxes = doc.createElement("menu");
+  contentToolboxes.setAttribute("id", "menu_browserContentToolbox");
+  contentToolboxes.setAttribute("label", l10n("browserContentToolboxMenu.label"));
+  contentToolboxes.setAttribute("accesskey", l10n("browserContentToolboxMenu.accesskey"));
+  let menupopup = doc.createElement("menupopup");
+  menupopup.addEventListener("popupshown", e => {
+    // Note that Services.ppmm also includes the parent process
+    // Which is the first process whose id is 0
+    let { childCount } = Services.ppmm;
+    if (childCount == 1) {
+      let menuitem = createMenuItem({
+        doc,
+        label: l10n("browserContentToolboxMenu.noContentProcessMessage")
+      });
+      menupopup.appendChild(menuitem);
+      return;
+    }
+    for (let processId = 1; processId < childCount; processId++) {
+      let menuitem = createMenuItem({
+        doc,
+        label: "Content process #" + processId
+      });
+      menuitem.addEventListener("command",
+        gDevToolsBrowser.openContentProcessToolbox.bind(gDevToolsBrowser, processId));
+      menupopup.appendChild(menuitem);
+    }
+  });
+  menupopup.addEventListener("popuphidden", e => {
+    while(menupopup.firstChild) menupopup.firstChild.remove();
+  });
+  contentToolboxes.appendChild(menupopup);
+
+  let endSeparator = doc.getElementById("menu_browserConsole");
+  let menu = doc.getElementById("menuWebDeveloperPopup");
+  menu.insertBefore(contentToolboxes, endSeparator);
+};
+
+/**
  * Add menus and shortcuts to a browser document
  *
  * @param {XULDocument} doc
@@ -375,6 +423,8 @@ exports.addMenus = function (doc) {
   addTopLevelItems(doc);
 
   addAllToolsToMenu(doc);
+
+  addContentProcessToolboxes(doc);
 };
 
 /**
