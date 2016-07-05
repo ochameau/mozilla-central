@@ -166,6 +166,7 @@ const KEY_APP_SYSTEM_LOCAL            = "app-system-local";
 const KEY_APP_SYSTEM_SHARE            = "app-system-share";
 const KEY_APP_SYSTEM_USER             = "app-system-user";
 const KEY_APP_TEMPORARY               = "app-temporary";
+const KEY_APP_SOURCE                  = "app-source";
 
 const NOTIFICATION_FLUSH_PERMISSIONS  = "flush-pending-permissions";
 const XPI_PERMISSION                  = "install";
@@ -1370,7 +1371,7 @@ var loadManifestFromDir = Task.async(function*(aDir, aInstallLocation) {
   if (file.leafName == FILE_WEB_MANIFEST) {
     addon = yield loadManifestFromWebManifest(uri);
     if (!addon.id) {
-      if (aInstallLocation == TemporaryInstallLocation) {
+      if (aInstallLocation == TemporaryInstallLocation || aInstallLocation == SourceInstallLocation) {
         // Generate a unique ID based on the directory path of
         // this temporary add-on location.
         const hasher = Cc["@mozilla.org/security/hash;1"]
@@ -2696,6 +2697,9 @@ this.XPIProvider = {
       XPIProvider.installLocations.push(TemporaryInstallLocation);
       XPIProvider.installLocationsByName[TemporaryInstallLocation.name] =
         TemporaryInstallLocation;
+      XPIProvider.installLocations.push(SourceInstallLocation);
+      XPIProvider.installLocationsByName[SourceInstallLocation.name] =
+        SourceInstallLocation;
 
       // The profile location is always enabled
       addDirectoryInstallLocation(KEY_APP_PROFILE, KEY_PROFILEDIR,
@@ -3985,15 +3989,111 @@ this.XPIProvider = {
    * @param aFile
    *        An nsIFile for the unpacked add-on directory or XPI file.
    *
+   * @return See installAddonFromSource return value.
+   */
+  installTemporaryAddon: function(aFile) {
+    return this.installAddonFromSources(aFile, TemporaryInstallLocation);
+  },
+
+  /**
+   * Installs add-on from a local XPI file or directory.
+   *
+   * @param aFile
+   *        An nsIFile for the unpacked add-on directory or XPI file.
+   * @param aInstallLocation
+   *        Define a custom install location object, other than default one,
+   *        "SourceInstallLocation" which maintains a list of local addons over
+   *        firefox restarts.
+   *
    * @return a Promise that resolves to an Addon object on success, or rejects
    *         if the add-on is not a valid restartless add-on or if the
-   *         same ID is already temporarily installed
+   *         same ID is already installed.
    */
-  installTemporaryAddon: Task.async(function*(aFile) {
+  installAddonFromSources: Task.async(function*(aFile, aInstallLocation = SourceInstallLocation) {
     if (aFile.exists() && aFile.isFile()) {
       flushJarCache(aFile);
     }
-    let addon = yield loadManifestFromFile(aFile, TemporaryInstallLocation);
+    let addon = yield loadManifestFromFile(aFile, aInstallLocation);
+
+    aInstallLocation.installAddon(addon.id, aFile, null, null);
+
+    if (!addon.bootstrap) {
+      throw new Error("Only restartless (bootstrap) add-ons"
+                    + " can be installed from sources:", addon.id);
+    }
+    let installReason = BOOTSTRAP_REASONS.ADDON_INSTALL;
+    let oldAddon = yield new Promise(
+                   resolve => XPIDatabase.getVisibleAddonForID(addon.id, resolve));
+    if (oldAddon) {
+      if (!oldAddon.bootstrap) {
+        logger.warn("Non-restartless Add-on is already installed", addon.id);
+        throw new Error("Non-restartless add-on with ID "
+                        + oldAddon.id + " is already installed");
+      }
+      else {
+        logger.warn("Addon with ID " + oldAddon.id + " already installed,"
+                    + " older version will be disabled");
+
+        let existingAddonID = oldAddon.id;
+        let existingAddon = oldAddon._sourceBundle;
+
+        // We'll be replacing a currently active bootstrapped add-on so
+        // call its uninstall method
+        let newVersion = addon.version;
+        let oldVersion = oldAddon.version;
+        if (Services.vc.compare(newVersion, oldVersion) >= 0) {
+          installReason = BOOTSTRAP_REASONS.ADDON_UPGRADE;
+        } else {
+          installReason = BOOTSTRAP_REASONS.ADDON_DOWNGRADE;
+        }
+        let uninstallReason = installReason;
+
+        if (oldAddon.active) {
+          XPIProvider.callBootstrapMethod(oldAddon, existingAddon,
+                                          "shutdown", uninstallReason,
+                                          { newVersion });
+        }
+        this.callBootstrapMethod(oldAddon, existingAddon,
+                                 "uninstall", uninstallReason, { newVersion });
+        this.unloadBootstrapScope(existingAddonID);
+        flushChromeCaches();
+      }
+    }
+
+    let file = addon._sourceBundle;
+
+    XPIProvider._addURIMapping(addon.id, file);
+    XPIProvider.callBootstrapMethod(addon, file, "install", installReason);
+    addon.state = AddonManager.STATE_INSTALLED;
+    logger.debug("Install of temporary addon in " + aFile.path + " completed.");
+    addon.visible = true;
+    addon.enabled = true;
+    addon.active = true;
+
+    addon = XPIDatabase.addAddonMetadata(addon, file.persistentDescriptor);
+
+    XPIStates.addAddon(addon);
+    XPIDatabase.saveChanges();
+    //XPIStates.save();
+
+    AddonManagerPrivate.callAddonListeners("onInstalling", addon.wrapper,
+                                           false);
+    XPIProvider.callBootstrapMethod(addon, file, "startup",
+                                    BOOTSTRAP_REASONS.ADDON_ENABLE);
+    AddonManagerPrivate.callInstallListeners("onExternalInstall",
+                                             null, addon.wrapper,
+                                             oldAddon ? oldAddon.wrapper : null,
+                                             false);
+    AddonManagerPrivate.callAddonListeners("onInstalled", addon.wrapper);
+
+    return addon.wrapper;
+  }),
+
+/*
+  installAddonFromSources: Task.async(function*(aFile) {
+    let addon = yield loadManifestFromFile(aFile, SourceInstallLocation);
+
+    SourceInstallLocation.installAddon(addon.id, aFile, null, null);
 
     if (!addon.bootstrap) {
       throw new Error("Only restartless (bootstrap) add-ons"
@@ -4052,6 +4152,7 @@ this.XPIProvider = {
 
     XPIStates.addAddon(addon);
     XPIDatabase.saveChanges();
+    XPIStates.save();
 
     AddonManagerPrivate.callAddonListeners("onInstalling", addon.wrapper,
                                            false);
@@ -4064,7 +4165,7 @@ this.XPIProvider = {
     AddonManagerPrivate.callAddonListeners("onInstalled", addon.wrapper);
 
     return addon.wrapper;
-  }),
+  }),*/
 
   /**
    * Returns an Addon corresponding to an instance ID.
@@ -5099,7 +5200,8 @@ this.XPIProvider = {
       // that an uninstall is necessary on next startup. Temporary add-ons are
       // automatically uninstalled on shutdown anyway so there is no need to
       // do this for them.
-      if (aAddon._installLocation.name != KEY_APP_TEMPORARY) {
+      if (aAddon._installLocation.name != KEY_APP_TEMPORARY &&
+          aAddon._installLocation.name != KEY_APP_SOURCE) {
         let stage = aAddon._installLocation.getStagingDir();
         stage.append(aAddon.id);
         if (!stage.exists())
@@ -8660,6 +8762,46 @@ const TemporaryInstallLocation = {
   getStagingDir: () => {},
 }
 
+const SourceInstallLocation = {
+  locked: false,
+  name: KEY_APP_SOURCE,
+  scope: AddonManager.SCOPE_TEMPORARY,
+  getAddonLocations: () => {
+    let locations = new Map();
+    let addons = SourceInstallLocation._addons;
+    for (let id in addons) {
+      locations.set(id, new nsIFile(addons[id]));
+    }
+    return locations;
+  },
+  isLinkedAddon: () => false,
+  installAddon: (id, file) => {
+    SourceInstallLocation._addons[id] = file.path;
+    SourceInstallLocation._save();
+  },
+  uninstallAddon: (id) => {
+    delete SourceInstallLocation._addons[id];
+    SourceInstallLocation._save();
+  },
+  getStagingDir: () => {},
+  get _addons() {
+    let addons = {};
+    try {
+      addons = JSON.parse(Services.prefs.getCharPref("extensions.addonFromSources"));
+    } catch(e) {}
+    if (typeof(addons) != "object") {
+      addons = {};
+    }
+    delete this._addons;
+    this._addons = addons;
+    return this._addons;
+  },
+  _save: () => {
+    Services.prefs.setCharPref("extensions.addonFromSources", JSON.stringify(SourceInstallLocation._addons));
+    Services.prefs.savePrefFile(null);
+  },
+};
+
 /**
  * An object that identifies a registry install location for add-ons. The location
  * consists of a registry key which contains string values mapping ID to the
@@ -8732,9 +8874,7 @@ WinRegInstallLocation.prototype = {
     for (let i = 0; i < count; ++i) {
       let id = aKey.getValueName(i);
 
-      let file = Cc["@mozilla.org/file/local;1"].
-                createInstance(Ci.nsIFile);
-      file.initWithPath(aKey.readStringValue(id));
+      let file = new nsIFile(aKey.readStringValue(id));
 
       if (!file.exists()) {
         logger.warn("Ignoring missing add-on in " + file.path);
