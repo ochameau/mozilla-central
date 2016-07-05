@@ -54,7 +54,7 @@ module.exports = createClass({
       file = file.parent;
     }
 
-    AddonManager.installTemporaryAddon(file)
+    AddonManager.installAddonFromSources(file)
       .catch(e => {
         console.error(e);
         this.setState({ installError: e.message });
