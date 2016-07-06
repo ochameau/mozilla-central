@@ -427,7 +427,7 @@ DebuggerClient.prototype = {
    *        Called with the response packet and a TabClient
    *        (which will be undefined on error).
    */
-  attachTab: function (aTabActor, aOnResponse = noop) {
+  attachTab: function (aTabActor, aOptions = {}, aOnResponse = noop) {
     if (this._clients.has(aTabActor)) {
       let cachedTab = this._clients.get(aTabActor);
       let cachedResponse = {
@@ -441,7 +441,8 @@ DebuggerClient.prototype = {
 
     let packet = {
       to: aTabActor,
-      type: "attach"
+      type: "attach",
+      chrome: aOptions.chrome
     };
     return this.request(packet).then(aResponse => {
       let tabClient;

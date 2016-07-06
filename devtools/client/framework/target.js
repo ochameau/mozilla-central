@@ -395,7 +395,8 @@ TabTarget.prototype = {
     this._setupRemoteListeners();
 
     let attachTab = () => {
-      this._client.attachTab(this._form.actor, (response, tabClient) => {
+      let chrome = Services.prefs.getBoolPref("devtools.chrome.enabled");
+      this._client.attachTab(this._form.actor, { chrome }, (response, tabClient) => {
         if (!tabClient) {
           this._remote.reject("Unable to attach to the tab");
           return;
