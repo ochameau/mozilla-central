@@ -192,7 +192,9 @@
           } catch (ex) {
             // Prevent a bad listener from interfering with the others.
             let msg = ex + ": " + ex.stack;
-            console.error(msg);
+            if (typeof console == "object") {
+              console.error(msg);
+            }
             dump(msg + "\n");
           }
         }
