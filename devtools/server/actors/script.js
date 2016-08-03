@@ -2231,6 +2231,35 @@ function hackDebugger(Debugger) {
 
 
 /**
+ * Creates an actor for handling chrome debugging. ChromeDebuggerActor is a
+ * thin wrapper over ThreadActor, slightly changing some of its behavior.
+ *
+ * @param aConnection object
+ *        The DebuggerServerConnection with which this ChromeDebuggerActor
+ *        is associated. (Currently unused, but required to make this
+ *        constructor usable with addGlobalActor.)
+ *
+ * @param aParent object
+ *        This actor's parent actor. See ThreadActor for a list of expected
+ *        properties.
+ */
+function ChromeDebuggerActor(aConnection, aParent)
+{
+  ThreadActor.prototype.initialize.call(this, aParent);
+}
+
+ChromeDebuggerActor.prototype = Object.create(ThreadActor.prototype);
+
+Object.assign(ChromeDebuggerActor.prototype, {
+  constructor: ChromeDebuggerActor,
+
+  // A constant prefix that will be used to form the actor ID by the server.
+  actorPrefix: "chromeDebugger"
+});
+
+exports.ChromeDebuggerActor = ChromeDebuggerActor;
+
+/**
  * Creates an actor for handling add-on debugging. AddonThreadActor is
  * a thin wrapper over ThreadActor.
  *

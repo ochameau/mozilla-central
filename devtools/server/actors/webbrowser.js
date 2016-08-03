@@ -1217,19 +1217,6 @@ TabActor.prototype = {
   _createExtraActors: createExtraActors,
   _appendExtraActors: appendExtraActors,
 
-  enableChrome: function () {
-    if (false /* check something to allow this or not */) {
-      throw new Error({
-        error: "forbidden",
-        message: "Can't enable chrome debugging."
-      });
-    }
-    this.makeDebugger = makeDebugger.bind(null, {
-      findDebuggees: dbg => dbg.findAllGlobals(),
-      shouldAddNewGlobalAsDebuggee: () => true
-    });
-  },
-
   /**
    * Does the actual work of attaching to a tab.
    */
@@ -1597,10 +1584,6 @@ TabActor.prototype = {
   onAttach(request) {
     if (this.exited) {
       return { type: "exited" };
-    }
-
-    if (request.chrome) {
-      this.enableChrome();
     }
 
     this._attach();
