@@ -1793,7 +1793,7 @@ Toolbox.prototype = {
 
     // Handle the case where the previous host happens to match the current
     // host. If so, switch to bottom if it's not already used, and side if not.
-    if (hostType === this._host.type) {
+    if (hostType === this.hostType) {
       if (hostType === Toolbox.HostType.BOTTOM) {
         hostType = Toolbox.HostType.SIDE;
       } else {
@@ -1812,7 +1812,7 @@ Toolbox.prototype = {
    *        The host type of the new host object
    */
   switchHost: function (hostType) {
-    if (hostType == this._host.type || !this._target.isLocalTab) {
+    if (hostType == this.hostType || !this._target.isLocalTab) {
       return null;
     }
 
@@ -2115,7 +2115,7 @@ Toolbox.prototype = {
     this._threadClient = null;
 
     // We need to grab a reference to win before this._host is destroyed.
-    let win = this.frame.ownerDocument.defaultView;
+    let win = this.win;
 
     if (this._requisition) {
       CommandUtils.destroyRequisition(this._requisition, this.target);
