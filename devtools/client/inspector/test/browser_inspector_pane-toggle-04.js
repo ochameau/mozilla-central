@@ -25,7 +25,7 @@ add_task(function* () {
   info("Changing toolbox host to a window.");
   yield toolbox.switchHost(Toolbox.HostType.WINDOW);
 
-  let hostWindow = toolbox._host._window;
+  let hostWindow = toolbox.win.parent;
   let originalWidth = hostWindow.outerWidth;
   let originalHeight = hostWindow.outerHeight;
 

@@ -90,5 +90,5 @@ function onExpandClosure(results) {
 
   gVariablesView.window.focus();
   gJSTerm.once("sidebar-closed", finishTest);
-  EventUtils.synthesizeKey("VK_ESCAPE", {});
+  EventUtils.synthesizeKey("VK_ESCAPE", {}, gVariablesView.window);
 }

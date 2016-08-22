@@ -25,8 +25,14 @@ add_task(function* () {
   let toolbox = yield gDevTools.showToolbox(target, null,
     Toolbox.HostType.BOTTOM);
 
+  let onTitleChanged = waitForTitleChange(toolbox);
   yield toolbox.selectTool("inspector");
+  yield onTitleChanged;
+
   yield toolbox.switchHost(Toolbox.HostType.WINDOW);
+  // Wait for title change event *after* switch host, in order to listen
+  // for the event on the WINDOW host window, which only exists after switchHost
+  yield waitForTitleChange(toolbox);
 
   is(getTitle(), `Developer Tools - Page title - ${URL}`,
     "Devtools title correct after switching to detached window host");
@@ -56,6 +62,8 @@ add_task(function* () {
   // Listen to will-navigate to check if the view is empty
   let willNavigate = toolbox.target.once("will-navigate");
 
+  onTitleChanged = waitForTitleChange(toolbox);
+
   // Only select the iframe after we are able to select an element from the top
   // level document.
   let newRoot = toolbox.getPanel("inspector").once("new-root");
@@ -64,6 +72,7 @@ add_task(function* () {
 
   yield willNavigate;
   yield newRoot;
+  yield onTitleChanged;
 
   info("Navigation to the iframe is done, the inspector should be back up");
   is(getTitle(), `Developer Tools - Page title - ${URL}`,
@@ -82,4 +91,16 @@ add_task(function* () {
 
 function getTitle() {
   return Services.wm.getMostRecentWindow("devtools:toolbox").document.title;
+}
+
+// Wait for a given toolbox to get its title updated
+function waitForTitleChange(toolbox) {
+  let deferred = defer();
+  toolbox.win.parent.addEventListener("message", function onmessage(event) {
+    if (event.data.name == "set-host-title") {
+      toolbox.win.parent.removeEventListener("message", onmessage);
+      deferred.resolve();
+    }
+  });
+  return deferred.promise;
 }
