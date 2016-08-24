@@ -27,6 +27,7 @@ DevToolsModules(
     'toolbox-highlighter-utils.js',
     'toolbox-hosts.js',
     'toolbox-options.js',
+    'toolbox-wrapper.js',
     'toolbox.js',
     'ToolboxProcess.jsm',
 )

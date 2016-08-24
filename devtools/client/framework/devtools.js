@@ -10,6 +10,7 @@ const defer = require("devtools/shared/defer");
 
 // Load gDevToolsBrowser toolbox lazily as they need gDevTools to be fully initialized
 loader.lazyRequireGetter(this, "Toolbox", "devtools/client/framework/toolbox", true);
+loader.lazyRequireGetter(this, "ToolboxWrapper", "devtools/client/framework/toolbox-wrapper", true);
 loader.lazyRequireGetter(this, "gDevToolsBrowser", "devtools/client/framework/devtools-browser", true);
 
 const {defaultTools: DefaultTools, defaultThemes: DefaultThemes} =
@@ -419,28 +420,28 @@ DevTools.prototype = {
       });
     }
     else {
-      // No toolbox for target, create one
-      toolbox = new Toolbox(target, toolId, hostType, hostOptions);
+      let wrapper = new ToolboxWrapper(target, hostType, hostOptions);
 
-      this.emit("toolbox-created", toolbox);
+      wrapper.create(toolId)
+        .then(toolbox => {
+          this._toolboxes.set(target, toolbox);
 
-      this._toolboxes.set(target, toolbox);
+          this.emit("toolbox-created", toolbox);
 
-      toolbox.once("destroy", () => {
-        this.emit("toolbox-destroy", target);
-      });
+          toolbox.once("destroy", () => {
+            this.emit("toolbox-destroy", target);
+          });
 
-      toolbox.once("destroyed", () => {
-        this._toolboxes.delete(target);
-        this.emit("toolbox-destroyed", target);
-      });
+          toolbox.once("destroyed", () => {
+            this._toolboxes.delete(target);
+            this.emit("toolbox-destroyed", target);
+          });
 
-      // If toolId was passed in, it will already be selected before the
-      // open promise resolves.
-      toolbox.open().then(() => {
-        deferred.resolve(toolbox);
-        this.emit("toolbox-ready", toolbox);
-      });
+          toolbox.open().then(() => {
+            deferred.resolve(toolbox);
+            this.emit("toolbox-ready", toolbox);
+          });
+        });
     }
 
     return deferred.promise;
