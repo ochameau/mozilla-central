@@ -342,7 +342,7 @@ pref("devtools.telemetry.tools.opened.version", "{}");
 #ifdef RELEASE_BUILD
 pref("devtools.jsonview.enabled", false);
 #else
-pref("devtools.jsonview.enabled", true);
+pref("devtools.jsonview.enabled", false);
 #endif
 
 // Disable the HTML responsive design tool by default.  Currently disabled until

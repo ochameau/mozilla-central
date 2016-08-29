@@ -18,7 +18,6 @@ const promise = require("promise");
 const defer = require("devtools/shared/defer");
 const Telemetry = require("devtools/client/shared/telemetry");
 const { gDevTools } = require("./devtools");
-const { when: unload } = require("sdk/system/unload");
 
 // Load target and toolbox lazily as they need gDevTools to be fully initialized
 loader.lazyRequireGetter(this, "TargetFactory", "devtools/client/framework/target", true);
@@ -139,6 +138,11 @@ var gDevToolsBrowser = exports.gDevToolsBrowser = {
           for (let win of this._trackedBrowserWindows) {
             this.updateCommandAvailability(win);
           }
+        }
+        break;
+      case "sdk:loader:destroy":
+        if (subject.wrappedJSObject == require('@loader/unload')) {
+          gDevToolsBrowser.destroy(true);
         }
         break;
     }
@@ -690,10 +694,11 @@ var gDevToolsBrowser = exports.gDevToolsBrowser = {
   /**
    * All browser windows have been closed, tidy up remaining objects.
    */
-  destroy: function () {
+  destroy: function (unload = false) {
     Services.prefs.removeObserver("devtools.", gDevToolsBrowser);
     Services.obs.removeObserver(gDevToolsBrowser, "browser-delayed-startup-finished");
     Services.obs.removeObserver(gDevToolsBrowser.destroy, "quit-application");
+    Services.obs.removeObserver(gDevToolsBrowser, "sdk:loader:destroy");
 
     gDevToolsBrowser._pingTelemetry();
     gDevToolsBrowser._telemetry = null;
@@ -701,6 +706,8 @@ var gDevToolsBrowser = exports.gDevToolsBrowser = {
     for (let win of gDevToolsBrowser._trackedBrowserWindows) {
       gDevToolsBrowser._forgetBrowserWindow(win);
     }
+
+    gDevTools.destroy(unload);
   },
 };
 
@@ -725,6 +732,8 @@ gDevTools.on("toolbox-destroyed", gDevToolsBrowser._updateMenuCheckbox);
 
 Services.obs.addObserver(gDevToolsBrowser.destroy, "quit-application", false);
 Services.obs.addObserver(gDevToolsBrowser, "browser-delayed-startup-finished", false);
+// Watch for module loader unload. Fires when the tools are reloaded.
+Services.obs.addObserver(gDevToolsBrowser, "sdk:loader:destroy", false);
 
 // Fake end of browser window load event for all already opened windows
 // that is already fully loaded.
@@ -735,8 +744,3 @@ while (enumerator.hasMoreElements()) {
     gDevToolsBrowser._registerBrowserWindow(win);
   }
 }
-
-// Watch for module loader unload. Fires when the tools are reloaded.
-unload(function () {
-  gDevToolsBrowser.destroy();
-});
