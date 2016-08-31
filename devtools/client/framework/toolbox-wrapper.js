@@ -34,6 +34,10 @@ function ToolboxWrapper(target, hostType, hostOptions) {
   this.onHostMinimized = this.onHostMinimized.bind(this);
   this.onHostMaximized = this.onHostMaximized.bind(this);
   this.host = this.createHost(hostType, hostOptions);
+
+  this.toolboxPromise = new Promise(done => {
+    this.toolboxCreated = done;
+  });
 }
 
 ToolboxWrapper.prototype = {
@@ -44,15 +48,37 @@ ToolboxWrapper.prototype = {
         this.host.frame.ownerDocument.defaultView.addEventListener("message", this);
         this.host.frame.addEventListener("unload", this);
 
-        let toolbox = new Toolbox(this.target, toolId, this.host.type, this.host.frame.contentWindow, this.frameId);
-
         // Prevent reloading the toolbox when loading the tools in a tab (e.g. from about:debugging)
         if (!this.host.frame.contentWindow.location.href.startsWith("about:devtools-toolbox")) {
-          this.host.frame.setAttribute("src", "about:devtools-toolbox");
+          this.host.frame.setAttribute("src",
+            "about:devtools-toolbox?host=" + this.host.type + "&tool=" + toolId
+            + "&frameId=" + this.frameId + "&"
+            + this.targetToQueryParameters(this.target));
         }
 
-        return toolbox;
+        return this.toolboxPromise;
       });
+  },
+
+  targetToQueryParameters(target) {
+    if (target.tab) {
+      return "type=tab&id=" + target.tab.linkedBrowser.outerWindowID;
+    }
+    let obj = {
+      form: target.form,
+      client: target.client.options,
+      chrome: target.chrome,
+      isTabActor: target.isTabActor
+    };
+    dump("Unsupported target: "+JSON.stringify(target.form)+"!\n");
+    for(var i in target) {
+      try {
+        if (typeof(target[i])!="function")
+        dump(i+" = "+target[i]+"\n");
+      } catch(e) {}
+    }
+    return "type=complex&form=" +     console.log("unsupported target", target);
+    return "";
   },
 
   handleEvent(event) {
@@ -91,6 +117,14 @@ ToolboxWrapper.prototype = {
         break;
       case "set-host-title":
         this.host.setTitle(event.data.title);
+        break;
+      case "toolbox-created":
+        let window = this.host.frame.contentWindow;
+        if (window.wrappedJSObject) {
+          window = window.wrappedJSObject;
+        }
+        let { toolbox } = window;
+        this.toolboxCreated(toolbox);
         break;
       case "destroy-host":
         this.destroy();

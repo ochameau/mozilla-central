@@ -12,11 +12,7 @@ var { loader, require } = Cu.import("resource://devtools/shared/Loader.jsm", {})
 // Require this module to setup core modules
 loader.require("devtools/client/framework/devtools-browser");
 
-var { gDevTools } = require("devtools/client/framework/devtools");
-var { TargetFactory } = require("devtools/client/framework/target");
-var { Toolbox } = require("devtools/client/framework/toolbox");
 var Services = require("Services");
-var { DebuggerClient } = require("devtools/shared/client/main");
 var { PrefsHelper } = require("devtools/client/shared/prefs");
 var { Task } = require("devtools/shared/task");
 
@@ -29,34 +25,18 @@ var Prefs = new PrefsHelper("devtools.debugger", {
   chromeDebuggingWebSocket: ["Bool", "chrome-debugging-websocket"],
 });
 
-var gToolbox, gClient;
-
 var connect = Task.async(function*() {
   window.removeEventListener("load", connect);
-  // Initiate the connection
-  let transport = yield DebuggerClient.socketConnect({
-    host: Prefs.chromeDebuggingHost,
-    port: Prefs.chromeDebuggingPort,
-    webSocket: Prefs.chromeDebuggingWebSocket,
-  });
-  gClient = new DebuggerClient(transport);
-  yield gClient.connect();
+
+  let params = "host=" + Prefs.chromeDebuggingHost +
+               "&port=" + Prefs.chromeDebuggingPort +
+               "&ws=" + Prefs.chromeDebuggingWebSocket;
   let addonID = getParameterByName("addonID");
 
   if (addonID) {
-    let { addons } = yield gClient.listAddons();
-    let addonActor = addons.filter(addon => addon.id === addonID).pop();
-    openToolbox({
-      form: addonActor,
-      chrome: true,
-      isTabActor: addonActor.isWebExtension ? true : false
-    });
+    openToolbox(params + "&type=addon&id=" + addonID);
   } else {
-    let response = yield gClient.getProcess();
-    openToolbox({
-      form: response.form,
-      chrome: true
-    });
+    openToolbox(params + "&type=process");
   }
 });
 
@@ -85,38 +65,28 @@ window.addEventListener("load", function() {
   });
 });
 
+window.addEventListener("unload", onUnload);
+
 function onCloseCommand(event) {
   window.close();
 }
 
-function openToolbox({ form, chrome, isTabActor }) {
-  let options = {
-    form: form,
-    client: gClient,
-    chrome: chrome,
-    isTabActor: isTabActor
-  };
-  TargetFactory.forRemoteTab(options).then(target => {
-    let frame = document.getElementById("toolbox-iframe");
-    let selectedTool = "jsdebugger";
+function openToolbox(params) {
+  let frame = document.getElementById("toolbox-iframe");
+  let selectedTool = "jsdebugger";
 
-    try {
-      // Remember the last panel that was used inside of this profile.
-      selectedTool = Services.prefs.getCharPref("devtools.toolbox.selectedTool");
-    } catch(e) {}
+  try {
+    // Remember the last panel that was used inside of this profile.
+    selectedTool = Services.prefs.getCharPref("devtools.toolbox.selectedTool");
+  } catch(e) {}
 
-    try {
-      // But if we are testing, then it should always open the debugger panel.
-      selectedTool = Services.prefs.getCharPref("devtools.browsertoolbox.panel");
-    } catch(e) {}
+  try {
+    // But if we are testing, then it should always open the debugger panel.
+    selectedTool = Services.prefs.getCharPref("devtools.browsertoolbox.panel");
+  } catch(e) {}
 
-    let options = { customIframe: frame };
-    gDevTools.showToolbox(target,
-                          selectedTool,
-                          Toolbox.HostType.CUSTOM,
-                          options)
-             .then(onNewToolbox);
-  });
+  let url = "about:devtools-toolbox?tool=" + selectedTool + "&" + params;
+  frame.setAttribute("src", url);
 }
 
 function onNewToolbox(toolbox) {
@@ -144,9 +114,8 @@ function evaluateTestScript(script, toolbox) {
 }
 
 function bindToolboxHandlers() {
-  gToolbox.once("destroyed", quitApp);
-  window.addEventListener("unload", onUnload);
 
+/*
 #ifdef XP_MACOSX
   // Badge the dock icon to differentiate this process from the main application process.
   updateBadgeText(false);
@@ -156,6 +125,7 @@ function bindToolboxHandlers() {
     setupThreadListeners(panel);
   });
 #endif
+*/
 }
 
 function setupThreadListeners(panel) {
@@ -182,21 +152,21 @@ function onUnload() {
   window.removeEventListener("message", onMessage);
   let cmdClose = document.getElementById("toolbox-cmd-close");
   cmdClose.removeEventListener("command", onCloseCommand);
-  gToolbox.destroy();
 }
 
 function onMessage(event) {
-  try {
-    let json = JSON.parse(event.data);
-    switch (json.name) {
-      case "toolbox-raise":
-        raise();
-        break;
-      case "toolbox-title":
-        setTitle(json.data.value);
-        break;
-    }
-  } catch(e) { console.error(e); }
+  if (!event.data) return;
+  switch (event.data.name) {
+    case "raise-host":
+      raise();
+      break;
+    case "set-host-title":
+      setTitle(event.data.title);
+      break;
+    case "destroy-host":
+      quitApp();
+      break;
+  }
 }
 
 window.addEventListener("message", onMessage);

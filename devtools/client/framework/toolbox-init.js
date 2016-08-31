@@ -29,6 +29,12 @@ if (url.search.length > 1) {
   // Specify the default tool to open
   let tool = url.searchParams.get("tool");
 
+  // Specify the host in which this toolbox is loaded. If omitted we consider
+  // being loaded in a custom host, like in tab, from about:debugging
+  let hostType = url.searchParams.get("host") || "custom";
+
+  let frameId = url.searchParams.get("frameId");
+
   Task.spawn(function* () {
     let target;
     if (url.searchParams.has("target")) {
@@ -65,8 +71,12 @@ if (url.search.length > 1) {
     } else {
       target = yield targetFromURL(url);
     }
-    let options = { customIframe: host };
-    yield gDevTools.showToolbox(target, tool, Toolbox.HostType.CUSTOM, options);
+
+    let toolbox = window.toolbox = new Toolbox(target, tool, hostType, window, frameId);
+    toolbox.open();
+    toolbox.postMessage({
+      name: "toolbox-created"
+    });
   }).catch(error => {
     console.error("Exception while loading the toolbox", error);
   });
