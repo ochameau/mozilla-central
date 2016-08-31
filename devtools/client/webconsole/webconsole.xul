@@ -211,4 +211,5 @@ function goUpdateConsoleCommands() {
       <tabpanels flex="1"/>
     </tabbox>
   </box>
+  <script type="text/javascript" src="chrome://devtools/content/webconsole/webconsole-init.js"/>
 </window>
