@@ -756,8 +756,11 @@ var UI = {
     let isPackaged = !!source.path;
     let project;
     try {
+      dump("importAndSelectApp: "+isPackaged+"\n");
       project = yield AppProjects[isPackaged ? "addPackaged" : "addHosted"](source);
+      dump("importAndSelectApp done\n");
     } catch (e) {
+      dump("importAndSelectApp exception: "+e+"\n");
       if (e === "Already added") {
         // Select project that's already been added,
         // and allow it to be revalidated and selected

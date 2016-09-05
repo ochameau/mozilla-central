@@ -173,7 +173,9 @@ const AppProjects = {
       // we will override this random UUID on app install.
       packagedAppOrigin: generateUUID().toString().slice(1, -1)
     };
+    dump("AppProject.IDB.add\n");
     return IDB.add(project).then(() => {
+    dump("AppProject.IDB.add done\n");
       this.projects.push(project);
       return project;
     });
