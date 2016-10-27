@@ -246,9 +246,11 @@ var CustomizableUIInternal = {
       navbarPlacements.splice(2, 0, "developer-button");
     }
 
+    /*
     if (Services.prefs.getBoolPref(kPrefWebIDEInNavbar)) {
       navbarPlacements.push("webide-button");
     }
+    */
 
     // Place this last, when createWidget is called for pocket, it will
     // append to the toolbar.

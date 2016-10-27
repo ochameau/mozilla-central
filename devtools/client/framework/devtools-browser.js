@@ -115,7 +115,10 @@ var gDevToolsBrowser = exports.gDevToolsBrowser = {
     let webIDEEnabled = Services.prefs.getBoolPref("devtools.webide.enabled");
     toggleMenuItem("menu_webide", webIDEEnabled);
 
-    let showWebIDEWidget = Services.prefs.getBoolPref("devtools.webide.widget.enabled");
+    let showWebIDEWidget = false;
+    try{
+      showWebIDEWidget = Services.prefs.getBoolPref("devtools.webide.widget.enabled");
+    } catch(e) {}
     if (webIDEEnabled && showWebIDEWidget) {
       gDevToolsBrowser.installWebIDEWidget();
     } else {
