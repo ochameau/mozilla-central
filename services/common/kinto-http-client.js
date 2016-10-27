@@ -60,7 +60,7 @@ const Cu = Components.utils;
 
 Cu.import("resource://gre/modules/Timer.jsm");
 Cu.importGlobalProperties(['fetch']);
-const { EventEmitter } = Cu.import("resource://devtools/shared/event-emitter.js", {});
+const { EventEmitter } = Cu.import("resource://gre/modules/event-emitter.js", {});
 
 let KintoHttpClient = class KintoHttpClient extends _base2.default {
   constructor(remote, options = {}) {

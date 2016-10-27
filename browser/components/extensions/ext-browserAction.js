@@ -15,7 +15,7 @@ XPCOMUtils.defineLazyServiceGetter(this, "DOMUtils",
                                    "@mozilla.org/inspector/dom-utils;1",
                                    "inIDOMUtils");
 
-Cu.import("resource://devtools/shared/event-emitter.js");
+Cu.import("resource://gre/modules/event-emitter.js");
 Cu.import("resource://gre/modules/Task.jsm");
 
 var {

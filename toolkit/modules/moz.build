@@ -39,6 +39,7 @@ EXTRA_JS_MODULES += [
     'debug.js',
     'DeferredTask.jsm',
     'Deprecated.jsm',
+    'event-emitter.js',
     'FileUtils.jsm',
     'Finder.jsm',
     'FinderHighlighter.jsm',
