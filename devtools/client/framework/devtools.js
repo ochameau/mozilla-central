@@ -427,6 +427,7 @@ DevTools.prototype = {
   }),
 
   createToolbox: Task.async(function* (target, toolId, hostType, hostOptions) {
+    let s = new Date().getTime();
     let manager = new ToolboxHostManager(target, hostType, hostOptions);
 
     let toolbox = yield manager.create(toolId);
@@ -446,6 +447,7 @@ DevTools.prototype = {
 
     yield toolbox.open();
     this.emit("toolbox-ready", toolbox);
+    dump(" ++ Toolbox startup time:"+(new Date().getTime()-s)+"\n");
 
     return toolbox;
   }),

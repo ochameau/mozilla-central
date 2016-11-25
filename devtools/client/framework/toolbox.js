@@ -968,6 +968,7 @@ Toolbox.prototype = {
       return promise.resolve();
     }
 
+    let s = new Date().getTime();
     const options = {
       environment: CommandUtils.createEnvironment(this, "_target")
     };
@@ -988,6 +989,7 @@ Toolbox.prototype = {
             }
           });
           this.setToolboxButtonsVisibility();
+          dump(" ++ GCLI startup time: "+(new Date().getTime()-s)+"\n");
         });
     });
   },
