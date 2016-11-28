@@ -30,7 +30,6 @@ const {RuleViewTool} = require("devtools/client/inspector/rules/rules");
 const HighlightersOverlay = require("devtools/client/inspector/shared/highlighters-overlay");
 const {ToolSidebar} = require("devtools/client/inspector/toolsidebar");
 const MarkupView = require("devtools/client/inspector/markup/markup");
-const {CommandUtils} = require("devtools/client/shared/developer-toolbar");
 const {ViewHelpers} = require("devtools/client/shared/widgets/view-helpers");
 const clipboardHelper = require("devtools/shared/platform/clipboard");
 
