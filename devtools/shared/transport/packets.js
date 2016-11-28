@@ -122,7 +122,7 @@ JSONPacket.fromHeader = function (header, transport) {
     return null;
   }
 
-  dumpv("Header matches JSON packet");
+  //dumpv("Header matches JSON packet");
   let packet = new JSONPacket(transport);
   packet.length = +match[1];
   return packet;
@@ -150,7 +150,7 @@ Object.defineProperty(JSONPacket.prototype, "object", {
 });
 
 JSONPacket.prototype.read = function (stream, scriptableStream) {
-  dumpv("Reading JSON packet");
+  //dumpv("Reading JSON packet");
 
   // Read in more packet data.
   this._readData(stream, scriptableStream);
@@ -176,10 +176,10 @@ JSONPacket.prototype.read = function (stream, scriptableStream) {
 };
 
 JSONPacket.prototype._readData = function (stream, scriptableStream) {
-  if (flags.wantVerbose) {
-    dumpv("Reading JSON data: _l: " + this.length + " dL: " +
-          this._data.length + " sA: " + stream.available());
-  }
+  //if (flags.wantVerbose) {
+  //  dumpv("Reading JSON data: _l: " + this.length + " dL: " +
+  //        this._data.length + " sA: " + stream.available());
+  //}
   let bytesToRead = Math.min(this.length - this._data.length,
                              stream.available());
   this._data += scriptableStream.readBytes(bytesToRead);
@@ -187,7 +187,7 @@ JSONPacket.prototype._readData = function (stream, scriptableStream) {
 };
 
 JSONPacket.prototype.write = function (stream) {
-  dumpv("Writing JSON packet");
+  //dumpv("Writing JSON packet");
 
   if (this._outgoing === undefined) {
     // Format the serialized packet to a buffer
@@ -247,7 +247,7 @@ BulkPacket.fromHeader = function (header, transport) {
     return null;
   }
 
-  dumpv("Header matches bulk packet");
+  //dumpv("Header matches bulk packet");
   let packet = new BulkPacket(transport);
   packet.header = {
     actor: match[1],
@@ -262,7 +262,7 @@ BulkPacket.HEADER_PATTERN = /^bulk ([^: ]+) ([^: ]+) (\d+):$/;
 BulkPacket.prototype = Object.create(Packet.prototype);
 
 BulkPacket.prototype.read = function (stream) {
-  dumpv("Reading bulk packet, handing off input stream");
+  //dumpv("Reading bulk packet, handing off input stream");
 
   // Temporarily pause monitoring of the input stream
   this._transport.pauseIncoming();
@@ -274,7 +274,7 @@ BulkPacket.prototype.read = function (stream) {
     type: this.type,
     length: this.length,
     copyTo: (output) => {
-      dumpv("CT length: " + this.length);
+      //dumpv("CT length: " + this.length);
       let copying = StreamUtils.copyStream(stream, output, this.length);
       deferred.resolve(copying);
       return copying;
@@ -285,7 +285,7 @@ BulkPacket.prototype.read = function (stream) {
 
   // Await the result of reading from the stream
   deferred.promise.then(() => {
-    dumpv("onReadDone called, ending bulk mode");
+    //dumpv("onReadDone called, ending bulk mode");
     this._done = true;
     this._transport.resumeIncoming();
   }, this._transport.close);
@@ -297,10 +297,10 @@ BulkPacket.prototype.read = function (stream) {
 };
 
 BulkPacket.prototype.write = function (stream) {
-  dumpv("Writing bulk packet");
+  //dumpv("Writing bulk packet");
 
   if (this._outgoingHeader === undefined) {
-    dumpv("Serializing bulk packet header");
+    //dumpv("Serializing bulk packet header");
     // Format the serialized packet header to a buffer
     this._outgoingHeader = "bulk " + this.actor + " " + this.type + " " +
                            this.length + ":";
@@ -308,14 +308,14 @@ BulkPacket.prototype.write = function (stream) {
 
   // Write the header, or whatever's left of it to write.
   if (this._outgoingHeader.length) {
-    dumpv("Writing bulk packet header");
+    //dumpv("Writing bulk packet header");
     let written = stream.write(this._outgoingHeader,
                                this._outgoingHeader.length);
     this._outgoingHeader = this._outgoingHeader.slice(written);
     return;
   }
 
-  dumpv("Handing off output stream");
+  //dumpv("Handing off output stream");
 
   // Temporarily pause the monitoring of the output stream
   this._transport.pauseOutgoing();
@@ -324,7 +324,7 @@ BulkPacket.prototype.write = function (stream) {
 
   this._readyForWriting.resolve({
     copyFrom: (input) => {
-      dumpv("CF length: " + this.length);
+      //dumpv("CF length: " + this.length);
       let copying = StreamUtils.copyStream(input, stream, this.length);
       deferred.resolve(copying);
       return copying;
@@ -335,7 +335,7 @@ BulkPacket.prototype.write = function (stream) {
 
   // Await the result of writing to the stream
   deferred.promise.then(() => {
-    dumpv("onWriteDone called, ending bulk mode");
+    //dumpv("onWriteDone called, ending bulk mode");
     this._done = true;
     this._transport.resumeOutgoing();
   }, this._transport.close);
