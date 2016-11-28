@@ -12,6 +12,7 @@ var promise = require("promise");
 var { DebuggerServer } = require("devtools/server/main");
 var DevToolsUtils = require("devtools/shared/DevToolsUtils");
 
+loader.lazyRequireGetter(this, "makeDebugger", "devtools/server/actors/utils/make-debugger");
 loader.lazyRequireGetter(this, "RootActor", "devtools/server/actors/root", true);
 loader.lazyRequireGetter(this, "BrowserAddonActor", "devtools/server/actors/addon", true);
 loader.lazyRequireGetter(this, "WebExtensionActor", "devtools/server/actors/webextension", true);
