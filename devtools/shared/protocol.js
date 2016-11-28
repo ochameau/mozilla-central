@@ -621,14 +621,23 @@ var Request = Class({
    * @returns a request packet.
    */
   write: function (fnArgs, ctx) {
-    let str = JSON.stringify(this.template, (key, value) => {
-      if (value instanceof Arg) {
-        return value.write(value.index in fnArgs ? fnArgs[value.index] : undefined,
-                           ctx, key);
+    let clone = function(obj) {
+      if (typeof(obj) !== "object") {
+        return obj;
       }
-      return value;
-    });
-    return JSON.parse(str);
+      let copy = {};
+      for (let key in obj) {
+        let value = obj[key];
+        if (value instanceof Arg) {
+          copy[key] = value.write(value.index in fnArgs ? fnArgs[value.index] :
+                                  undefined, ctx, key);
+        } else {
+          copy[key] = clone(value);
+        }
+      }
+      return copy;
+    }
+    return clone(this.template);
   },
 
   /**
