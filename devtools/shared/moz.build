@@ -54,6 +54,7 @@ DevToolsModules(
     'event-emitter.js',
     'flags.js',
     'indentation.js',
+    'indexed-db.js',
     'l10n.js',
     'loader-plugin-raw.jsm',
     'Loader.jsm',

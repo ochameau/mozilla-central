@@ -1,0 +1,60 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+"use strict";
+
+const { Cc, Ci } = require("chrome");
+
+const PSEUDOURI = "indexeddb://fx-devtools";
+
+// Use XPCOM because `require("./url").URL` doesn't expose the raw uri object.
+var principaluri = Cc["@mozilla.org/network/io-service;1"].
+              getService(Ci.nsIIOService).
+              newURI(PSEUDOURI, null, null);
+
+var ssm = Cc["@mozilla.org/scriptsecuritymanager;1"]
+            .getService(Ci.nsIScriptSecurityManager);
+var principal = ssm.createCodebasePrincipal(principaluri, {});
+
+function toArray(args) {
+  return Array.prototype.slice.call(args);
+}
+
+function openInternal(args, forPrincipal, deleting) {
+  if (forPrincipal) {
+    args = toArray(args);
+  } else {
+    args = [principal].concat(toArray(args));
+  }
+  if (args.length == 2) {
+    args.push({ storage: "persistent" });
+  } else if (!deleting && args.length >= 3 && typeof args[2] === "number") {
+    args[2] = { version: args[2], storage: "persistent" };
+  }
+
+  if (deleting) {
+    return indexedDB.deleteForPrincipal.apply(indexedDB, args);
+  }
+
+  return indexedDB.openForPrincipal.apply(indexedDB, args);
+}
+
+exports.indexedDB = Object.freeze({
+  open: function () {
+    return openInternal(arguments, false, false);
+  },
+  deleteDatabase: function () {
+    return openInternal(arguments, false, true);
+  },
+  openForPrincipal: function () {
+    return openInternal(arguments, true, false);
+  },
+  deleteForPrincipal: function () {
+    return openInternal(arguments, true, true);
+  },
+  cmp: indexedDB.cmp.bind(indexedDB)
+});
+
+exports.IDBKeyRange = IDBKeyRange;
+exports.DOMException = Ci.nsIDOMDOMException;
