@@ -14,9 +14,10 @@ const nodeConstants = require("devtools/shared/dom-node-constants");
 const clipboardHelper = require("devtools/shared/platform/clipboard");
 const {setImageTooltip, setBrokenImageTooltip} =
       require("devtools/client/shared/widgets/tooltip/ImageTooltipHelper");
-const {setEventTooltip} = require("devtools/client/shared/widgets/tooltip/EventTooltipHelper");
 const MarkupContainer = require("devtools/client/inspector/markup/views/markup-container");
 const ElementEditor = require("devtools/client/inspector/markup/views/element-editor");
+
+loader.lazyRequireGetter(this, "setEventTooltip", "devtools/client/shared/widgets/tooltip/EventTooltipHelper", true);
 
 /**
  * An implementation of MarkupContainer for Elements that can contain
