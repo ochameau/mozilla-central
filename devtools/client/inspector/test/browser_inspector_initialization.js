@@ -1,112 +1,69 @@
-/* -*- indent-tabs-mode: nil; js-indent-level: 2 -*- */
-/* vim: set ts=2 et sw=2 tw=80: */
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-/* globals getTestActorWithoutToolbox */
 "use strict";
 
-// Tests for different ways to initialize the inspector.
+const TEST_URI = "data:text/html;charset=utf-8,<body style='color:red'>foo</body>";
 
-const HTML = `
-  <div id="first" style="margin: 10em; font-size: 14pt;
-                         font-family: helvetica, sans-serif; color: gray">
-    <h1>Some header text</h1>
-    <p id="salutation" style="font-size: 12pt">hi.</p>
-    <p id="body" style="font-size: 12pt">I am a test-case. This text exists
-    solely to provide some things to test the inspector initialization.</p>
-    <p>If you are reading this, you should go do something else instead. Maybe
-    read a book. Or better yet, write some test-cases for another bit of code.
-      <span style="font-style: italic">Inspector's!</span>
-    </p>
-    <p id="closing">end transmission</p>
-  </div>
-`;
+requestLongerTimeout(3);
 
-const TEST_URI = "data:text/html;charset=utf-8," + encodeURI(HTML);
+function* unloadDevtools() {
+  Services.ppmm.loadProcessScript("data:,new " + function () {
+    /* Flush message manager cached frame scripts as well as chrome locales */
+    let obs = Components.classes["@mozilla.org/observer-service;1"]
+                        .getService(Components.interfaces.nsIObserverService);
+    obs.notifyObservers(null, "message-manager-flush-caches", null);
+
+    /* Also purge cached modules in child processes, we do it a few lines after
+       in the parent process */
+    if (Services.appinfo.processType == Services.appinfo.PROCESS_TYPE_CONTENT) {
+      Services.obs.notifyObservers(null, "devtools-unload", "reload");
+    }
+  }, false);
+  Services.obs.notifyObservers(null, "devtools-unload", "reload");
+  Cu.unload("resource://devtools/shared/Loader.jsm");
+}
 
 add_task(function* () {
-  let tab = yield addTab(TEST_URI);
-  let testActor = yield getTestActorWithoutToolbox(tab);
+  let timings = [];
 
-  yield testToolboxInitialization(testActor, tab);
-  yield testContextMenuInitialization(testActor);
-  yield testContextMenuInspectorAlreadyOpen(testActor);
-});
+  yield new Promise(done => window.setTimeout(done, 2000));
 
-function* testToolboxInitialization(testActor, tab) {
-  let target = TargetFactory.forTab(tab);
+  let gDT = gDevTools;
+  let TF = TargetFactory;
+  for (let i = 0; i < 10; i++) {
+    let tab = yield addTab(TEST_URI);
+    let target = TF.forTab(tab);
+    let start = new Date().getTime();
+    let toolbox = yield gDT.showToolbox(target, "inspector");
+    let inspector = toolbox.getCurrentPanel();
+    yield selectNode("body", inspector);
+    timings.push(new Date().getTime()-start);
+    if (target) {
+      yield gDT.closeToolbox(target);
+    }
+    yield removeTab(tab);
 
-  info("Opening inspector with gDevTools.");
-  let toolbox = yield gDevTools.showToolbox(target, "inspector");
-  let inspector = toolbox.getCurrentPanel();
+    yield unloadDevtools();
 
-  ok(true, "Inspector started, and notification received.");
-  ok(inspector, "Inspector instance is accessible.");
-  ok(inspector.isReady, "Inspector instance is ready.");
-  is(inspector.target.tab, tab, "Valid target.");
-
-  yield selectNode("p", inspector);
-  yield testMarkupView("p", inspector);
-  yield testBreadcrumbs("p", inspector);
-
-  yield testActor.scrollIntoView("span");
-
-  yield selectNode("span", inspector);
-  yield testMarkupView("span", inspector);
-  yield testBreadcrumbs("span", inspector);
-
-  info("Destroying toolbox");
-  let destroyed = toolbox.once("destroyed");
-  toolbox.destroy();
-  yield destroyed;
-
-  ok("true", "'destroyed' notification received.");
-  ok(!gDevTools.getToolbox(target), "Toolbox destroyed.");
-}
-
-function* testContextMenuInitialization(testActor) {
-  info("Opening inspector by clicking on 'Inspect Element' context menu item");
-  yield clickOnInspectMenuItem(testActor, "#salutation");
-
-  info("Checking inspector state.");
-  yield testMarkupView("#salutation");
-  yield testBreadcrumbs("#salutation");
-}
-
-function* testContextMenuInspectorAlreadyOpen(testActor) {
-  info("Changing node by clicking on 'Inspect Element' context menu item");
-
-  let inspector = getActiveInspector();
-  ok(inspector, "Inspector is active");
-
-  yield clickOnInspectMenuItem(testActor, "#closing");
-
-  ok(true, "Inspector was updated when 'Inspect Element' was clicked.");
-  yield testMarkupView("#closing", inspector);
-  yield testBreadcrumbs("#closing", inspector);
-}
-
-function* testMarkupView(selector, inspector) {
-  inspector = inspector || getActiveInspector();
-  let nodeFront = yield getNodeFront(selector, inspector);
-  try {
-    is(inspector.selection.nodeFront, nodeFront,
-       "Right node is selected in the markup view");
-  } catch (ex) {
-    ok(false, "Got exception while resolving selected node of markup view.");
-    console.error(ex);
+    let {devtools} = Cu.import("resource://devtools/shared/Loader.jsm", {});
+    devtools.require("devtools/client/framework/devtools-browser");
+    gDT = devtools.require("devtools/client/framework/devtools").gDevTools;
+    TF = devtools.require("devtools/client/framework/target").TargetFactory;
   }
-}
 
-function* testBreadcrumbs(selector, inspector) {
-  inspector = inspector || getActiveInspector();
-  let nodeFront = yield getNodeFront(selector, inspector);
-
-  let b = inspector.breadcrumbs;
-  let expectedText = b.prettyPrintNodeAsText(nodeFront);
-  let button = b.container.querySelector("button[checked=true]");
-  ok(button, "A crumbs is checked=true");
-  is(button.getAttribute("title"), expectedText,
-     "Crumb refers to the right node");
-}
+  dump("Timings > "+timings.join(", ")+"\n");
+  timings.sort();
+  let min = 100000, avg = 0, max = 0;
+  timings.forEach(t => {
+    min = Math.min(min, t);
+    avg += t;
+    max = Math.max(max, t);
+  });
+  avg /= timings.length;
+  dump("Min : "+min+"\n");
+  dump("Average : "+avg+"\n");
+  dump("Middle : "+timings[Math.floor(timings.length/2)-1]+"\n");
+  dump("Max : "+max+"\n");
+  ok(true, "ok");
+});
