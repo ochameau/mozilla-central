@@ -964,7 +964,7 @@ Toolbox.prototype = {
       return promise.resolve();
     }
     // Disable gcli in browser toolbox until there is usages of it
-    if (this.target.chrome || true) {
+    if (this.target.chrome) {
       return promise.resolve();
     }
 
