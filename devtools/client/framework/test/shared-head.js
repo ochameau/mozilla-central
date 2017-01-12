@@ -103,6 +103,11 @@ registerCleanupFunction(function* cleanup() {
   while (gBrowser.tabs.length > 1) {
     yield closeTabAndToolbox(gBrowser.selectedTab);
   }
+  let env = Cc["@mozilla.org/process/environment;1"].getService(Ci.nsIEnvironment);
+  if (env.get("DEBUG_LEAKS") == "1") {
+    let { checkForLeaks } = require("devtools/client/shared/leak-reporter");
+    yield checkForLeaks();
+  }
 });
 
 /**
