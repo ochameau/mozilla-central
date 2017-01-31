@@ -23,7 +23,6 @@ const Menu = require("devtools/client/framework/menu");
 const MenuItem = require("devtools/client/framework/menu-item");
 
 const {HTMLBreadcrumbs} = require("devtools/client/inspector/breadcrumbs");
-const {ComputedViewTool} = require("devtools/client/inspector/computed/computed");
 const {FontInspector} = require("devtools/client/inspector/fonts/fonts");
 const {InspectorSearch} = require("devtools/client/inspector/inspector-search");
 const {RuleViewTool} = require("devtools/client/inspector/rules/rules");
@@ -548,6 +547,10 @@ Inspector.prototype = {
 
     this._setDefaultSidebar = (event, toolId) => {
       Services.prefs.setCharPref("devtools.inspector.activeSidebar", toolId);
+      if (toolId == "computedview") {
+        const {ComputedViewTool} = require("devtools/client/inspector/computed/computed");
+        this.computedview = new ComputedViewTool(this, this.panelWin);
+      }
     };
 
     this.sidebar.on("select", this._setDefaultSidebar);
@@ -569,7 +572,6 @@ Inspector.prototype = {
       defaultTab == "computedview");
 
     this.ruleview = new RuleViewTool(this, this.panelWin);
-    this.computedview = new ComputedViewTool(this, this.panelWin);
 
     if (Services.prefs.getBoolPref("devtools.layoutview.enabled")) {
       const LayoutView = this.browserRequire("devtools/client/inspector/layout/layout");
