@@ -24,7 +24,6 @@ const {
   VIEW_NODE_IMAGE_URL_TYPE,
 } = require("devtools/client/inspector/shared/node-types");
 const StyleInspectorMenu = require("devtools/client/inspector/shared/style-inspector-menu");
-const TooltipsOverlay = require("devtools/client/inspector/shared/tooltips-overlay");
 const KeyShortcuts = require("devtools/client/shared/key-shortcuts");
 const BoxModelView = require("devtools/client/inspector/components/deprecated-box-model");
 const clipboardHelper = require("devtools/shared/platform/clipboard");
@@ -213,9 +212,19 @@ function CssComputedView(inspector, document, pageStyle) {
 
   this._contextmenu = new StyleInspectorMenu(this, { isRuleView: false });
 
-  // Add the tooltips and highlightersoverlay
-  this.tooltips = new TooltipsOverlay(this);
-  this.tooltips.addToView();
+  // Lazily add the tooltips to the view.
+  // Use `tooltips` if you want to automatically create an instance
+  // Use `_tooltips` if you want to check if one already exists
+  Object.defineProperty(this, "tooltips", {
+    get() {
+      delete this.tooltips;
+      const TooltipsOverlay = require("devtools/client/inspector/shared/tooltips-overlay");
+      this.tooltips = this._tooltips = new TooltipsOverlay(this);
+      this.tooltips.addToView();
+      return this.tooltips;
+    },
+    configurable: true
+  });
 
   this.highlighters.addToView(this);
 }
@@ -751,7 +760,9 @@ CssComputedView.prototype = {
       this._contextmenu = null;
     }
 
-    this.tooltips.destroy();
+    if (this._tooltips) {
+      this._tooltips.destroy();
+    }
     this.highlighters.removeFromView(this);
 
     // Remove bound listeners

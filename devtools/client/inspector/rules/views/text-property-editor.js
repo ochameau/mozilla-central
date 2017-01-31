@@ -89,7 +89,8 @@ TextPropertyEditor.prototype = {
    */
   get editing() {
     return !!(this.nameSpan.inplaceEditor || this.valueSpan.inplaceEditor ||
-      this.ruleView.tooltips.isEditing) || this.popup.isOpen;
+      (this.ruleView._tooltips && this.ruleView._tooltips.isEditing)) ||
+      this.popup.isOpen;
   },
 
   /**

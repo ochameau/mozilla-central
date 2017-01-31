@@ -27,7 +27,6 @@ const {
   VIEW_NODE_LOCATION_TYPE,
 } = require("devtools/client/inspector/shared/node-types");
 const StyleInspectorMenu = require("devtools/client/inspector/shared/style-inspector-menu");
-const TooltipsOverlay = require("devtools/client/inspector/shared/tooltips-overlay");
 const {createChild, promiseWarn, throttle} = require("devtools/client/inspector/shared/utils");
 const EventEmitter = require("devtools/shared/event-emitter");
 const KeyShortcuts = require("devtools/client/shared/key-shortcuts");
@@ -175,10 +174,21 @@ function CssRuleView(inspector, document, store, pageStyle) {
 
   this._contextmenu = new StyleInspectorMenu(this, { isRuleView: true });
 
-  // Add the tooltips and highlighters to the view
-  this.tooltips = new TooltipsOverlay(this);
-  this.tooltips.addToView();
+  // Lazily add the tooltips to the view.
+  // Use `tooltips` if you want to automatically create an instance
+  // Use `_tooltips` if you want to check if one already exists
+  Object.defineProperty(this, "tooltips", {
+    get() {
+      delete this.tooltips;
+      const TooltipsOverlay = require("devtools/client/inspector/shared/tooltips-overlay");
+      this.tooltips = this._tooltips = new TooltipsOverlay(this);
+      this.tooltips.addToView();
+      return this.tooltips;
+    },
+    configurable: true
+  });
 
+  // Add the highlighters to the view
   this.highlighters.addToView(this);
 
   EventEmitter.decorate(this);
@@ -516,7 +526,7 @@ CssRuleView.prototype = {
    * editor visible.
    */
   get isEditing() {
-    return this.tooltips.isEditing ||
+    return (this._tooltips && this._tooltips.isEditing) ||
       this.element.querySelectorAll(".styleinspector-propertyeditor")
         .length > 0;
   },
@@ -671,7 +681,9 @@ CssRuleView.prototype = {
       this._contextmenu = null;
     }
 
-    this.tooltips.destroy();
+    if (this._tooltips) {
+      this._tooltips.destroy();
+    }
     this.highlighters.removeFromView(this);
 
     // Remove bound listeners
