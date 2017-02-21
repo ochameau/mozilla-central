@@ -19,8 +19,11 @@ Cu.import("chrome://marionette/content/driver.js");
 Cu.import("chrome://marionette/content/error.js");
 Cu.import("chrome://marionette/content/message.js");
 
-// Bug 1083711: Load transport.js as an SDK module instead of subscript
-loader.loadSubScript("resource://devtools/shared/transport/transport.js");
+try {
+Cu.import("chrome://marionette/content/transport2.js");
+}catch(e){
+  dump("ex:"+e+" - "+e.fileName+":"+e.lineNumber+"\n");
+}
 
 const logger = Log.repository.getLogger("Marionette");
 
