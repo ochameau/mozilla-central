@@ -28,6 +28,7 @@ JOB_NAME_WHITELIST = set([
     'linux-qr-debug',
     'linux-qr-opt',
     'linux64-add-on-devel',
+    'devtools-opt',
     'linux64-artifact-opt',
     'linux64-asan-debug',
     'linux64-asan-opt',

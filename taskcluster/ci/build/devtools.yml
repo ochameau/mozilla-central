@@ -1,0 +1,22 @@
+devtools/opt:
+    description: "Devtools Add-on"
+    index:
+        product: firefox
+        job-name: devtools-opt
+    treeherder:
+        platform: devtools/opt
+        symbol: tc(Dt)
+        tier: 2
+    worker-type: aws-provisioner-v1/gecko-{level}-b-linux
+    worker:
+        implementation: docker-worker
+        max-run-time: 36000
+        artifacts:
+            - type: file
+              name: public/devtools@mozilla.org.xpi
+              path: /home/worker/checkouts/gecko/devtools@mozilla.org.xpi
+    run:
+        using: run-task
+        command: >
+            cd /home/worker/checkouts/gecko/devtools &&
+            zip -r ../devtools@mozilla.org.xpi . -9 -x \*test\* -x \*moz.build \*.md \*LICENSE \*README \*UPGRADING
