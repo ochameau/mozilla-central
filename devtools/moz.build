@@ -16,6 +16,7 @@ if CONFIG['MOZ_DEVTOOLS'] == 'all':
 # and shim modules that are going to stay in Firefox once DevTools ship as an
 # add-on.
 # `platform` contains all native components
+# `shim` contains the bare minimum integration to install DevTools Add-on
 DIRS += [
     'shim',
     'platform',
