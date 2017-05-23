@@ -13,4 +13,4 @@ pref("devtools.addon.auto-install", true);
 // DevTools add-on install URL.
 // >>> DO NOT LAND THAT
 // TODO: use final hosting URL on archive.mozilla.org
-pref("devtools.addon.install-url", "https://index.taskcluster.net/v1/task/project.devtools.branches.master.linux-opt/artifacts/public/devtools.xpi");
+pref("devtools.addon.install-url", "https://index.taskcluster.net/v1/task/project.devtools.branches.master.build-lint/artifacts/public/devtools.xpi");
