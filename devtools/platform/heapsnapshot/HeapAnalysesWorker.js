@@ -14,9 +14,9 @@
 
 importScripts("resource://gre/modules/workers/require.js");
 importScripts("resource://devtools/shared/worker/helper.js");
-const { censusReportToCensusTreeNode } = require("resource://devtools/shared/heapsnapshot/census-tree-node.js");
-const DominatorTreeNode = require("resource://devtools/shared/heapsnapshot/DominatorTreeNode.js");
-const CensusUtils = require("resource://devtools/shared/heapsnapshot/CensusUtils.js");
+const { censusReportToCensusTreeNode } = require("resource://devtools-platform/heapsnapshot/census-tree-node.js");
+const DominatorTreeNode = require("resource://devtools-platform/heapsnapshot/DominatorTreeNode.js");
+const CensusUtils = require("resource://devtools-platform/heapsnapshot/CensusUtils.js");
 
 const DEFAULT_START_INDEX = 0;
 const DEFAULT_MAX_COUNT = 50;

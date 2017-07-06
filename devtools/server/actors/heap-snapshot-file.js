@@ -14,7 +14,7 @@ loader.lazyRequireGetter(this, "DevToolsUtils",
                          "devtools/shared/DevToolsUtils");
 loader.lazyRequireGetter(this, "OS", "resource://gre/modules/osfile.jsm", true);
 loader.lazyRequireGetter(this, "HeapSnapshotFileUtils",
-                         "devtools/shared/heapsnapshot/HeapSnapshotFileUtils");
+                         "devtools-platform/heapsnapshot/HeapSnapshotFileUtils");
 
 /**
  * The HeapSnapshotFileActor handles transferring heap snapshot files from the

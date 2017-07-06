@@ -4,8 +4,8 @@
 "use strict";
 
 const { immutableUpdate } = require("resource://devtools/shared/ThreadSafeDevToolsUtils.js");
-const { Visitor, walk } = require("resource://devtools/shared/heapsnapshot/CensusUtils.js");
-const { deduplicatePaths } = require("resource://devtools/shared/heapsnapshot/shortest-paths");
+const { Visitor, walk } = require("resource://devtools-platform/heapsnapshot/CensusUtils.js");
+const { deduplicatePaths } = require("resource://devtools-platform/heapsnapshot/shortest-paths");
 
 const DEFAULT_MAX_DEPTH = 4;
 const DEFAULT_MAX_SIBLINGS = 15;

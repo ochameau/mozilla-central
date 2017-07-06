@@ -182,7 +182,7 @@ function makeTakeCensusTask({ getDisplay, getFilter, getCensus, beginAction,
    * @param {snapshotId} id
    *
    * @see {Snapshot} model defined in devtools/client/memory/models.js
-   * @see `devtools/shared/heapsnapshot/HeapAnalysesClient.js`
+   * @see `devtools-platform/heapsnapshot/HeapAnalysesClient.js`
    * @see `js/src/doc/Debugger/Debugger.Memory.md` for breakdown details
    */
   let thisTakeCensusTaskId = ++takeCensusTaskCounter;

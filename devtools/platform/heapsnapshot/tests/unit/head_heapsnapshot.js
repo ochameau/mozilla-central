@@ -24,12 +24,12 @@ const { addDebuggerToGlobal } =
 const DevToolsUtils = require("devtools/shared/DevToolsUtils");
 const flags = require("devtools/shared/flags");
 const HeapAnalysesClient =
-  require("devtools/shared/heapsnapshot/HeapAnalysesClient");
+  require("devtools-platform/heapsnapshot/HeapAnalysesClient");
 const Services = require("Services");
-const { censusReportToCensusTreeNode } = require("devtools/shared/heapsnapshot/census-tree-node");
-const CensusUtils = require("devtools/shared/heapsnapshot/CensusUtils");
-const DominatorTreeNode = require("devtools/shared/heapsnapshot/DominatorTreeNode");
-const { deduplicatePaths } = require("devtools/shared/heapsnapshot/shortest-paths");
+const { censusReportToCensusTreeNode } = require("devtools-platform/heapsnapshot/census-tree-node");
+const CensusUtils = require("devtools-platform/heapsnapshot/CensusUtils");
+const DominatorTreeNode = require("devtools-platform/heapsnapshot/DominatorTreeNode");
+const { deduplicatePaths } = require("devtools-platform/heapsnapshot/shortest-paths");
 const { LabelAndShallowSizeVisitor } = DominatorTreeNode;
 
 // Always log packets when running tests. runxpcshelltests.py will throw

@@ -1,0 +1,9 @@
+devtools.jar:
+% resource devtools-platform %modules/devtools-platform/
+  modules/devtools-platform/heapsnapshot/census-tree-node.js (./census-tree-node.js)
+  modules/devtools-platform/heapsnapshot/CensusUtils.js (./CensusUtils.js)
+  modules/devtools-platform/heapsnapshot/DominatorTreeNode.js (./DominatorTreeNode.js)
+  modules/devtools-platform/heapsnapshot/HeapAnalysesClient.js (./HeapAnalysesClient.js)
+  modules/devtools-platform/heapsnapshot/HeapAnalysesWorker.js (./HeapAnalysesWorker.js)
+  modules/devtools-platform/heapsnapshot/HeapSnapshotFileUtils.js (./HeapSnapshotFileUtils.js)
+  modules/devtools-platform/heapsnapshot/shortest-paths.js (./shortest-paths.js)

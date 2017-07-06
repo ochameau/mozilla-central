@@ -16,7 +16,7 @@ const {
   walk,
   basisTotalBytes,
   basisTotalCount,
-} = require("resource://devtools/shared/heapsnapshot/CensusUtils.js");
+} = require("resource://devtools-platform/heapsnapshot/CensusUtils.js");
 
 // Monotonically increasing integer for CensusTreeNode `id`s.
 let censusTreeNodeIdCounter = 0;

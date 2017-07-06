@@ -11,7 +11,7 @@
 
 "use strict";
 
-const { getLabelAndShallowSize } = require("devtools/shared/heapsnapshot/DominatorTreeNode");
+const { getLabelAndShallowSize } = require("devtools-platform/heapsnapshot/DominatorTreeNode");
 
 const TEST_URL = "http://example.com/browser/devtools/client/memory/test/browser/doc_empty.html";
 

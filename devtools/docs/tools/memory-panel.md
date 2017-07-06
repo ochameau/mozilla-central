@@ -63,7 +63,7 @@ Saving a heap snapshot has a few requirements:
 
 To solve (1), we use the [protobuf](https://developers.google.com/protocol-buffers/)
 message format. The message definitions themselves are in
-`devtools/shared/heapsnapshot/CoreDump.proto`. We always use `optional` fields
+`devtools-platform/heapsnapshot/CoreDump.proto`. We always use `optional` fields
 so we can change our mind about what fields are required sometime in the future.
 Deserialization checks the semantic integrity of deserialized protobuf messages.
 
@@ -103,9 +103,9 @@ The `DeserializedNode` and `DeserializedEdge` classes implement the
 than the live heap graph operate on these classes (unknowingly, of course).
 
 For more details, see the
-[`mozilla::devtools::HeapSnapshot`](devtools/shared/heapsnapshot/HeapSnapshot.cpp)
+[`mozilla::devtools::HeapSnapshot`](devtools-platform/heapsnapshot/HeapSnapshot.cpp)
 and
-[`mozilla::devtools::Deserialized{Node,Edge}`](devtools/shared/heapsnapshot/DeserializedNode.h)
+[`mozilla::devtools::Deserialized{Node,Edge}`](devtools-platform/heapsnapshot/DeserializedNode.h)
 classes.
 
 ### Heap Analyses
@@ -121,7 +121,7 @@ interface.
 
 For each analysis we expose to chrome JavaScript on the `HeapSnapshot` webidl
 interface, there is a small amount of glue code in Gecko. The
-[`mozilla::devtools::HeapSnapshot`](devtools/shared/heapsnapshot/HeapSnapshot.h)
+[`mozilla::devtools::HeapSnapshot`](devtools-platform/heapsnapshot/HeapSnapshot.h)
 C++ class implements the webidl interface. The analyses methods (eg
 `ComputeDominatorTree`) take the deserialized nodes and edges from the heap
 snapshot, create `JS::ubi::Node`s from them, call the analyses from
@@ -133,7 +133,7 @@ For API documentation on running specific analyses, see the
 
 ### Testing `JS::ubi::Node`, Snapshots, and Analyses
 
-The majority of the tests reside within `devtools/shared/heapsnapshot/tests/**`.
+The majority of the tests reside within `devtools-platform/heapsnapshot/tests/**`.
 For reading and saving heap snapshots, most tests are gtests. The gtests can be
 run with the `mach gtest DevTools.*` command. The rest are integration sanity
 tests to make sure we can read and save snapshots in various environments, such
@@ -163,14 +163,14 @@ implemented as traversals of the resulting census or dominator trees.
 See the following files for details on the various data transformations and
 shuffling that the `HeapAnalysesWorker` delegates to.
 
-* `devtools/shared/heapsnapshot/CensusUtils.js`
-* `devtools/shared/heapsnapshot/CensusTreeNode.js`
-* `devtools/shared/heapsnapshot/DominatorTreeNode.js`
+* `devtools-platform/heapsnapshot/CensusUtils.js`
+* `devtools-platform/heapsnapshot/CensusTreeNode.js`
+* `devtools-platform/heapsnapshot/DominatorTreeNode.js`
 
 ### Testing the `HeapAnalysesWorker` and `HeapAnalysesClient`
 
 Tests for the `HeapAnalysesWorker` and `HeapAnalysesClient` reside in
-`devtools/shared/heapsnapshot/tests/**` and can be run with the usual `mach test
+`devtools-platform/heapsnapshot/tests/**` and can be run with the usual `mach test
 $PATH` command.
 
 ## Frontend

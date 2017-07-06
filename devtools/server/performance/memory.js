@@ -16,7 +16,7 @@ loader.lazyRequireGetter(this, "StackFrameCache",
   "devtools/server/actors/utils/stack", true);
 loader.lazyRequireGetter(this, "ThreadSafeChromeUtils");
 loader.lazyRequireGetter(this, "HeapSnapshotFileUtils",
-  "devtools/shared/heapsnapshot/HeapSnapshotFileUtils");
+  "devtools-platform/heapsnapshot/HeapSnapshotFileUtils");
 loader.lazyRequireGetter(this, "ChromeActor", "devtools/server/actors/chrome",
                          true);
 loader.lazyRequireGetter(this, "ChildProcessActor",

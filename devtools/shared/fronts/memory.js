@@ -10,7 +10,7 @@ const protocol = require("devtools/shared/protocol");
 loader.lazyRequireGetter(this, "FileUtils",
                          "resource://gre/modules/FileUtils.jsm", true);
 loader.lazyRequireGetter(this, "HeapSnapshotFileUtils",
-                         "devtools/shared/heapsnapshot/HeapSnapshotFileUtils");
+                         "devtools-platform/heapsnapshot/HeapSnapshotFileUtils");
 
 const MemoryFront = protocol.FrontClassWithSpec(memorySpec, {
   initialize: function (client, form, rootForm = null) {

@@ -6,7 +6,7 @@
 
 const { DOM: dom, createClass, PropTypes, createFactory } = require("devtools/client/shared/vendor/react");
 const { assert } = require("devtools/shared/DevToolsUtils");
-const { createParentMap } = require("devtools/shared/heapsnapshot/CensusUtils");
+const { createParentMap } = require("devtools-platform/heapsnapshot/CensusUtils");
 const Tree = createFactory(require("devtools/client/shared/components/tree"));
 const DominatorTreeItem = createFactory(require("./dominator-tree-item"));
 const { L10N } = require("../utils");

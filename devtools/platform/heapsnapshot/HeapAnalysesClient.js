@@ -8,7 +8,7 @@ const DevToolsUtils = require("devtools/shared/DevToolsUtils");
 const { DevToolsWorker } = require("devtools/shared/worker/worker");
 
 const WORKER_URL =
-  "resource://devtools/shared/heapsnapshot/HeapAnalysesWorker.js";
+  "resource://devtools-platform/heapsnapshot/HeapAnalysesWorker.js";
 var workerCounter = 0;
 
 /**
@@ -96,7 +96,7 @@ HeapAnalysesClient.prototype.getCreationTime = function (snapshotFilePath) {
  *        - {Boolean} asTreeNode
  *          Whether or not the census is returned as a CensusTreeNode,
  *          or just a breakdown report. Defaults to false.
- *          @see `devtools/shared/heapsnapshot/census-tree-node.js`
+ *          @see `devtools-platform/heapsnapshot/census-tree-node.js`
  *        - {Boolean} asInvertedTreeNode
  *          Whether or not the census is returned as an inverted
  *          CensusTreeNode. Defaults to false.

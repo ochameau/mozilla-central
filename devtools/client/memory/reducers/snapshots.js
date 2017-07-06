@@ -13,7 +13,7 @@ const {
   dominatorTreeState,
   viewState,
 } = require("../constants");
-const DominatorTreeNode = require("devtools/shared/heapsnapshot/DominatorTreeNode");
+const DominatorTreeNode = require("devtools-platform/heapsnapshot/DominatorTreeNode");
 
 const handlers = Object.create(null);
 
