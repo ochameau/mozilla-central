@@ -241,6 +241,9 @@ const NodeFront = FrontClassWithSpec(nodeSpec, {
   get nodeName() {
     return this._form.nodeName;
   },
+  get reflowDuration() {
+    return this._form.reflowDuration;
+  },
   get displayName() {
     let {displayName, nodeName} = this._form;
 

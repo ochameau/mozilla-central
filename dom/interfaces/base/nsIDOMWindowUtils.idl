@@ -1994,6 +1994,8 @@ interface nsIDOMWindowUtils : nsISupports {
    */
   void removeFromStyloBlocklist(in ACString aBlockedDomain);
 
+  long long getReflowDurationForElement(in nsIDOMNode aNode);
+
   // These consts are only for testing purposes.
   const long DEFAULT_MOUSE_POINTER_ID = 0;
   const long DEFAULT_PEN_POINTER_ID   = 1;

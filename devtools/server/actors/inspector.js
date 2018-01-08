@@ -211,6 +211,10 @@ var NodeActor = exports.NodeActor = protocol.ActorClassWithSpec(nodeSpec, {
     // Storing the original display of the node, to track changes when reflows
     // occur
     this.wasDisplayed = this.isDisplayed;
+
+    let utils = node.ownerDocument && node.ownerDocument.defaultView && node.ownerDocument.defaultView.QueryInterface(Ci.nsIInterfaceRequestor)
+              .getInterface(Ci.nsIDOMWindowUtils);
+    this.reflowDuration = utils && utils.getReflowDurationForElement(node);
   },
 
   toString: function () {
@@ -253,6 +257,8 @@ var NodeActor = exports.NodeActor = protocol.ActorClassWithSpec(nodeSpec, {
     let parentNode = this.walker.parentNode(this);
     let inlineTextChild = this.walker.inlineTextChild(this);
 
+    let utils = this.rawNode.ownerDocument && this.rawNode.ownerDocument.defaultView && this.rawNode.ownerDocument.defaultView.QueryInterface(Ci.nsIInterfaceRequestor)
+              .getInterface(Ci.nsIDOMWindowUtils);
     let form = {
       actor: this.actorID,
       baseURI: this.rawNode.baseURI,
@@ -264,6 +270,7 @@ var NodeActor = exports.NodeActor = protocol.ActorClassWithSpec(nodeSpec, {
       displayName: getNodeDisplayName(this.rawNode),
       numChildren: this.numChildren,
       inlineTextChild: inlineTextChild ? inlineTextChild.form() : undefined,
+      reflowDuration: utils && utils.getReflowDurationForElement(this.rawNode),
 
       // doctype attributes
       name: this.rawNode.name,
@@ -903,6 +910,7 @@ var WalkerActor = protocol.ActorClassWithSpec(walkerSpec, {
 
     this.layoutChangeObserver = getLayoutChangesObserver(this.tabActor);
     this._onReflows = this._onReflows.bind(this);
+    this._onReflowsInterval = this.rootWin.setInterval(this._onReflows, 3000);
     this.layoutChangeObserver.on("reflows", this._onReflows);
     this._onResize = this._onResize.bind(this);
     this.layoutChangeObserver.on("resize", this._onResize);
@@ -993,6 +1001,7 @@ var WalkerActor = protocol.ActorClassWithSpec(walkerSpec, {
 
       this.walkerSearch.destroy();
 
+      this.rootWin.clearInterval(this._onReflowsInterval);
       this.layoutChangeObserver.off("reflows", this._onReflows);
       this.layoutChangeObserver.off("resize", this._onResize);
       this.layoutChangeObserver = null;
@@ -1066,12 +1075,20 @@ var WalkerActor = protocol.ActorClassWithSpec(walkerSpec, {
   _onReflows: function (reflows) {
     // Going through the nodes the walker knows about, see which ones have
     // had their display changed and send a display-change event if any
+    let utils = this.rootWin.QueryInterface(Ci.nsIInterfaceRequestor)
+                    .getInterface(Ci.nsIDOMWindowUtils);
     let changes = [];
     for (let [node, actor] of this._refMap) {
       if (Cu.isDeadWrapper(node)) {
         continue;
       }
 
+      let reflowDuration = utils && utils.getReflowDurationForElement(node);
+      if (actor.reflowDuration !== reflowDuration) {
+        changes.push(actor);
+        actor.reflowDuration = reflowDuration;
+        continue;
+      }
       let isDisplayed = actor.isDisplayed;
       if (isDisplayed !== actor.wasDisplayed) {
         changes.push(actor);

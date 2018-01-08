@@ -45,6 +45,10 @@ function MarkupElementContainer(markupView, node) {
 }
 
 MarkupElementContainer.prototype = extend(MarkupContainer.prototype, {
+  updateReflows() {
+    this.editor.updateReflows();
+  },
+
   _buildEventTooltipContent: Task.async(function* (target, tooltip) {
     if (target.hasAttribute("data-event")) {
       yield tooltip.hide();

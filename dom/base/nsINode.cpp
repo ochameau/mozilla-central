@@ -119,7 +119,8 @@ using namespace mozilla::dom;
 
 nsINode::nsSlots::nsSlots()
   : mWeakReference(nullptr),
-    mEditableDescendantCount(0)
+    mEditableDescendantCount(0),
+    mReflowDuration(0)
 {
 }
 

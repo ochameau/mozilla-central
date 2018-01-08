@@ -1061,8 +1061,11 @@ MarkupView.prototype = {
   _onDisplayChange: function (nodes) {
     for (let node of nodes) {
       let container = this.getContainer(node);
-      if (container) {
+      if (container && container.updateIsDisplayed) {
         container.updateIsDisplayed();
+      }
+      if (container && container.updateReflows) {
+        container.updateReflows();
       }
     }
   },

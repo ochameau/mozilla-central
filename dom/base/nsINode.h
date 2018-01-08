@@ -464,6 +464,15 @@ public:
     return GetBoolFlag(NodeIsElement);
   }
 
+  void IncrementReflowDuration(PRTime duration) {
+    nsSlots* s = Slots();
+    s->mReflowDuration += duration;
+  }
+  long long GetReflowDuration() {
+    nsSlots* s = Slots();
+    return s->mReflowDuration;
+  }
+
   /**
    * Return this node as an Element.  Should only be used for nodes
    * for which IsElement() is true.  This is defined inline in Element.h.
@@ -1162,6 +1171,8 @@ public:
      * explicitly set as editable.
      */
     uint32_t mEditableDescendantCount;
+
+    long long mReflowDuration;
   };
 
   /**

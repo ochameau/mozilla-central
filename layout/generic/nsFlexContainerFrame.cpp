@@ -4103,6 +4103,8 @@ nsFlexContainerFrame::Reflow(nsPresContext* aPresContext,
     return;
   }
 
+  PRTime reflowStart = PR_Now();
+
   // We (and our children) can only depend on our ancestor's bsize if we have
   // a percent-bsize, or if we're positioned and we have "block-start" and "block-end"
   // set and have block-size:auto.  (There are actually other cases, too -- e.g. if
@@ -4168,6 +4170,19 @@ nsFlexContainerFrame::Reflow(nsPresContext* aPresContext,
     DoFlexLayout(aPresContext, aDesiredSize, aReflowInput, aStatus,
                  contentBoxMainSize, availableBSizeForContent,
                  struts, axisTracker);
+  }
+
+  if (mContent) {
+    PRTime reflowDuration = PR_Now() - reflowStart;
+    mContent->IncrementReflowDuration(reflowDuration);
+
+    /*
+    nsAutoString tag;
+    mContent->AsElement()->GetTagName(tag);
+    printf("flexContainerFrame::Reflow <%p:%s> in %ld ms (total:%ld)\n", (void*)this, NS_LossyConvertUTF16toASCII(tag).get(), reflowDuration, mContent->GetReflowDuration());
+    */
+  } else {
+    printf("flewContainerFrame::Reflow without content\n");
   }
 }
 

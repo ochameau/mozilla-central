@@ -301,6 +301,8 @@ ViewportFrame::Reflow(nsPresContext*           aPresContext,
   MOZ_ASSERT(aStatus.IsEmpty(), "Caller should pass a fresh reflow status!");
   NS_FRAME_TRACE_REFLOW_IN("ViewportFrame::Reflow");
 
+  PRTime reflowStart = PR_Now();
+
   // Because |Reflow| sets ComputedBSize() on the child to our
   // ComputedBSize().
   AddStateBits(NS_FRAME_CONTAINS_RELATIVE_BSIZE);
@@ -408,6 +410,19 @@ ViewportFrame::Reflow(nsPresContext*           aPresContext,
 
   NS_FRAME_TRACE_REFLOW_OUT("ViewportFrame::Reflow", aStatus);
   NS_FRAME_SET_TRUNCATION(aStatus, aReflowInput, aDesiredSize);
+
+  PRTime reflowDuration = PR_Now() - reflowStart;
+  if (mContent) {
+    // There seem to never be a `mContent` set, so record this from nsContainerFrame::ReflowChild
+    mContent->IncrementReflowDuration(reflowDuration);
+    /*
+    nsAutoString tag;
+    mContent->AsElement()->GetTagName(tag);
+    printf("ViewPortFrame::Reflow <%s> in %ld ms\n", NS_LossyConvertUTF16toASCII(tag).get(), reflowDuration);
+    */
+  } else {
+    //printf("ViewPortFrame::Reflow without content: %ld ms\n", reflowDuration);
+  }
 }
 
 bool

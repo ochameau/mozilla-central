@@ -4459,6 +4459,24 @@ nsDOMWindowUtils::RemoveFromStyloBlocklist(const nsACString& aBlockedDomain)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+nsDOMWindowUtils::GetReflowDurationForElement(nsIDOMNode* aNode,
+                                              int64_t* _retval)
+{
+  if (!aNode) {
+    return NS_ERROR_INVALID_ARG;
+  }
+
+  nsCOMPtr<nsINode> node = do_QueryInterface(aNode);
+
+  if (!node) {
+    return NS_ERROR_INVALID_ARG;
+  }
+
+  *_retval = (int64_t)node->GetReflowDuration();
+  return NS_OK;
+}
+
 NS_INTERFACE_MAP_BEGIN(nsTranslationNodeList)
   NS_INTERFACE_MAP_ENTRY(nsISupports)
   NS_INTERFACE_MAP_ENTRY(nsITranslationNodeList)

@@ -132,6 +132,11 @@ ElementEditor.prototype = {
     this.tag.setAttribute("tabindex", "-1");
     open.appendChild(this.tag);
 
+    this.reflows = this.doc.createElement("span");
+    this.reflows.classList.add("reflows");
+    this.reflows.setAttribute("tabindex", "-1");
+    open.appendChild(this.reflows);
+
     this.attrList = this.doc.createElement("span");
     open.appendChild(this.attrList);
 
@@ -210,10 +215,17 @@ ElementEditor.prototype = {
     return {type, name, value, el: node};
   },
 
+  updateReflows: function () {
+    let time = Math.round(this.node.reflowDuration / 1000);
+    this.reflows.textContent = " (" + time +"ms)";
+  },
+
   /**
    * Update the state of the editor from the node.
    */
   update: function () {
+    this.updateReflows();
+
     let nodeAttributes = this.node.attributes || [];
 
     // Keep the data model in sync with attributes on the node.

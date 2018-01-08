@@ -920,6 +920,8 @@ nsContainerFrame::ReflowChild(nsIFrame*                aKidFrame,
              aDesiredSize.ScrollableOverflow() == nsRect(0,0,0,0),
              "please reset the overflow areas before calling ReflowChild");
 
+  PRTime reflowStart = PR_Now();
+
   // Position the child frame and its view if requested.
   if (NS_FRAME_NO_MOVE_FRAME != (aFlags & NS_FRAME_NO_MOVE_FRAME)) {
     aKidFrame->SetPosition(aWM, aPos, aContainerSize);
@@ -946,6 +948,19 @@ nsContainerFrame::ReflowChild(nsIFrame*                aKidFrame,
       nsOverflowContinuationTracker::AutoFinish fini(aTracker, aKidFrame);
       kidNextInFlow->GetParent()->DeleteNextInFlowChild(kidNextInFlow, true);
     }
+  }
+
+  PRTime reflowDuration = PR_Now() - reflowStart;
+  if (mContent) {
+    mContent->IncrementReflowDuration(reflowDuration);
+
+    /*
+    nsAutoString tag;
+    mContent->AsElement()->GetTagName(tag);
+    printf("ViewPortFrame::Reflow <%s> in %ld ms\n", NS_LossyConvertUTF16toASCII(tag).get(), reflowDuration);
+    */
+  } else {
+    printf("ViewPortFrame::Reflow without content: %ld ms\n", reflowDuration);
   }
 }
 

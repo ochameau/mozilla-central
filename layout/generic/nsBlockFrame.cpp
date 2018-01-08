@@ -1098,6 +1098,8 @@ nsBlockFrame::Reflow(nsPresContext*           aPresContext,
   }
 #endif
 
+  PRTime reflowStart = PR_Now();
+
   const ReflowInput *reflowInput = &aReflowInput;
   WritingMode wm = aReflowInput.GetWritingMode();
   nscoord consumedBSize = ConsumedBSize(wm);
@@ -1498,6 +1500,15 @@ nsBlockFrame::Reflow(nsPresContext*           aPresContext,
     printf("%s\n", buf);
   }
 #endif
+
+  nsCOMPtr<nsINode> node(do_QueryInterface(mContent));
+
+  PRTime reflowDuration = PR_Now() - reflowStart;
+  node->IncrementReflowDuration(reflowDuration);
+
+  //nsAutoString tag;
+  //mContent->AsElement()->GetTagName(tag);
+  //printf("blockFrame::Reflow <%p:%s> in %ld ms (total:%ld)\n", (void*)node, NS_LossyConvertUTF16toASCII(tag).get(), reflowDuration, mContent->GetReflowDuration());
 
   NS_FRAME_SET_TRUNCATION(aStatus, (*reflowInput), aMetrics);
 }
