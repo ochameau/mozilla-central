@@ -1,0 +1,639 @@
+var { classes: Cc, interfaces: Ci, utils: Cu, results: Cr } = Components;
+
+Components.utils.import("resource://gre/modules/osfile.jsm");
+Components.utils.import("resource://gre/modules/Task.jsm");
+Components.utils.import("resource://gre/modules/Services.jsm");
+
+const init = Components.classes["@mozilla.org/jsreflect;1"].createInstance();
+init();
+
+var done = false;
+
+const kIgnorePaths = [
+  // Just ignore gcli for now
+  "devtools/client/commandline",
+
+  // Ignore old debugger frontend as well as the new
+  "devtools/client/debugger",
+
+  // Ignore old console test which are meant to be manually rewritten for the new console
+  "devtools/client/webconsole/test",
+
+  // Keep Task here, will followup to clean it up
+  "devtools/client/shared/redux/middleware/task.js",
+
+  // These tests fail when converted to async
+  "devtools/client/netmonitor/test/browser_net_resend.js",
+  "devtools/client/inspector/test/browser_inspector_expand-collapse.js",
+  "devtools/client/inspector/computed/test/browser_computed_cycle_color.js",
+  "devtools/client/inspector/markup/test/browser_markup_accessibility_semantics.js",
+  "devtools/client/inspector/markup/test/browser_markup_dragdrop_autoscroll_01.js",
+  "devtools/client/inspector/markup/test/browser_markup_dragdrop_autoscroll_02.js",
+
+  // Ignore animationinspector for now, because of browser_animation_timeline_rate_selector.js failure
+  "devtools/client/animationinspector",
+
+  // Ignore inspector for now, because of various test failures related to inspector
+  "devtools/client/inspector",
+];
+
+let generatorWhitelist = [];
+let generatorWhitelistPrefixes = [];
+
+let replaceGenerators = arguments.includes("--replace-generators");
+let showGeneratorsWithoutYield = arguments.includes("--show-without-yield");
+let showGenerators = arguments.includes("--show-generators");
+let gPaths = arguments.filter(a => !a.startsWith("-"));
+
+if (!gPaths.length) {
+  gPaths = ["toolkit", "browser"];
+}
+generatorWhitelist = [
+  "devtools/client/storage/ui.js:361",
+  "devtools/client/inspector/shared/test/browser_styleinspector_context-menu-copy-color_01.js:107",
+  "devtools/client/shared/redux/middleware/test/test_middleware-task-03.js:30",
+  "devtools/client/inspector/markup/test/head.js:551",
+];
+generatorWhitelistPrefixes = [
+  // Modules that uses generators outside of Task usage, real generators!
+  "devtools/client/webide/modules/runtimes.js",
+
+  // Usages of Symbol.iterator
+  "devtools/client/framework/devtools.js",
+  "devtools/client/framework/gDevTools.jsm",
+  "devtools/client/performance/modules/logic/jit.js",
+  "devtools/client/shared/widgets/VariablesView.jsm",
+  "devtools/client/shared/widgets/view-helpers.js",
+
+  "devtools/client/shared/source-map",
+];
+
+generatorWhitelist = new Set(generatorWhitelist);
+
+
+function isFileRelevant(file) {
+  return file.includes("Task.") || file.includes("yield");
+}
+
+function deepEqualExceptLocation(obj1, obj2) {
+  if ((typeof obj1) != (typeof obj2))
+    return false;
+
+  if (typeof obj1 == "string")
+    return obj1 == obj2;
+
+  if (obj1 === obj2)
+    return true;
+
+  for (let prop in obj1) {
+    if (prop == "loc")
+      continue;
+    if (!deepEqualExceptLocation(obj1[prop], obj2[prop]))
+      return false;
+  }
+  for (let prop in obj2) {
+    if (prop == "loc")
+      continue;
+    if (!deepEqualExceptLocation(obj1[prop], obj2[prop]))
+      return false;
+  }
+
+  return true;
+}
+
+let globalCounts = {functions: 0, generators: 0, converted: 0, alreadyConverted: 0};
+let noYield = 0;
+
+function processScript(file, relativePath = "", startLine = 1) {
+  file = file.replace(/^#/gm, "//XPCShell-preprocessor-");
+  let lines = file.split("\n");
+  let removals = [];
+
+  let getLineForLoc = loc => lines[loc.line - startLine];
+
+  let replacedLocationSet = new Set();
+
+  function convertToNonGeneratorFunction(fun) {
+    // 'function*' may not be included in fun.loc
+    let fromLoc = fun.loc.start;
+    let start = getLineForLoc(fromLoc).slice(0, fromLoc.column);
+    let match = /function\s*\*? ?$/.exec(start);
+    if (match)
+      fromLoc = {line: fromLoc.line, column: fromLoc.column - match[0].length};
+    let toLoc = fun.loc.start;
+
+    if (fun.id) {
+      let prefix = "function ";
+      // Handle the '*methodName() {' -> 'methodName() {' case.
+      if (!match && (match = /\* ?$/.exec(start))) {
+        fromLoc = {line: fromLoc.line, column: fromLoc.column - match[0].length};
+        prefix = "";
+      }
+
+      removals.push({from_line: fromLoc.line - startLine,
+                     from_column: fromLoc.column,
+                     to_line: toLoc.line - startLine,
+                     to_column: toLoc.column,
+                     insert: prefix
+                    });
+    } else {
+      let end = getLineForLoc(toLoc).slice(toLoc.column);
+      toLoc = {line: toLoc.line, column: toLoc.column + end.indexOf("(")};
+      removals.push({from_line: fromLoc.line - startLine,
+                     from_column: fromLoc.column,
+                     to_line: toLoc.line - startLine,
+                     to_column: toLoc.column,
+                     insert: "function"
+                    });
+    }
+  }
+  
+  function replaceGenerator(fun, loc) {
+    if (!loc)
+      loc = fun.loc;
+    replacedLocationSet.add(fun.loc.start.line + ":" + fun.loc.start.column);
+
+    // Go through the AST recursively and replace each 'yield' with 'await'
+    let walk = obj => {
+      // Avoid replacing yield keywords in subfunctions; they may be actual generators!
+      if (obj.type == "FunctionExpression" || obj.type == "FunctionDeclaration")
+        return;
+
+      if (obj.type == "YieldExpression") {
+        let fromLoc = obj.loc.start;
+        // obj.argument.loc.start won't be correct if obj.argument starts with '('.
+        let match = /yield\*?/.exec(getLineForLoc(fromLoc).slice(fromLoc.column));
+        let toLoc = {line: fromLoc.line, column: fromLoc.column + match[0].length};
+        removals.push({from_line: fromLoc.line - startLine,
+                       from_column: fromLoc.column,
+                       to_line: toLoc.line - startLine,
+                       to_column: toLoc.column,
+                       insert: "await"
+                      });
+      }
+
+      for (let prop in obj) {
+        if (obj[prop] && (typeof obj[prop]) == "object")
+          walk(obj[prop]);
+      }
+    };
+    if (fun.body)
+      walk(fun.body);
+
+    // loc may either be the call expression's location, or the function expression location.
+    // In that latter case, 'function*' may not be included.
+    let fromLoc = loc.start;
+    let start = getLineForLoc(fromLoc).slice(0, fromLoc.column);
+    let match = /function\s*\*? ?$/.exec(start);
+    if (match)
+      fromLoc = {line: fromLoc.line, column: fromLoc.column - match[0].length};
+    let toLoc = fun.loc.start;
+
+    if (fun.id) {
+      let prefix = "async function ";
+      // Handle the '*methodName() {' -> 'async methodName() {' case.
+      if (!match && (match = /\* ?$/.exec(start))) {
+        fromLoc = {line: fromLoc.line, column: fromLoc.column - match[0].length};
+        prefix = "async ";
+      }
+
+      removals.push({from_line: fromLoc.line - startLine,
+                     from_column: fromLoc.column,
+                     to_line: toLoc.line - startLine,
+                     to_column: toLoc.column,
+                     insert: prefix
+                    });
+    } else {
+      // If loc is for the whole call expression, we may be in the
+      // 'methodName: Task.async(function*()' case, let's grab the name from it.
+      let match = /(\w+): ?$/.exec(start);
+      let name = "function";
+      if (match) {
+        name = match[1];
+        fromLoc = {line: fromLoc.line, column: fromLoc.column - match[0].length};
+      }
+      let end = getLineForLoc(toLoc).slice(toLoc.column);
+      toLoc = {line: toLoc.line, column: toLoc.column + end.indexOf("(")};
+      removals.push({from_line: fromLoc.line - startLine,
+                     from_column: fromLoc.column,
+                     to_line: toLoc.line - startLine,
+                     to_column: toLoc.column,
+                     insert: "async " + name
+                    });
+    }
+  }
+
+  
+  try {
+    Reflect.parse(file, {
+      source: relativePath,
+      line: startLine,
+      builder: {
+        program: function(body, loc) {
+          let counts = {functions: 0, generators: 0, converted: 0, alreadyConverted: 0};
+
+          let yields = [];
+          let walkFun = obj => {
+            // Avoid subfunctions
+            if (obj.type == "FunctionExpression" || obj.type == "FunctionDeclaration")
+              return false;
+
+            if (obj.type == "YieldExpression") {
+              yields.push(getLineForLoc(obj.loc.start));
+
+              if (!obj.argument)
+                return false;
+
+              // yield promiseBlah; or yield blahPromise;
+              if (obj.argument.type == "Identifier" &&
+                  (obj.argument.name.startsWith("promise") ||
+                   obj.argument.name.endsWith("Promise")))
+                return true;
+              // yield new Promise(...)
+              if (obj.argument.type == "NewExpression" &&
+                  obj.argument.callee.type == "Identifier" &&
+                  obj.argument.callee.name == "Promise")
+                return true;
+              if (obj.argument.type == "CallExpression") {
+                let callee = obj.argument.callee;
+                if (callee.type == "MemberExpression" &&
+                    callee.object.type == "Identifier" &&
+                    ["BrowserTestUtils", "ContentTask", "Promise", "Task",
+                     "PlacesUtils", "PlacesTestUtils", "NormandyApi"].includes(callee.object.name)) {
+                  return true;
+                }
+                // yield OS.File...
+                if (callee.type == "MemberExpression" &&
+                    callee.object.type == "MemberExpression" &&
+                    callee.object.object.type == "Identifier" &&
+                    callee.object.object.name == "OS" &&
+                    callee.object.property.type == "Identifier" &&
+                    callee.object.property.name == "File") {
+                  return true;
+                }
+                // yield promiseBlah(...)
+                if (callee.type == "Identifier" && (callee.name.startsWith("promise") ||
+                                                    callee.name.startsWith("waitFor")))
+                  return true;
+              }
+              // yield blah.promise; eg. deferred.promise
+              if (obj.argument.type == "MemberExpression" &&
+                  obj.argument.property.type == "Identifier" &&
+                  obj.argument.property.name == "promise")
+                return true;
+            }
+
+            for (let prop in obj) {
+              if (obj[prop] && (typeof obj[prop]) == "object" && walkFun(obj[prop]))
+                return true;
+            }
+            return false;
+          };
+          
+          // Go through the AST recursively and replace each 'yield' with 'await'
+          let walk = obj => {
+            // Avoid replacing yield keywords in subfunctions; they may be actual generators!
+            if (obj.type == "FunctionExpression" || obj.type == "FunctionDeclaration") {
+              counts.functions++;
+              if (obj.generator) {
+                counts.generators++;
+                if (replacedLocationSet.has(obj.loc.start.line + ":" + obj.loc.start.column)) {
+                  counts.alreadyConverted++;
+                } else {
+                  yields = [];
+                  if (walkFun(obj.body))
+                    replaceGenerator(obj);
+                  else {
+                    if (!yields.length) {
+                      convertToNonGeneratorFunction(obj);
+                      if (showGeneratorsWithoutYield)
+                        dump("generator without yield at: " + relativePath + " " + obj.loc.start.line + "\n");
+                      noYield++;
+                    } else {
+                      let location = relativePath + ":" + obj.loc.start.line;
+                      if (replaceGenerators) {
+                        if (!generatorWhitelistPrefixes.some(p => relativePath.startsWith(p))) {
+                          if (!generatorWhitelist.has(location)) {
+                            for (let entry of generatorWhitelist)
+                              if (entry.startsWith(relativePath))
+                                print("warning: found " + entry + " but replacing a generator at line " + obj.loc.start.line);
+                            replaceGenerator(obj)
+                          } else {
+                            generatorWhitelist.delete(location);
+                          }
+                        }
+                      } else if (showGenerators) {
+                        dump(location + "\n" + yields.join("\n") + "\n\n");
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
+            for (let prop in obj) {
+              if (obj[prop] && (typeof obj[prop]) == "object")
+                walk(obj[prop]);
+            }
+          };
+          walk(body);
+          if (counts.generators) {
+            counts.converted = replacedLocationSet.size;
+          }
+          for (let i in counts)
+            globalCounts[i] += counts[i];
+        },
+
+        callExpression: function(callee, args, loc) {
+          let rv = {type: "CallExpression", callee: callee, arguments: args, loc: loc};
+          if (!callee)
+            return rv;
+
+          // Remove XPCOMUtils.defineLazyModuleGetter and Cu.import calls for Task.jsm
+          if (callee.type == "MemberExpression" && callee.property.type == "Identifier" &&
+              ((callee.property.name == "import" && args.length >= 1 &&
+               args[0].type == "Literal" && args[0].value.endsWith("modules/Task.jsm")) ||
+               (callee.property.name == "defineLazyModuleGetter" && args.length >= 3 &&
+                args[2].type == "Literal" && args[2].value.endsWith("modules/Task.jsm")))) {
+
+            // Preserve the import for files that use Task.Debugging
+            if (![
+              "toolkit/components/asyncshutdown/AsyncShutdown.jsm",
+              "toolkit/components/osfile/modules/osfile_async_front.jsm",
+              "toolkit/modules/Log.jsm",
+              "testing/mochitest/browser-test.js",
+              "testing/xpcshell/head.js",
+            ].includes(relativePath)) {
+              let fromLoc = loc.start;
+              let toLoc = loc.end;
+              removals.push({from_line: fromLoc.line - startLine,
+                             from_column: 0,
+                             to_line: toLoc.line - startLine + 1,
+                             to_column: 0,
+                            });
+            }
+          }
+
+          // ContentTask.spawn's third argument is a task.
+          if (callee.type == "MemberExpression" &&
+              callee.property.type == "Identifier" && callee.property.name == "spawn" &&
+              callee.object.type == "Identifier" && callee.object.name == "ContentTask" &&
+              args.length == 3 && args[2].type == "FunctionExpression" && args[2].generator)
+            replaceGenerator(args[2]);
+
+          // add_task
+          if (callee.type == "Identifier" && callee.name == "add_task" &&
+              args[0].type == "FunctionExpression" && args[0].generator) {
+            replaceGenerator(args[0]);
+          }
+
+          // Task.spawn
+          if (callee.type == "MemberExpression" &&
+              callee.property.type == "Identifier" && callee.property.name == "spawn" &&
+              callee.object.type == "Identifier" && callee.object.name == "Task" &&
+              args.length == 1) {
+
+            
+            let fromLoc = callee.loc.start;
+            let toLoc = callee.loc.end;
+            removals.push({from_line: fromLoc.line - startLine,
+                           from_column: fromLoc.column,
+                           to_line: toLoc.line - startLine,
+                           to_column: toLoc.column,
+                          });
+
+            if (args[0].type == "FunctionExpression" && args[0].generator)
+              replaceGenerator(args[0]);
+            else if (args[0].type == "CallExpression" &&
+                     args[0].callee.type == "MemberExpression" &&
+                     args[0].callee.property.type == "Identifier" &&
+                     args[0].callee.property.name == "bind" &&
+                     args[0].callee.object.type == "FunctionExpression" &&
+                     args[0].callee.object.generator)
+              replaceGenerator(args[0].callee.object);
+            else
+              dump(relativePath + " " + callee.loc.start.line + " needs review\n");
+
+            toLoc = fromLoc = args[0].loc.end;
+            removals.push({from_line: fromLoc.line - startLine,
+                           from_column: fromLoc.column,
+                           to_line: toLoc.line - startLine,
+                           to_column: toLoc.column,
+                           insert: ")("
+                        });
+          }
+
+          // return if we are not in a Task.async call.
+          if (callee.type != "MemberExpression" ||
+              callee.property.type != "Identifier" ||
+              callee.property.name != "async" ||
+              callee.object.type != "Identifier" || callee.object.name != "Task" ||
+              args.length != 1)
+            return rv;
+
+          let fun;
+          if (args[0].type == "FunctionExpression" && args[0].generator) {
+            fun = args[0];
+          } else if (args[0].type == "CallExpression" &&
+                     args[0].callee.type == "MemberExpression" &&
+                     args[0].callee.property.type == "Identifier" &&
+                     args[0].callee.property.name == "bind" &&
+                     args[0].callee.object.type == "FunctionExpression" &&
+                     args[0].callee.object.generator) {
+            fun = args[0].callee.object;
+          } else {
+            return rv;
+          }
+          replaceGenerator(fun, loc);
+
+          let fromLoc = args[0].loc.end;
+          let toLoc = loc.end;
+          removals.push({from_line: fromLoc.line - startLine,
+                         from_column: fromLoc.column,
+                         to_line: toLoc.line - startLine,
+                         to_column: toLoc.column,
+                        });
+
+          return rv;
+        }
+      }
+    });
+
+    if (!removals.length)
+      return null;
+
+    removals.sort((a, b) => {
+      return (a.from_line - b.from_line) || (a.from_column - b.from_column);
+    });
+
+    let removal;
+    while ((removal = removals.pop())) {
+      let line = lines[removal.from_line].slice(0, removal.from_column) +
+                 (removal.insert || "") +
+                 lines[removal.to_line].slice(removal.to_column);
+      lines[removal.from_line] = line;
+      lines.splice(removal.from_line + 1, removal.to_line - removal.from_line);
+    }
+
+    return lines.join("\n").replace(/^\/\/XPCShell-preprocessor-/gm, "#");
+  } catch (ex) {
+    dump("Error reading " + relativePath + ":" + ex.lineNumber + " " + ex + "\n");
+    return null;
+  }
+}
+
+Task.spawn(function *() {
+  let currentDirectory = yield OS.File.getCurrentDirectory();
+  dump("current:"+currentDirectory+"\n");
+  let paths = gPaths.map(a => currentDirectory + "/" + a);
+  
+  let decoder = new TextDecoder();
+
+  while (paths.length) {
+    let iterator;
+    try {
+      iterator = new OS.File.DirectoryIterator(paths.pop());
+
+      let items = [];
+      while(true) {
+        let i = iterator.next();
+        if (!i) break;
+        i = yield i;
+        if (!i || i.done) break;
+        i = i.value;
+        if (!i) break;
+        items.push(i);
+      }
+      for (let child of items) {
+        if (typeof child == "string") {
+          continue;
+        }
+        let path = child.path;
+        let relativePath = path.slice(currentDirectory.length + 1);
+        if (kIgnorePaths.some(p => relativePath.startsWith(p)))
+          continue;
+
+        if (child.isDir) {
+          paths.push(path);
+          continue;
+        }
+
+        if (!path.endsWith(".js") && !path.endsWith(".jsm") &&
+            !path.endsWith(".xml") && !path.endsWith(".xhtml") &&
+            !path.endsWith(".html") && !path.endsWith("xul"))
+          continue;
+        
+        let file = decoder.decode(yield OS.File.read(path));
+        if (!isFileRelevant(file))
+          continue;
+
+        if (path.endsWith(".js") || path.endsWith(".jsm")) {
+          file = processScript(file, relativePath);
+        } else if (path.endsWith(".html")) {
+          // Look for <script> tags.
+          let lines = file.split("\n");
+          let startLine, endLine;
+          let madeChanges = false;
+          for (startLine = 0; startLine < lines.length; ++startLine) {
+            if (/<script.*>/.test(lines[startLine]) &&
+                !lines[startLine].includes("</script>")) {
+              let prefix = lines[startLine].replace(/.*<script[^>]*>/, "");
+              for (endLine = ++startLine; endLine < lines.length; ++endLine) {
+                if (lines[endLine].includes("</script>"))
+                  break;
+              }
+              if (endLine == lines.length)
+                break;
+              let suffix = lines[endLine].replace(/<\/script>.*/, "")
+                                         .replace(/\/\/(.*)/, "/*$1*/");
+              let f = lines.slice(startLine, endLine).join("\n");
+              if (!isFileRelevant(f)) {
+                startLine = endLine;
+                continue;
+              }
+              f = processScript("function f() {" + prefix + "\n"+f+"\n" + suffix + "}",
+                                relativePath, startLine);
+              if (!f) {
+                startLine = endLine;
+                continue;
+              }
+              let modifiedLines = f.split("\n");
+              modifiedLines.shift();
+              modifiedLines.pop();
+              lines.splice(startLine, endLine - startLine, ...modifiedLines);
+              startLine += modifiedLines.length;
+              madeChanges = true;
+            }
+          }
+          file = madeChanges ? lines.join("\n") : null;
+        } else {
+          // Handle XBL bindings and xhtml files by looking for CDATA blocks
+          if (path.endsWith(".xml") &&
+              !file.includes("xmlns=\"http://www.mozilla.org/xbl\""))
+            continue;
+
+          let lines = file.split("\n");
+          let startLine, endLine;
+          let madeChanges = false;
+          for (startLine = 0; startLine < lines.length; ++startLine) {
+            if (lines[startLine].includes("<![CDATA[")) {
+              let prefix = lines[startLine].replace(/.*<!\[CDATA\[/, "");
+              for (endLine = ++startLine; endLine < lines.length; ++endLine) {
+                if (lines[endLine].includes("]]>"))
+                  break;
+              }
+              let suffix = lines[endLine].replace(/\]\]>.*/, "")
+                                         .replace(/\/\/(.*)/, "/*$1*/");
+              let f = lines.slice(startLine, endLine).join("\n");
+              if (!isFileRelevant(f))
+                continue;
+              f = processScript("function f() {" + prefix + "\n"+f+"\n" + suffix + "}",
+                                relativePath, startLine);
+              if (!f)
+                continue;
+              let modifiedLines = f.split("\n");
+              modifiedLines.shift();
+              modifiedLines.pop();
+              lines.splice(startLine, endLine - startLine, ...modifiedLines);
+              startLine += modifiedLines.length;
+              madeChanges = true;
+            }
+          }
+          file = madeChanges ? lines.join("\n") : null;
+        }
+
+        if (file)
+          yield OS.File.writeAtomic(path, (new TextEncoder()).encode(file));
+      }
+    } catch (ex) {
+      // Ignore StopIteration to prevent exiting the loop.
+      //if (ex != StopIteration) {
+        throw ex;
+      //}
+    }
+    iterator.close();
+  }
+  done = true;
+
+  dump("global counts: " + globalCounts.toSource() + "\n");
+  dump((globalCounts.converted / globalCounts.generators * 100) + "% converted\n");
+  dump("generators without yield: " + noYield + "\n");
+  
+  if (replaceGenerators) {
+    for (let whitelistEntry of generatorWhitelist)
+      print("Error: unused whitelist entry: " + whitelistEntry);
+  }
+
+});
+
+// Spin an event loop.
+(() => {
+  var thread = Components.classes["@mozilla.org/thread-manager;1"]
+                         .getService().currentThread;
+  while (!done)
+    thread.processNextEvent(true);
+
+  // get rid of any pending event
+  while (thread.hasPendingEvents())
+    thread.processNextEvent(true);
+})();
