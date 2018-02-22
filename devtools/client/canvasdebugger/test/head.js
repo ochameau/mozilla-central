@@ -68,9 +68,13 @@ function ifTestingUnsupported() {
   finish();
 }
 
-function test() {
+async function test() {
   let generator = isTestingSupported() ? ifTestingSupported : ifTestingUnsupported;
-  (generator)().catch(handleError);
+  try {
+    generator();
+  } catch(e) {
+    handleError(e);
+  }
 }
 
 function createCanvas() {

@@ -47,7 +47,7 @@ function* viewSource() {
 }
 
 function test() {
-  (viewSource)().then(finish, (aError) => {
+  viewSource().then(finish, (aError) => {
     ok(false, "Got an error: " + aError.message + "\n" + aError.stack);
     finish();
   });

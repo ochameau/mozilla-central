@@ -36,7 +36,7 @@ exports.idleWait = function (time) {
  */
 exports.waitUntil = async function(predicate, interval = 100, tries = 100) {
   for (let i = 1; i <= tries; i++) {
-    if (await (predicate)()) {
+    if (await predicate()) {
       dump(`Predicate returned true after ${i} tries.\n`);
       return;
     }
