@@ -7,7 +7,6 @@ var {Ci, Cu} = require("chrome");
 
 const {FileUtils} = require("resource://gre/modules/FileUtils.jsm");
 const Services = require("Services");
-const {Task} = require("devtools/shared/task");
 var strings = Services.strings.createBundle("chrome://devtools/locale/app-manager.properties");
 
 function AppValidator({ type, location }) {

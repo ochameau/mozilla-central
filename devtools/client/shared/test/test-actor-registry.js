@@ -8,7 +8,6 @@
 
   const { require } = ChromeUtils.import("resource://devtools/shared/Loader.jsm", {});
   const { fetch } = require("devtools/shared/DevToolsUtils");
-  const { Task } = require("devtools/shared/task");
 
   const TEST_URL_ROOT = "http://example.com/browser/devtools/client/shared/test/";
   const ACTOR_URL = TEST_URL_ROOT + "test-actor.js";

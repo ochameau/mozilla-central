@@ -6,7 +6,6 @@
 // Test the completions using numbers.
 const source = "0x1.";
 const completions = ["toExponential", "toFixed", "toString"];
-const { Task } = require("devtools/shared/task");
 
 function test() {
   const options = { tabContent: "test scratchpad autocomplete" };

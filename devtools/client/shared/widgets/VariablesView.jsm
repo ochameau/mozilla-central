@@ -24,7 +24,6 @@ const defer = require("devtools/shared/defer");
 const { extend } = require("devtools/shared/extend");
 const { ViewHelpers, setNamedTimeout } =
   require("devtools/client/shared/widgets/view-helpers");
-const { Task } = require("devtools/shared/task");
 const nodeConstants = require("devtools/shared/dom-node-constants");
 const {KeyCodes} = require("devtools/client/shared/keycodes");
 const {PluralForm} = require("devtools/shared/plural-form");

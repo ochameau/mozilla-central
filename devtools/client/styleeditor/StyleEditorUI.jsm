@@ -11,7 +11,6 @@ const {loader, require} = ChromeUtils.import("resource://devtools/shared/Loader.
 const Services = require("Services");
 const {NetUtil} = require("resource://gre/modules/NetUtil.jsm");
 const {OS} = require("resource://gre/modules/osfile.jsm");
-const {Task} = require("devtools/shared/task");
 const EventEmitter = require("devtools/shared/old-event-emitter");
 const {gDevTools} = require("devtools/client/framework/devtools");
 const {

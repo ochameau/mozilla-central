@@ -5,7 +5,6 @@
 /* globals dump */
 
 const { CC } = require("chrome");
-const { Task } = require("devtools/shared/task");
 const DevToolsUtils = require("devtools/shared/DevToolsUtils");
 const { once, observeOnce } = require("devtools/client/performance/test/helpers/event-utils");
 

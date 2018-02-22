@@ -14,7 +14,6 @@ const {
   getRect, getAdjustedQuads, getWindowDimensions
 } = require("devtools/shared/layout/utils");
 const defer = require("devtools/shared/defer");
-const {Task} = require("devtools/shared/task");
 const {
   isContentStylesheet,
   getCSSStyleRules

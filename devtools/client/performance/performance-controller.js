@@ -12,7 +12,6 @@ var { loader, require } = BrowserLoaderModule.BrowserLoader({
   baseURI: "resource://devtools/client/performance/",
   window
 });
-var { Task } = require("devtools/shared/task");
 /* exported ViewHelpers, WidgetMethods, setNamedTimeout, clearNamedTimeout */
 var { ViewHelpers, WidgetMethods, setNamedTimeout, clearNamedTimeout } = require("devtools/client/shared/widgets/view-helpers");
 var { PrefObserver } = require("devtools/client/shared/prefs");

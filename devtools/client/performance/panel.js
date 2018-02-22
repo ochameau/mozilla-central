@@ -5,7 +5,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 "use strict";
 
-const { Task } = require("devtools/shared/task");
 const defer = require("devtools/shared/defer");
 
 loader.lazyRequireGetter(this, "EventEmitter",

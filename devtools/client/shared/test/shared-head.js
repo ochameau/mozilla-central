@@ -47,7 +47,6 @@ const flags = require("devtools/shared/flags");
 let promise = require("promise");
 let defer = require("devtools/shared/defer");
 const Services = require("Services");
-const {Task} = require("devtools/shared/task");
 const KeyShortcuts = require("devtools/client/shared/key-shortcuts");
 
 const TEST_DIR = gTestPath.substr(0, gTestPath.lastIndexOf("/"));

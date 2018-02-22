@@ -6,7 +6,6 @@
 
 "use strict";
 
-const {Task} = require("devtools/shared/task");
 
 const DEFAULT_TOGGLE_DELAY = 50;
 

@@ -20,7 +20,6 @@ var promise = require("promise");
 var defer = require("devtools/shared/defer");
 var Services = require("Services");
 var ChromeUtils = require("ChromeUtils");
-var {Task} = require("devtools/shared/task");
 var {gDevTools} = require("devtools/client/framework/devtools");
 var EventEmitter = require("devtools/shared/old-event-emitter");
 var Telemetry = require("devtools/client/shared/telemetry");

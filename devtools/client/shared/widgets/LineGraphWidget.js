@@ -1,6 +1,5 @@
 "use strict";
 
-const { Task } = require("devtools/shared/task");
 const { extend } = require("devtools/shared/extend");
 const { AbstractCanvasGraph, CanvasGraphUtils } = require("devtools/client/shared/widgets/Graphs");
 const { LocalizationHelper } = require("devtools/shared/l10n");

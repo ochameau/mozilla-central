@@ -7,7 +7,6 @@
  * This file contains the base line graph that all Performance line graphs use.
  */
 
-const { Task } = require("devtools/shared/task");
 const { extend } = require("devtools/shared/extend");
 const LineGraphWidget = require("devtools/client/shared/widgets/LineGraphWidget");
 const MountainGraphWidget = require("devtools/client/shared/widgets/MountainGraphWidget");

@@ -6,7 +6,6 @@
 
 var Services = require("Services");
 var promise = require("promise");
-var {Task} = require("devtools/shared/task");
 var {XPCOMUtils} = require("resource://gre/modules/XPCOMUtils.jsm");
 var EventEmitter = require("devtools/shared/old-event-emitter");
 

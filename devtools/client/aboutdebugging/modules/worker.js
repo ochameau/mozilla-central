@@ -4,7 +4,6 @@
 
 "use strict";
 
-const { Task } = require("devtools/shared/task");
 
 loader.lazyRequireGetter(this, "gDevTools",
   "devtools/client/framework/devtools", true);

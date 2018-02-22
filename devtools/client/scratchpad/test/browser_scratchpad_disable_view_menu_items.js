@@ -4,7 +4,6 @@
 // Test if the view menu items "Larger Font" and "Smaller Font" are disabled
 // when the font size reaches the maximum/minimum values.
 
-var {Task} = require("devtools/shared/task");
 
 function test() {
   const options = {

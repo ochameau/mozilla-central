@@ -7,7 +7,6 @@ const { require } = ChromeUtils.import("resource://devtools/shared/Loader.jsm", 
 const { FileUtils } = require("resource://gre/modules/FileUtils.jsm");
 const { gDevTools } = require("devtools/client/framework/devtools");
 const Services = require("Services");
-const { Task } = require("devtools/shared/task");
 const { AppProjects } = require("devtools/client/webide/modules/app-projects");
 const DevToolsUtils = require("devtools/shared/DevToolsUtils");
 const { DebuggerServer } = require("devtools/server/main");

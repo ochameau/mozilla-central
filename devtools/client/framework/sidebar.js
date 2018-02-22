@@ -5,7 +5,6 @@
 "use strict";
 
 var Services = require("Services");
-var {Task} = require("devtools/shared/task");
 var EventEmitter = require("devtools/shared/event-emitter");
 var Telemetry = require("devtools/client/shared/telemetry");
 

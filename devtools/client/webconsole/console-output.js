@@ -19,7 +19,6 @@ const XHTML_NS = "http://www.w3.org/1999/xhtml";
 
 const WebConsoleUtils = require("devtools/client/webconsole/utils").Utils;
 const { getSourceNames } = require("devtools/client/shared/source-utils");
-const {Task} = require("devtools/shared/task");
 const l10n = require("devtools/client/webconsole/webconsole-l10n");
 const nodeConstants = require("devtools/shared/dom-node-constants");
 const {PluralForm} = require("devtools/shared/plural-form");

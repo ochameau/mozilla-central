@@ -16,7 +16,6 @@ const {LocalizationHelper} = require("devtools/shared/l10n");
 const {extend} = require("devtools/shared/extend");
 const {WidgetMethods, setNamedTimeout} =
   require("devtools/client/shared/widgets/view-helpers");
-const {Task} = require("devtools/shared/task");
 
 // Use privileged promise in panel documents to prevent having them to freeze
 // during toolbox destruction. See bug 1402779.

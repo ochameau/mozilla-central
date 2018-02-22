@@ -6,7 +6,6 @@
 /* global addMessageListener, sendAsyncMessage, content */
 "use strict";
 const {require} = ChromeUtils.import("resource://devtools/shared/Loader.jsm", {});
-const { Task } = require("devtools/shared/task");
 const Services = require("Services");
 
 addMessageListener("devtools:test:history", function ({ data }) {

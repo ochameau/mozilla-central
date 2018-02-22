@@ -11,7 +11,6 @@ const { TargetFactory } = require("devtools/client/framework/target");
 const Telemetry = require("devtools/client/shared/telemetry");
 const {LocalizationHelper} = require("devtools/shared/l10n");
 const L10N = new LocalizationHelper("devtools/client/locales/toolbox.properties");
-const {Task} = require("devtools/shared/task");
 
 const NS_XHTML = "http://www.w3.org/1999/xhtml";
 

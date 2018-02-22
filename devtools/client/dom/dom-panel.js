@@ -10,7 +10,6 @@ const ObjectClient = require("devtools/shared/client/object-client");
 
 const defer = require("devtools/shared/defer");
 const EventEmitter = require("devtools/shared/old-event-emitter");
-const { Task } = require("devtools/shared/task");
 
 /**
  * This object represents DOM panel. It's responsibility is to

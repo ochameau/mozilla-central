@@ -6,7 +6,6 @@
 
 const Services = require("Services");
 const defer = require("devtools/shared/defer");
-const {Task} = require("devtools/shared/task");
 const {gDevTools} = require("devtools/client/framework/devtools");
 
 const {LocalizationHelper} = require("devtools/shared/l10n");

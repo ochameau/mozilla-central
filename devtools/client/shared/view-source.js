@@ -4,7 +4,6 @@
 
 "use strict";
 
-var { Task } = require("devtools/shared/task");
 
 var Services = require("Services");
 var { gDevTools } = require("devtools/client/framework/devtools");

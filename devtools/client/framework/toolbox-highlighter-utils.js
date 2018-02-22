@@ -5,7 +5,6 @@
 "use strict";
 
 const promise = require("promise");
-const {Task} = require("devtools/shared/task");
 const flags = require("devtools/shared/flags");
 
 /**
