@@ -318,7 +318,7 @@ StorageUI.prototype = {
    *  @param {Array} editableFields
    *         An array of keys of columns to be made editable
    */
-  makeFieldsEditable: function(editableFields) {
+  makeFieldsEditable: function (editableFields) {
     if (editableFields && editableFields.length > 0) {
       this.table.makeFieldsEditable(editableFields);
     } else if (this.table._editableFieldsEngine) {
