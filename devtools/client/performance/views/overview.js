@@ -209,7 +209,8 @@ var OverviewView = {
   /**
    * Called when recording state changes.
    */
-  _onRecordingStateChange: OverviewViewOnStateChange(async function (_, state, recording) {
+  _onRecordingStateChange:
+    OverviewViewOnStateChange(async function (_, state, recording) {
       if (state !== "recording-stopped") {
         return;
       }

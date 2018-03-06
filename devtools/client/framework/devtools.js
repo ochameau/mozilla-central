@@ -470,7 +470,7 @@ DevTools.prototype = {
       // actually trying to create a new one.
       let promise = this._creatingToolboxes.get(target);
       if (promise) {
-        return await promise;
+        return promise;
       }
       let toolboxPromise = this.createToolbox(target, toolId, hostType, hostOptions);
       this._creatingToolboxes.set(target, toolboxPromise);

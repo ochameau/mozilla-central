@@ -14,7 +14,7 @@ const { once } = require("devtools/client/performance/test/helpers/event-utils")
  */
 exports.initPanelInNewTab = async function ({ tool, url, win }, options = {}) {
   let tab = await addTab({ url, win }, options);
-  return (await exports.initPanelInTab({ tool, tab }));
+  return exports.initPanelInTab({ tool, tab });
 };
 
 /**
@@ -41,17 +41,17 @@ exports.initPanelInTab = async function ({ tool, tab }) {
  */
 exports.initPerformanceInNewTab = async function ({ url, win }, options = {}) {
   let tab = await addTab({ url, win }, options);
-  return (await exports.initPerformanceInTab({ tab }));
+  return exports.initPerformanceInTab({ tab });
 };
 
 /**
  * Initializes a performance panel in the specified tab.
  */
 exports.initPerformanceInTab = async function ({ tab }) {
-  return (await exports.initPanelInTab({
+  return exports.initPanelInTab({
     tool: "performance",
     tab: tab
-  }));
+  });
 };
 
 /**
@@ -60,7 +60,7 @@ exports.initPerformanceInTab = async function ({ tab }) {
  */
 exports.initConsoleInNewTab = async function ({ url, win }, options = {}) {
   let tab = await addTab({ url, win }, options);
-  return (await exports.initConsoleInTab({ tab }));
+  return exports.initConsoleInTab({ tab });
 };
 
 /**
@@ -84,11 +84,11 @@ exports.initConsoleInTab = async function ({ tab }) {
   };
 
   let profile = async function (label) {
-    return await consoleMethod("profile", label, "recording-started");
+    return consoleMethod("profile", label, "recording-started");
   };
 
   let profileEnd = async function (label) {
-    return await consoleMethod("profileEnd", label, "recording-stopped");
+    return consoleMethod("profileEnd", label, "recording-stopped");
   };
 
   return { target, toolbox, panel, console: { profile, profileEnd } };

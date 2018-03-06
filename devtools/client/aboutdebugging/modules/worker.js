@@ -4,7 +4,6 @@
 
 "use strict";
 
-
 loader.lazyRequireGetter(this, "gDevTools",
   "devtools/client/framework/devtools", true);
 loader.lazyRequireGetter(this, "TargetFactory",

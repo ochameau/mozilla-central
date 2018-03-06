@@ -107,7 +107,7 @@ var openStyleEditorForURL = async function (url, win) {
  *        name of the property.
  */
 var getComputedStyleProperty = async function (args) {
-  return await ContentTask.spawn(gBrowser.selectedBrowser, args,
+  return ContentTask.spawn(gBrowser.selectedBrowser, args,
     function ({selector, pseudo, name}) {
       let element = content.document.querySelector(selector);
       let style = content.getComputedStyle(element, pseudo);

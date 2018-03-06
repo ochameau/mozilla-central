@@ -597,7 +597,8 @@ exports.fetchImmediatelyDominated = TaskCache.declareCacheableTask({
     return `${id}-${lazyChildren.key()}`;
   },
 
-  task: async function (heapWorker, id, lazyChildren, removeFromCache, dispatch, getState) {
+  task: async function (heapWorker, id, lazyChildren, removeFromCache, dispatch,
+                        getState) {
     const snapshot = getSnapshot(getState(), id);
     assert(snapshot.dominatorTree, "Should have dominator tree model");
     assert(snapshot.dominatorTree.state === dominatorTreeState.LOADED ||

@@ -915,7 +915,7 @@ var TestActorFront = exports.TestActorFront = protocol.FrontClassWithSpec(testSp
    */
   async assertHighlightedNode(selector) {
     let rect = await this.getNodeRect(selector);
-    return await this.isNodeRectHighlighted(rect);
+    return this.isNodeRectHighlighted(rect);
   },
 
   /**
@@ -928,7 +928,7 @@ var TestActorFront = exports.TestActorFront = protocol.FrontClassWithSpec(testSp
    */
   async assertHighlightedTextNode(parentSelector, childNodeIndex) {
     let rect = await this.getTextNodeRect(parentSelector, childNodeIndex);
-    return await this.isNodeRectHighlighted(rect);
+    return this.isNodeRectHighlighted(rect);
   },
 
   /**

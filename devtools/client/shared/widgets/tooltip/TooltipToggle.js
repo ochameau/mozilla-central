@@ -6,7 +6,6 @@
 
 "use strict";
 
-
 const DEFAULT_TOGGLE_DELAY = 50;
 
 /**

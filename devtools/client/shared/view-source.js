@@ -4,7 +4,6 @@
 
 "use strict";
 
-
 var Services = require("Services");
 var { gDevTools } = require("devtools/client/framework/devtools");
 var { getSourceText } = require("devtools/client/debugger/content/queries");

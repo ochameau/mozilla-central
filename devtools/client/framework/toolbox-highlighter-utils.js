@@ -83,7 +83,7 @@ exports.getHighlighterUtils = function (toolbox) {
         await toolbox.initInspector();
         isInspectorInitialized = true;
       }
-      return await generator.apply(null, args);
+      return generator.apply(null, args);
     };
   };
 
@@ -111,33 +111,34 @@ exports.getHighlighterUtils = function (toolbox) {
    * @return A promise that resolves when the picker has started or immediately
    * if it is already started
    */
-  let startPicker = exported.startPicker = requireInspector(async function (doFocus = false) {
-    if (isPicking) {
-      return;
-    }
-    isPicking = true;
+  let startPicker = exported.startPicker =
+    requireInspector(async function (doFocus = false) {
+      if (isPicking) {
+        return;
+      }
+      isPicking = true;
 
-    toolbox.pickerButton.isChecked = true;
-    await toolbox.selectTool("inspector");
-    toolbox.on("select", cancelPicker);
+      toolbox.pickerButton.isChecked = true;
+      await toolbox.selectTool("inspector");
+      toolbox.on("select", cancelPicker);
 
-    if (isRemoteHighlightable()) {
-      toolbox.walker.on("picker-node-hovered", onPickerNodeHovered);
-      toolbox.walker.on("picker-node-picked", onPickerNodePicked);
-      toolbox.walker.on("picker-node-previewed", onPickerNodePreviewed);
-      toolbox.walker.on("picker-node-canceled", onPickerNodeCanceled);
+      if (isRemoteHighlightable()) {
+        toolbox.walker.on("picker-node-hovered", onPickerNodeHovered);
+        toolbox.walker.on("picker-node-picked", onPickerNodePicked);
+        toolbox.walker.on("picker-node-previewed", onPickerNodePreviewed);
+        toolbox.walker.on("picker-node-canceled", onPickerNodeCanceled);
 
-      await toolbox.highlighter.pick(doFocus);
-      toolbox.emit("picker-started");
-    } else {
-      // If the target doesn't have the highlighter actor, we can use the
-      // walker's pick method instead, knowing that it only responds when a node
-      // is picked (instead of emitting events)
-      toolbox.emit("picker-started");
-      let node = await toolbox.walker.pick();
-      onPickerNodePicked({node: node});
-    }
-  });
+        await toolbox.highlighter.pick(doFocus);
+        toolbox.emit("picker-started");
+      } else {
+        // If the target doesn't have the highlighter actor, we can use the
+        // walker's pick method instead, knowing that it only responds when a node
+        // is picked (instead of emitting events)
+        toolbox.emit("picker-started");
+        let node = await toolbox.walker.pick();
+        onPickerNodePicked({node: node});
+      }
+    });
 
   /**
    * Stop the element picker. Note that the picker is automatically stopped when
@@ -245,14 +246,15 @@ exports.getHighlighterUtils = function (toolbox) {
    * highlightNodeFront, so it has the same signature.
    * @see highlightNodeFront
    */
-  exported.highlightDomValueGrip = requireInspector(async function (valueGrip, options = {}) {
-    let nodeFront = await gripToNodeFront(valueGrip);
-    if (nodeFront) {
-      await highlightNodeFront(nodeFront, options);
-    } else {
-      throw new Error("The ValueGrip passed could not be translated to a NodeFront");
-    }
-  });
+  exported.highlightDomValueGrip =
+    requireInspector(async function (valueGrip, options = {}) {
+      let nodeFront = await gripToNodeFront(valueGrip);
+      if (nodeFront) {
+        await highlightNodeFront(nodeFront, options);
+      } else {
+        throw new Error("The ValueGrip passed could not be translated to a NodeFront");
+      }
+    });
 
   /**
    * Translate a debugger value grip into a node front usable by the inspector
@@ -261,7 +263,7 @@ exports.getHighlighterUtils = function (toolbox) {
    */
   let gripToNodeFront = exported.gripToNodeFront = requireInspector(
   async function (grip) {
-    return await toolbox.walker.getNodeActorFromObjectActor(grip.actor);
+    return toolbox.walker.getNodeActorFromObjectActor(grip.actor);
   });
 
   /**

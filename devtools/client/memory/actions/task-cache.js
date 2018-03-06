@@ -93,7 +93,7 @@ TaskCache.declareCacheableTask = function ({ getCacheKey, task }) {
         }
       }));
 
-      return await cache.get(key);
+      return cache.get(key);
     };
   };
 };

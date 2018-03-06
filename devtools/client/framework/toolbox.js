@@ -2169,7 +2169,7 @@ Toolbox.prototype = {
     }
 
     let prefFront = await this.preferenceFront;
-    return await prefFront.getBoolPref(DISABLE_AUTOHIDE_PREF);
+    return prefFront.getBoolPref(DISABLE_AUTOHIDE_PREF);
   },
 
   _listFrames: function (event) {

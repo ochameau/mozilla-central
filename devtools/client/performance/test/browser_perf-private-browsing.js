@@ -28,7 +28,7 @@ add_task(async function () {
 
 async function createPanelInNewWindow(options) {
   let win = await addWindow(options);
-  return await createPanelInWindow(options, win);
+  return createPanelInWindow(options, win);
 }
 
 async function createPanelInWindow(options, win = window) {

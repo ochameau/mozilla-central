@@ -125,7 +125,7 @@ async function openTabAndSetupStorage(url, options = {}) {
   await openTab(url, options);
 
   // open storage inspector
-  return await openStoragePanel();
+  return openStoragePanel();
 }
 
 /**
@@ -837,7 +837,7 @@ async function typeWithTerminator(str, terminator, validate = true) {
     return uniqueId;
   }
 
-  return await gUI.table.once(TableWidget.EVENTS.ROW_EDIT);
+  return gUI.table.once(TableWidget.EVENTS.ROW_EDIT);
 }
 
 function getCurrentEditorValue() {
