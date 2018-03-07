@@ -14,15 +14,16 @@ add_task(async function() {
   let tab = gBrowser.selectedTab = BrowserTestUtils.addTab(gBrowser,
                                                            "data:text/html,empty");
   await BrowserTestUtils.browserLoaded(tab.linkedBrowser);
-  await ContentTask.spawn(tab.linkedBrowser, { url: TEST_URL_1 }, async function({ url }) {
-    // Also, the neterror being privileged, the DOMContentLoaded only fires on
-    // the chromeEventHandler.
-    let { chromeEventHandler } = docShell; // eslint-disable-line no-undef
-    let onDOMContentLoaded = ContentTaskUtils.waitForEvent(chromeEventHandler,
-      "DOMContentLoaded", true);
-    content.location = url;
-    await onDOMContentLoaded;
-  });
+  await ContentTask.spawn(tab.linkedBrowser, { url: TEST_URL_1 },
+    async function({ url }) {
+      // Also, the neterror being privileged, the DOMContentLoaded only fires on
+      // the chromeEventHandler.
+      let { chromeEventHandler } = docShell; // eslint-disable-line no-undef
+      let onDOMContentLoaded = ContentTaskUtils.waitForEvent(chromeEventHandler,
+        "DOMContentLoaded", true);
+      content.location = url;
+      await onDOMContentLoaded;
+    });
 
   let { inspector, testActor } = await openInspector();
   ok(true, "Inspector loaded on the already opened net error");

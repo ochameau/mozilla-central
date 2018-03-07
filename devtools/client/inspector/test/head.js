@@ -412,121 +412,121 @@ async function poll(check, desc, attempts = 10, timeBetweenAttempts = 200) {
  *    properties. (see `openInspector`)
  */
 const getHighlighterHelperFor = (type) => async function({inspector, testActor}) {
-    let front = inspector.inspector;
-    let highlighter = await front.getHighlighterByType(type);
+  let front = inspector.inspector;
+  let highlighter = await front.getHighlighterByType(type);
 
-    let prefix = "";
+  let prefix = "";
 
-    // Internals for mouse events
-    let prevX, prevY;
+  // Internals for mouse events
+  let prevX, prevY;
 
-    // Highlighted node
-    let highlightedNode = null;
+  // Highlighted node
+  let highlightedNode = null;
 
-    return {
-      set prefix(value) {
-        prefix = value;
-      },
+  return {
+    set prefix(value) {
+      prefix = value;
+    },
 
-      get highlightedNode() {
-        if (!highlightedNode) {
-          return null;
-        }
-
-        return {
-          getComputedStyle: async function(options = {}) {
-            return await inspector.pageStyle.getComputed(
-              highlightedNode, options);
-          }
-        };
-      },
-
-      get actorID() {
-        if (!highlighter) {
-          return null;
-        }
-
-        return highlighter.actorID;
-      },
-
-      show: async function(selector = ":root", options, frameSelector = null) {
-        if (frameSelector) {
-          highlightedNode = await getNodeFrontInFrame(selector, frameSelector, inspector);
-        } else {
-          highlightedNode = await getNodeFront(selector, inspector);
-        }
-        return await highlighter.show(highlightedNode, options);
-      },
-
-      hide: async function() {
-        await highlighter.hide();
-      },
-
-      isElementHidden: async function(id) {
-        return (await testActor.getHighlighterNodeAttribute(
-          prefix + id, "hidden", highlighter)) === "true";
-      },
-
-      getElementTextContent: async function(id) {
-        return await testActor.getHighlighterNodeTextContent(
-          prefix + id, highlighter);
-      },
-
-      getElementAttribute: async function(id, name) {
-        return await testActor.getHighlighterNodeAttribute(
-          prefix + id, name, highlighter);
-      },
-
-      waitForElementAttributeSet: async function(id, name) {
-        await poll(async function() {
-          let value = await testActor.getHighlighterNodeAttribute(
-            prefix + id, name, highlighter);
-          return !!value;
-        }, `Waiting for element ${id} to have attribute ${name} set`);
-      },
-
-      waitForElementAttributeRemoved: async function(id, name) {
-        await poll(async function() {
-          let value = await testActor.getHighlighterNodeAttribute(
-            prefix + id, name, highlighter);
-          return !value;
-        }, `Waiting for element ${id} to have attribute ${name} removed`);
-      },
-
-      synthesizeMouse: async function(options) {
-        options = Object.assign({selector: ":root"}, options);
-        await testActor.synthesizeMouse(options);
-      },
-
-      // This object will synthesize any "mouse" prefixed event to the
-      // `testActor`, using the name of method called as suffix for the
-      // event's name.
-      // If no x, y coords are given, the previous ones are used.
-      //
-      // For example:
-      //   mouse.down(10, 20); // synthesize "mousedown" at 10,20
-      //   mouse.move(20, 30); // synthesize "mousemove" at 20,30
-      //   mouse.up();         // synthesize "mouseup" at 20,30
-      mouse: new Proxy({}, {
-        get: (target, name) =>
-          async function(x = prevX, y = prevY, selector = ":root") {
-            prevX = x;
-            prevY = y;
-            await testActor.synthesizeMouse({
-              selector, x, y, options: {type: "mouse" + name}});
-          }
-      }),
-
-      reflow: async function() {
-        await testActor.reflow();
-      },
-
-      finalize: async function() {
-        highlightedNode = null;
-        await highlighter.finalize();
+    get highlightedNode() {
+      if (!highlightedNode) {
+        return null;
       }
-    };
+
+      return {
+        getComputedStyle: async function(options = {}) {
+          return inspector.pageStyle.getComputed(
+            highlightedNode, options);
+        }
+      };
+    },
+
+    get actorID() {
+      if (!highlighter) {
+        return null;
+      }
+
+      return highlighter.actorID;
+    },
+
+    show: async function(selector = ":root", options, frameSelector = null) {
+      if (frameSelector) {
+        highlightedNode = await getNodeFrontInFrame(selector, frameSelector, inspector);
+      } else {
+        highlightedNode = await getNodeFront(selector, inspector);
+      }
+      return highlighter.show(highlightedNode, options);
+    },
+
+    hide: async function() {
+      await highlighter.hide();
+    },
+
+    isElementHidden: async function(id) {
+      return (await testActor.getHighlighterNodeAttribute(
+        prefix + id, "hidden", highlighter)) === "true";
+    },
+
+    getElementTextContent: async function(id) {
+      return testActor.getHighlighterNodeTextContent(
+        prefix + id, highlighter);
+    },
+
+    getElementAttribute: async function(id, name) {
+      return testActor.getHighlighterNodeAttribute(
+        prefix + id, name, highlighter);
+    },
+
+    waitForElementAttributeSet: async function(id, name) {
+      await poll(async function() {
+        let value = await testActor.getHighlighterNodeAttribute(
+          prefix + id, name, highlighter);
+        return !!value;
+      }, `Waiting for element ${id} to have attribute ${name} set`);
+    },
+
+    waitForElementAttributeRemoved: async function(id, name) {
+      await poll(async function() {
+        let value = await testActor.getHighlighterNodeAttribute(
+          prefix + id, name, highlighter);
+        return !value;
+      }, `Waiting for element ${id} to have attribute ${name} removed`);
+    },
+
+    synthesizeMouse: async function(options) {
+      options = Object.assign({selector: ":root"}, options);
+      await testActor.synthesizeMouse(options);
+    },
+
+    // This object will synthesize any "mouse" prefixed event to the
+    // `testActor`, using the name of method called as suffix for the
+    // event's name.
+    // If no x, y coords are given, the previous ones are used.
+    //
+    // For example:
+    //   mouse.down(10, 20); // synthesize "mousedown" at 10,20
+    //   mouse.move(20, 30); // synthesize "mousemove" at 20,30
+    //   mouse.up();         // synthesize "mouseup" at 20,30
+    mouse: new Proxy({}, {
+      get: (target, name) =>
+        async function(x = prevX, y = prevY, selector = ":root") {
+          prevX = x;
+          prevY = y;
+          await testActor.synthesizeMouse({
+            selector, x, y, options: {type: "mouse" + name}});
+        }
+    }),
+
+    reflow: async function() {
+      await testActor.reflow();
+    },
+
+    finalize: async function() {
+      highlightedNode = null;
+      await highlighter.finalize();
+    }
   };
+};
 
 // The expand all operation of the markup-view calls itself recursively and
 // there's not one event we can wait for to know when it's done so use this
@@ -540,7 +540,7 @@ function* waitForMultipleChildrenUpdates(inspector) {
     return yield waitForMultipleChildrenUpdates(inspector);
   }
   return null;
-};
+}
 
 /**
  * Using the markupview's _waitForChildren function, wait for all queued

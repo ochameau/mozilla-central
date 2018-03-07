@@ -434,7 +434,8 @@ async function addNewRule(inspector, view) {
  *        The index we expect the rule to have in the rule-view
  * @return a promise that resolves after the rule has been added
  */
-async function addNewRuleAndDismissEditor(inspector, view, expectedSelector, expectedIndex) {
+async function addNewRuleAndDismissEditor(inspector, view, expectedSelector,
+                                          expectedIndex) {
   await addNewRule(inspector, view);
 
   info("Getting the new rule at index " + expectedIndex);

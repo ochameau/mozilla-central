@@ -584,7 +584,8 @@ function* waitForScrollStop(doc) {
  *        - {String} pseudo: optional, "before" or "after" if the element focused after
  *        deleting the node is supposed to be a before/after pseudo-element.
  */
-async function checkDeleteAndSelection(inspector, key, {selector, focusedSelector, pseudo}) {
+async function checkDeleteAndSelection(inspector, key,
+                                       {selector, focusedSelector, pseudo}) {
   info("Test deleting node " + selector + " with " + key + ", " +
        "expecting " + focusedSelector + " to be focused");
 

@@ -157,7 +157,7 @@ Inspector.prototype = {
     let defaultSelection = await this._getDefaultNodeForSelection()
       .catch(this._handleRejectionIfNotDestroyed);
 
-    return await this._deferredOpen(defaultSelection);
+    return this._deferredOpen(defaultSelection);
   },
 
   get toolbox() {

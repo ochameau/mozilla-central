@@ -111,8 +111,8 @@ async function areElementAndHighlighterMovedCorrectly(helper, side, by) {
   delta = delta * ((side === "right" || side === "bottom") ? -1 : 1);
 
   info("Checking element's sides are correct after drag & drop");
-  return await areElementSideValuesCorrect(highlightedNode, beforeDragStyle,
-                                           side, delta);
+  return areElementSideValuesCorrect(highlightedNode, beforeDragStyle,
+                                     side, delta);
 }
 
 async function isHandlerPositionUpdated(helper, name, x, y, by) {

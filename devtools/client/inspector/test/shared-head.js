@@ -8,7 +8,6 @@
 /* globals registerTestActor, getTestActor, openToolboxForTab, gBrowser */
 /* import-globals-from ../../shared/test/shared-head.js */
 
-
 var {getInplaceEditorForSpan: inplaceEditor} = require("devtools/client/shared/inplace-editor");
 
 // This file contains functions related to the inspector that are also of interest to
@@ -304,7 +303,7 @@ function executeInContent(name, data = {}, objects = {},
  *        name of the property.
  */
 async function getComputedStyleProperty(selector, pseudo, propName) {
-  return await executeInContent("Test:GetComputedStylePropertyValue",
+  return executeInContent("Test:GetComputedStylePropertyValue",
     {selector,
      pseudo,
      name: propName});
@@ -326,7 +325,7 @@ async function getComputedStyleProperty(selector, pseudo, propName) {
  *        the name used in test message
  */
 async function waitForComputedStyleProperty(selector, pseudo, name, expected) {
-  return await executeInContent("Test:WaitForComputedStylePropertyValue",
+  return executeInContent("Test:WaitForComputedStylePropertyValue",
     {selector,
      pseudo,
      expected,
