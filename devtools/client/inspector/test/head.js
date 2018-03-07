@@ -531,16 +531,16 @@ const getHighlighterHelperFor = (type) => async function({inspector, testActor})
 // The expand all operation of the markup-view calls itself recursively and
 // there's not one event we can wait for to know when it's done so use this
 // helper function to wait until all recursive children updates are done.
-async function waitForMultipleChildrenUpdates(inspector) {
+function* waitForMultipleChildrenUpdates(inspector) {
   // As long as child updates are queued up while we wait for an update already
   // wait again
   if (inspector.markup._queuedChildUpdates &&
         inspector.markup._queuedChildUpdates.size) {
-    await waitForChildrenUpdated(inspector);
-    return await waitForMultipleChildrenUpdates(inspector);
+    yield waitForChildrenUpdated(inspector);
+    return yield waitForMultipleChildrenUpdates(inspector);
   }
   return null;
-}
+};
 
 /**
  * Using the markupview's _waitForChildren function, wait for all queued
