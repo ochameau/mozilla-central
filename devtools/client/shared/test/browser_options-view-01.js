@@ -14,16 +14,16 @@ const PRETTY_PRINT_PREF = "auto-pretty-print";
 const originalBlackBox = Services.prefs.getBoolPref(BRANCH + BLACK_BOX_PREF);
 const originalPrettyPrint = Services.prefs.getBoolPref(BRANCH + PRETTY_PRINT_PREF);
 
-add_task(function* () {
+add_task(async function() {
   info("Setting a couple of preferences");
   Services.prefs.setBoolPref(BRANCH + BLACK_BOX_PREF, false);
   Services.prefs.setBoolPref(BRANCH + PRETTY_PRINT_PREF, true);
 
   info("Opening a test tab and a toolbox host to create the options view in");
-  yield addTab("about:blank");
-  let [host, win] = yield createHost("bottom", OPTIONS_VIEW_URL);
+  await addTab("about:blank");
+  let [host, win] = await createHost("bottom", OPTIONS_VIEW_URL);
 
-  yield testOptionsView(win);
+  await testOptionsView(win);
 
   info("Closing the host and current tab");
   host.destroy();

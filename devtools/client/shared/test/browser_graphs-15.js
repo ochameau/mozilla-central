@@ -25,9 +25,9 @@ for (let frameRate of FRAMES) {
 
 const LineGraphWidget = require("devtools/client/shared/widgets/LineGraphWidget");
 
-add_task(function* () {
-  yield addTab("about:blank");
-  yield performTest();
+add_task(async function() {
+  await addTab("about:blank");
+  await performTest();
   gBrowser.removeCurrentTab();
 });
 

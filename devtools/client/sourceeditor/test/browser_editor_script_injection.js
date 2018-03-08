@@ -6,8 +6,8 @@
 
 "use strict";
 
-add_task(function* () {
-  yield runTest();
+add_task(async function() {
+  await runTest();
 });
 
 function* runTest() {

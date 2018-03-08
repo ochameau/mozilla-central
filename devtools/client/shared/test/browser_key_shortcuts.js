@@ -5,28 +5,28 @@
 
 var isOSX = Services.appinfo.OS === "Darwin";
 
-add_task(function* () {
+add_task(async function() {
   let shortcuts = new KeyShortcuts({
     window
   });
 
-  yield testSimple(shortcuts);
-  yield testNonLetterCharacter(shortcuts);
-  yield testPlusCharacter(shortcuts);
-  yield testFunctionKey(shortcuts);
-  yield testMixup(shortcuts);
-  yield testLooseDigits(shortcuts);
-  yield testExactModifiers(shortcuts);
-  yield testLooseShiftModifier(shortcuts);
-  yield testStrictLetterShiftModifier(shortcuts);
-  yield testAltModifier(shortcuts);
-  yield testCommandOrControlModifier(shortcuts);
-  yield testCtrlModifier(shortcuts);
-  yield testInvalidShortcutString(shortcuts);
-  yield testCmdShiftShortcut(shortcuts);
+  await testSimple(shortcuts);
+  await testNonLetterCharacter(shortcuts);
+  await testPlusCharacter(shortcuts);
+  await testFunctionKey(shortcuts);
+  await testMixup(shortcuts);
+  await testLooseDigits(shortcuts);
+  await testExactModifiers(shortcuts);
+  await testLooseShiftModifier(shortcuts);
+  await testStrictLetterShiftModifier(shortcuts);
+  await testAltModifier(shortcuts);
+  await testCommandOrControlModifier(shortcuts);
+  await testCtrlModifier(shortcuts);
+  await testInvalidShortcutString(shortcuts);
+  await testCmdShiftShortcut(shortcuts);
   shortcuts.destroy();
 
-  yield testTarget();
+  await testTarget();
 });
 
 // Test helper to listen to the next key press for a given key,
@@ -96,7 +96,7 @@ function* testPlusCharacter(shortcuts) {
 }
 
 // Test they listeners are not mixed up between shortcuts
-function* testMixup(shortcuts) {
+async function testMixup(shortcuts) {
   info("Test possible listener mixup");
 
   let hitFirst = false, hitSecond = false;
@@ -113,19 +113,19 @@ function* testMixup(shortcuts) {
   // Dispatch the first shortcut and expect only this one to be notified
   ok(!hitFirst, "First shortcut isn't notified before firing the key event");
   EventUtils.synthesizeKey("0", {}, window);
-  yield onFirstKey;
+  await onFirstKey;
   ok(hitFirst, "Got the first shortcut notified");
   ok(!hitSecond, "No mixup, second shortcut is still not notified (1/2)");
 
   // Wait an extra time, just to be sure this isn't racy
-  yield new Promise(done => {
+  await new Promise(done => {
     window.setTimeout(done, 0);
   });
   ok(!hitSecond, "No mixup, second shortcut is still not notified (2/2)");
 
   // Finally dispatch the second shortcut
   EventUtils.synthesizeKey("a", { altKey: true }, window);
-  yield onSecondKey;
+  await onSecondKey;
   ok(hitSecond, "Got the second shortcut notified once it is actually fired");
 }
 
@@ -164,7 +164,7 @@ function* testLooseDigits(shortcuts) {
 }
 
 // Test that shortcuts is notified only when the modifiers match exactly
-function* testExactModifiers(shortcuts) {
+async function testExactModifiers(shortcuts) {
   info("Test exact modifiers match");
 
   let hit = false;
@@ -196,7 +196,7 @@ function* testExactModifiers(shortcuts) {
     window);
 
   // Wait an extra time to let a chance to call the listener
-  yield new Promise(done => {
+  await new Promise(done => {
     window.setTimeout(done, 0);
   });
   ok(!hit, "Listener isn't called when modifiers aren't exactly matching");
@@ -204,7 +204,7 @@ function* testExactModifiers(shortcuts) {
   // Dispatch the expected modifiers
   EventUtils.synthesizeKey("a", { accelKey: false, altKey: true, shiftKey: false},
                            window);
-  yield onKey;
+  await onKey;
   ok(hit, "Got shortcut notified once it is actually fired");
 }
 

@@ -26,9 +26,9 @@ const TEST_HEIGHT = 100;
 
 const {FlameGraph} = require("devtools/client/shared/widgets/FlameGraph");
 
-add_task(function* () {
-  yield addTab("about:blank");
-  yield performTest();
+add_task(async function() {
+  await addTab("about:blank");
+  await performTest();
   gBrowser.removeCurrentTab();
 });
 

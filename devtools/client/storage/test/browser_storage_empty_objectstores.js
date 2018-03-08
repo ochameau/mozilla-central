@@ -68,10 +68,10 @@ let testTables = function* () {
   }
 };
 
-add_task(function* () {
-  yield openTabAndSetupStorage(MAIN_DOMAIN + "storage-empty-objectstores.html");
+add_task(async function() {
+  await openTabAndSetupStorage(MAIN_DOMAIN + "storage-empty-objectstores.html");
 
   testTree();
-  yield testTables();
-  yield finishTests();
+  await testTables();
+  await finishTests();
 });

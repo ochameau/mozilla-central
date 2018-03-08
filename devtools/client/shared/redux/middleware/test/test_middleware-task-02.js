@@ -16,11 +16,11 @@ function run_test() {
   run_next_test();
 }
 
-add_task(function* () {
+add_task(async function() {
   let store = applyMiddleware(task)(createStore)(reducer);
 
   store.dispatch(comboAction());
-  yield waitUntilState(store, () => store.getState().length === 3);
+  await waitUntilState(store, () => store.getState().length === 3);
 
   equal(store.getState()[0].type, "fetchAsync-start",
         "Async dispatched actions in a generator task are fired");
@@ -50,9 +50,9 @@ function fetchSync(data) {
 }
 
 function fetchAsync(data) {
-  return function* (dispatch) {
+  return async function(dispatch) {
     dispatch({ type: "fetchAsync-start" });
-    let val = yield new Promise(resolve => resolve(data));
+    let val = await new Promise(resolve => resolve(data));
     dispatch({ type: "fetchAsync-end" });
     return val;
   };

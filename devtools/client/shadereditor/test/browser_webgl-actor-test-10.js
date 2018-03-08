@@ -25,20 +25,20 @@ function* ifWebGLSupported() {
   finish();
 
   function testHighlighting(programActor) {
-    return Task.spawn(function* () {
-      yield ensurePixelIs(front, { x: 0, y: 0 }, { r: 255, g: 0, b: 0, a: 255 }, true);
-      yield ensurePixelIs(front, { x: 511, y: 511 }, { r: 0, g: 255, b: 0, a: 255 }, true);
+    return (async function() {
+      await ensurePixelIs(front, { x: 0, y: 0 }, { r: 255, g: 0, b: 0, a: 255 }, true);
+      await ensurePixelIs(front, { x: 511, y: 511 }, { r: 0, g: 255, b: 0, a: 255 }, true);
       ok(true, "The corner pixel colors are correct before highlighting.");
 
-      yield programActor.highlight([0, 1, 0, 1]);
-      yield ensurePixelIs(front, { x: 0, y: 0 }, { r: 0, g: 0, b: 0, a: 255 }, true);
-      yield ensurePixelIs(front, { x: 511, y: 511 }, { r: 0, g: 255, b: 0, a: 255 }, true);
+      await programActor.highlight([0, 1, 0, 1]);
+      await ensurePixelIs(front, { x: 0, y: 0 }, { r: 0, g: 0, b: 0, a: 255 }, true);
+      await ensurePixelIs(front, { x: 511, y: 511 }, { r: 0, g: 255, b: 0, a: 255 }, true);
       ok(true, "The corner pixel colors are correct after highlighting.");
 
-      yield programActor.unhighlight();
-      yield ensurePixelIs(front, { x: 0, y: 0 }, { r: 255, g: 0, b: 0, a: 255 }, true);
-      yield ensurePixelIs(front, { x: 511, y: 511 }, { r: 0, g: 255, b: 0, a: 255 }, true);
+      await programActor.unhighlight();
+      await ensurePixelIs(front, { x: 0, y: 0 }, { r: 255, g: 0, b: 0, a: 255 }, true);
+      await ensurePixelIs(front, { x: 511, y: 511 }, { r: 0, g: 255, b: 0, a: 255 }, true);
       ok(true, "The corner pixel colors are correct after unhighlighting.");
-    });
+    })();
   }
 }

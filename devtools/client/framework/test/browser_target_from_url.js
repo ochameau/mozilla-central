@@ -23,14 +23,14 @@ function assertIsTabTarget(target, url, chrome = false) {
   is(target.isRemote, true);
 }
 
-add_task(function* () {
-  let tab = yield addTab(TEST_URI);
+add_task(async function() {
+  let tab = await addTab(TEST_URI);
   let browser = tab.linkedBrowser;
   let target;
 
   info("Test invalid type");
   try {
-    yield targetFromURL(new URL("http://foo?type=x"));
+    await targetFromURL(new URL("http://foo?type=x"));
     ok(false, "Shouldn't pass");
   } catch (e) {
     is(e.message, "targetFromURL, unsupported type 'x' parameter");
@@ -40,7 +40,7 @@ add_task(function* () {
   let windowId = window.QueryInterface(Ci.nsIInterfaceRequestor)
                        .getInterface(Ci.nsIDOMWindowUtils)
                        .outerWindowID;
-  target = yield targetFromURL(new URL("http://foo?type=window&id=" + windowId));
+  target = await targetFromURL(new URL("http://foo?type=window&id=" + windowId));
   is(target.url, window.location.href);
   is(target.isLocalTab, false);
   is(target.chrome, true);
@@ -49,28 +49,28 @@ add_task(function* () {
 
   info("Test tab");
   windowId = browser.outerWindowID;
-  target = yield targetFromURL(new URL("http://foo?type=tab&id=" + windowId));
+  target = await targetFromURL(new URL("http://foo?type=tab&id=" + windowId));
   assertIsTabTarget(target, TEST_URI);
 
   info("Test tab with chrome privileges");
-  target = yield targetFromURL(new URL("http://foo?type=tab&id=" + windowId + "&chrome"));
+  target = await targetFromURL(new URL("http://foo?type=tab&id=" + windowId + "&chrome"));
   assertIsTabTarget(target, TEST_URI, true);
 
   info("Test invalid tab id");
   try {
-    yield targetFromURL(new URL("http://foo?type=tab&id=10000"));
+    await targetFromURL(new URL("http://foo?type=tab&id=10000"));
     ok(false, "Shouldn't pass");
   } catch (e) {
     is(e.message, "targetFromURL, tab with outerWindowID '10000' doesn't exist");
   }
 
   info("Test parent process");
-  target = yield targetFromURL(new URL("http://foo?type=process"));
+  target = await targetFromURL(new URL("http://foo?type=process"));
   let topWindow = Services.wm.getMostRecentWindow("navigator:browser");
   assertIsTabTarget(target, topWindow.location.href, true);
 
-  yield testRemoteTCP();
-  yield testRemoteWebSocket();
+  await testRemoteTCP();
+  await testRemoteWebSocket();
 
   gBrowser.removeCurrentTab();
 });

@@ -25,7 +25,7 @@ const MAXIMUM_FONT_SIZE = 96;
 const MINIMUM_FONT_SIZE = 6;
 const NORMAL_FONT_SIZE = 12;
 
-var testMaximumFontSize = Task.async(function* (win, sp) {
+var testMaximumFontSize = async function(win, sp) {
   let doc = win.document;
 
   Services.prefs.clearUserPref("devtools.scratchpad.editorFontSize");
@@ -43,9 +43,9 @@ var testMaximumFontSize = Task.async(function* (win, sp) {
   menu.doCommand();
 
   ok(cmd.hasAttribute("disabled") === false, 'Command "sp-cmd-larger-font" is enabled.');
-});
+};
 
-var testMinimumFontSize = Task.async(function* (win, sp) {
+var testMinimumFontSize = async function(win, sp) {
   let doc = win.document;
 
   let menu = doc.getElementById("sp-menu-smaller-font");
@@ -63,4 +63,4 @@ var testMinimumFontSize = Task.async(function* (win, sp) {
   ok(cmd.hasAttribute("disabled") === false, 'Command "sp-cmd-smaller-font" is enabled.');
 
   Services.prefs.clearUserPref("devtools.scratchpad.editorFontSize");
-});
+};

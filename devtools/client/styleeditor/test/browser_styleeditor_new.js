@@ -9,18 +9,18 @@ const TESTCASE_URI = TEST_BASE_HTTP + "simple.html";
 
 const TESTCASE_CSS_SOURCE = "body{background-color:red;";
 
-add_task(function* () {
-  let { panel, ui } = yield openStyleEditorForURL(TESTCASE_URI);
+add_task(async function() {
+  let { panel, ui } = await openStyleEditorForURL(TESTCASE_URI);
 
-  let editor = yield createNew(ui, panel.panelWindow);
-  yield testInitialState(editor);
+  let editor = await createNew(ui, panel.panelWindow);
+  await testInitialState(editor);
 
   let originalHref = editor.styleSheet.href;
   let waitForPropertyChange = onPropertyChange(editor);
 
-  yield typeInEditor(editor, panel.panelWindow);
+  await typeInEditor(editor, panel.panelWindow);
 
-  yield waitForPropertyChange;
+  await waitForPropertyChange;
 
   testUpdated(editor, originalHref);
 });

@@ -11,18 +11,18 @@ const URL = "data:text/html;charset=utf8,test page for menu api";
 const Menu = require("devtools/client/framework/menu");
 const MenuItem = require("devtools/client/framework/menu-item");
 
-add_task(function* () {
+add_task(async function() {
   info("Create a test tab and open the toolbox");
-  let tab = yield addTab(URL);
+  let tab = await addTab(URL);
   let target = TargetFactory.forTab(tab);
-  let toolbox = yield gDevTools.showToolbox(target, "webconsole");
+  let toolbox = await gDevTools.showToolbox(target, "webconsole");
 
-  yield testMenuItems();
-  yield testMenuPopup(toolbox);
-  yield testSubmenu(toolbox);
+  await testMenuItems();
+  await testMenuPopup(toolbox);
+  await testSubmenu(toolbox);
 });
 
-function* testMenuItems() {
+function testMenuItems() {
   let menu = new Menu();
   let menuItem1 = new MenuItem();
   let menuItem2 = new MenuItem();

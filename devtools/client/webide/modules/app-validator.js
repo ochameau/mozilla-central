@@ -119,16 +119,16 @@ AppValidator.findManifestPath = function (manifestURL) {
 };
 
 AppValidator.checkAlternateManifest = function (manifestURL) {
-  return Task.spawn(function* () {
+  return (async function() {
     let result;
     try {
-      result = yield AppValidator.findManifestPath(manifestURL);
+      result = await AppValidator.findManifestPath(manifestURL);
     } catch (e) {
-      result = yield AppValidator.findManifestAtOrigin(manifestURL);
+      result = await AppValidator.findManifestAtOrigin(manifestURL);
     }
 
     return result;
-  });
+  })();
 };
 
 AppValidator.prototype._fetchManifest = function (manifestURL) {

@@ -109,12 +109,12 @@ function* testTables(tests) {
   }
 }
 
-add_task(function* () {
-  yield openTabAndSetupStorage(MAIN_DOMAIN + "storage-listings-usercontextid.html",
+add_task(async function() {
+  await openTabAndSetupStorage(MAIN_DOMAIN + "storage-listings-usercontextid.html",
                                {userContextId: 1});
 
   testTree(testCasesUserContextId);
-  yield testTables(testCasesUserContextId);
+  await testTables(testCasesUserContextId);
 
-  yield finishTests();
+  await finishTests();
 });

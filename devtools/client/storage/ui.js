@@ -319,7 +319,7 @@ StorageUI.prototype = {
    *  @param {Array} editableFields
    *         An array of keys of columns to be made editable
    */
-  makeFieldsEditable: function* (editableFields) {
+  makeFieldsEditable: function(editableFields) {
     if (editableFields && editableFields.length > 0) {
       this.table.makeFieldsEditable(editableFields);
     } else if (this.table._editableFieldsEngine) {
@@ -563,7 +563,7 @@ StorageUI.prototype = {
    * @param {Constant} reason
    *        See REASON constant at top of file.
    */
-  fetchStorageObjects: Task.async(function* (type, host, names, reason) {
+  async fetchStorageObjects(type, host, names, reason) {
     let fetchOpts = reason === REASON.NEXT_50_ITEMS ? {offset: this.itemOffset}
                                                     : {};
     let storageType = this.storageTypes[type];
@@ -593,32 +593,32 @@ StorageUI.prototype = {
           }
         }
 
-        this.actorSupportsAddItem = yield this._target.actorHasMethod(type, "addItem");
+        this.actorSupportsAddItem = await this._target.actorHasMethod(type, "addItem");
         this.actorSupportsRemoveItem =
-          yield this._target.actorHasMethod(type, "removeItem");
+          await this._target.actorHasMethod(type, "removeItem");
         this.actorSupportsRemoveAll =
-          yield this._target.actorHasMethod(type, "removeAll");
+          await this._target.actorHasMethod(type, "removeAll");
         this.actorSupportsRemoveAllSessionCookies =
-          yield this._target.actorHasMethod(type, "removeAllSessionCookies");
+          await this._target.actorHasMethod(type, "removeAllSessionCookies");
 
-        yield this.resetColumns(type, host, subType);
+        await this.resetColumns(type, host, subType);
       }
 
-      let {data} = yield storageType.getStoreObjects(host, names, fetchOpts);
+      let {data} = await storageType.getStoreObjects(host, names, fetchOpts);
       if (data.length) {
         this.populateTable(data, reason);
       }
-      yield this.updateToolbar();
+      await this.updateToolbar();
       this.emit("store-objects-updated");
     } catch (ex) {
       console.error(ex);
     }
-  }),
+  },
 
   /**
    * Updates the toolbar hiding and showing buttons as appropriate.
    */
-  updateToolbar: Task.async(function* () {
+  async updateToolbar() {
     let item = this.tree.selectedItem;
     let howManyNodesIn = item ? item.length : 0;
 
@@ -634,7 +634,7 @@ StorageUI.prototype = {
       this._addButton.hidden = true;
       this._addButton.removeAttribute("tooltiptext");
     }
-  }),
+  },
 
   /**
    * Populates the storage tree which displays the list of storages present for
@@ -687,13 +687,13 @@ StorageUI.prototype = {
    * Populates the selected entry from the table in the sidebar for a more
    * detailed view.
    */
-  updateObjectSidebar: Task.async(function* () {
+  async updateObjectSidebar() {
     let item = this.table.selectedRow;
     let value;
 
     // Get the string value (async action) and the update the UI synchronously.
     if (item && item.name && item.valueActor) {
-      value = yield item.valueActor.string();
+      value = await item.valueActor.string();
     }
 
     // Bail if the selectedRow is no longer selected, the item doesn't exist or the state
@@ -762,7 +762,7 @@ StorageUI.prototype = {
     }
 
     this.emit("sidebar-updated");
-  }),
+  },
 
   /**
    * Tries to parse a string value into either a json or a key-value separated

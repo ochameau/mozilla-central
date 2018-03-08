@@ -48,7 +48,7 @@ window.addEventListener("DOMContentLoaded", function () {
 /**
  * Called when the "connect" button is clicked.
  */
-var submit = Task.async(function* () {
+var submit = async function() {
   // Show the "connecting" screen
   document.body.classList.add("connecting");
 
@@ -64,23 +64,23 @@ var submit = Task.async(function* () {
   }
 
   // Initiate the connection
-  let transport = yield DebuggerClient.socketConnect({ host, port });
+  let transport = await DebuggerClient.socketConnect({ host, port });
   gClient = new DebuggerClient(transport);
   let delay = Services.prefs.getIntPref("devtools.debugger.remote-timeout");
   gConnectionTimeout = setTimeout(handleConnectionTimeout, delay);
-  let response = yield gClient.connect();
-  yield onConnectionReady(...response);
-});
+  let response = await gClient.connect();
+  await onConnectionReady(...response);
+};
 
 /**
  * Connection is ready. List actors and build buttons.
  */
-var onConnectionReady = Task.async(function* ([aType, aTraits]) {
+var onConnectionReady = async function([aType, aTraits]) {
   clearTimeout(gConnectionTimeout);
 
   let addons = [];
   try {
-    let response = yield gClient.listAddons();
+    let response = await gClient.listAddons();
     if (!response.error && response.addons.length > 0) {
       addons = response.addons;
     }
@@ -104,7 +104,7 @@ var onConnectionReady = Task.async(function* ([aType, aTraits]) {
     parent.remove();
   }
 
-  let response = yield gClient.listTabs();
+  let response = await gClient.listTabs();
 
   parent = document.getElementById("tabActors");
 
@@ -156,7 +156,7 @@ var onConnectionReady = Task.async(function* ([aType, aTraits]) {
   if (firstLink) {
     firstLink.focus();
   }
-});
+};
 
 /**
  * Build one button for an add-on actor.

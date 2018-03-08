@@ -53,19 +53,19 @@ function* ifWebGLSupported() {
   finish();
 
   function checkFirstCachedPrograms(programActor) {
-    return Task.spawn(function* () {
-      let programs = yield front.getPrograms();
+    return (async function() {
+      let programs = await front.getPrograms();
 
       is(programs.length, 1,
         "There should be 1 cached program actor.");
       is(programs[0], programActor,
         "The cached program actor was the expected one.");
-    });
+    })();
   }
 
   function checkSecondCachedPrograms(oldProgramActor, newProgramActors) {
-    return Task.spawn(function* () {
-      let programs = yield front.getPrograms();
+    return (async function() {
+      let programs = await front.getPrograms();
 
       is(programs.length, 2,
         "There should be 2 cached program actors after the navigation.");
@@ -78,56 +78,56 @@ function* ifWebGLSupported() {
         "The old program actor is not equal to the new first program actor.");
       isnot(newProgramActors[1], oldProgramActor,
         "The old program actor is not equal to the new second program actor.");
-    });
+    })();
   }
 
   function checkHighlightingInTheFirstPage(programActor) {
-    return Task.spawn(function* () {
-      yield ensurePixelIs(front, { x: 0, y: 0 }, { r: 255, g: 0, b: 0, a: 255 }, true);
-      yield ensurePixelIs(front, { x: 511, y: 511 }, { r: 0, g: 255, b: 0, a: 255 }, true);
+    return (async function() {
+      await ensurePixelIs(front, { x: 0, y: 0 }, { r: 255, g: 0, b: 0, a: 255 }, true);
+      await ensurePixelIs(front, { x: 511, y: 511 }, { r: 0, g: 255, b: 0, a: 255 }, true);
       ok(true, "The corner pixel colors are correct before highlighting.");
 
-      yield programActor.highlight([0, 1, 0, 1]);
-      yield ensurePixelIs(front, { x: 0, y: 0 }, { r: 0, g: 0, b: 0, a: 255 }, true);
-      yield ensurePixelIs(front, { x: 511, y: 511 }, { r: 0, g: 255, b: 0, a: 255 }, true);
+      await programActor.highlight([0, 1, 0, 1]);
+      await ensurePixelIs(front, { x: 0, y: 0 }, { r: 0, g: 0, b: 0, a: 255 }, true);
+      await ensurePixelIs(front, { x: 511, y: 511 }, { r: 0, g: 255, b: 0, a: 255 }, true);
       ok(true, "The corner pixel colors are correct after highlighting.");
 
-      yield programActor.unhighlight();
-      yield ensurePixelIs(front, { x: 0, y: 0 }, { r: 255, g: 0, b: 0, a: 255 }, true);
-      yield ensurePixelIs(front, { x: 511, y: 511 }, { r: 0, g: 255, b: 0, a: 255 }, true);
+      await programActor.unhighlight();
+      await ensurePixelIs(front, { x: 0, y: 0 }, { r: 255, g: 0, b: 0, a: 255 }, true);
+      await ensurePixelIs(front, { x: 511, y: 511 }, { r: 0, g: 255, b: 0, a: 255 }, true);
       ok(true, "The corner pixel colors are correct after unhighlighting.");
-    });
+    })();
   }
 
   function checkHighlightingInTheSecondPage(firstProgramActor, secondProgramActor) {
-    return Task.spawn(function* () {
-      yield ensurePixelIs(front, { x: 0, y: 0 }, { r: 255, g: 255, b: 0, a: 255 }, true, "#canvas1");
-      yield ensurePixelIs(front, { x: 0, y: 0 }, { r: 0, g: 255, b: 255, a: 255 }, true, "#canvas2");
-      yield ensurePixelIs(front, { x: 127, y: 127 }, { r: 255, g: 255, b: 0, a: 255 }, true, "#canvas1");
-      yield ensurePixelIs(front, { x: 127, y: 127 }, { r: 0, g: 255, b: 255, a: 255 }, true, "#canvas2");
+    return (async function() {
+      await ensurePixelIs(front, { x: 0, y: 0 }, { r: 255, g: 255, b: 0, a: 255 }, true, "#canvas1");
+      await ensurePixelIs(front, { x: 0, y: 0 }, { r: 0, g: 255, b: 255, a: 255 }, true, "#canvas2");
+      await ensurePixelIs(front, { x: 127, y: 127 }, { r: 255, g: 255, b: 0, a: 255 }, true, "#canvas1");
+      await ensurePixelIs(front, { x: 127, y: 127 }, { r: 0, g: 255, b: 255, a: 255 }, true, "#canvas2");
       ok(true, "The two canvases are correctly drawn before highlighting.");
 
-      yield firstProgramActor.highlight([1, 0, 0, 1]);
-      yield ensurePixelIs(front, { x: 0, y: 0 }, { r: 255, g: 0, b: 0, a: 255 }, true, "#canvas1");
-      yield ensurePixelIs(front, { x: 0, y: 0 }, { r: 0, g: 255, b: 255, a: 255 }, true, "#canvas2");
-      yield ensurePixelIs(front, { x: 127, y: 127 }, { r: 255, g: 0, b: 0, a: 255 }, true, "#canvas1");
-      yield ensurePixelIs(front, { x: 127, y: 127 }, { r: 0, g: 255, b: 255, a: 255 }, true, "#canvas2");
+      await firstProgramActor.highlight([1, 0, 0, 1]);
+      await ensurePixelIs(front, { x: 0, y: 0 }, { r: 255, g: 0, b: 0, a: 255 }, true, "#canvas1");
+      await ensurePixelIs(front, { x: 0, y: 0 }, { r: 0, g: 255, b: 255, a: 255 }, true, "#canvas2");
+      await ensurePixelIs(front, { x: 127, y: 127 }, { r: 255, g: 0, b: 0, a: 255 }, true, "#canvas1");
+      await ensurePixelIs(front, { x: 127, y: 127 }, { r: 0, g: 255, b: 255, a: 255 }, true, "#canvas2");
       ok(true, "The first canvas was correctly filled after highlighting.");
 
-      yield secondProgramActor.highlight([0, 1, 0, 1]);
-      yield ensurePixelIs(front, { x: 0, y: 0 }, { r: 255, g: 0, b: 0, a: 255 }, true, "#canvas1");
-      yield ensurePixelIs(front, { x: 0, y: 0 }, { r: 0, g: 255, b: 0, a: 255 }, true, "#canvas2");
-      yield ensurePixelIs(front, { x: 127, y: 127 }, { r: 255, g: 0, b: 0, a: 255 }, true, "#canvas1");
-      yield ensurePixelIs(front, { x: 127, y: 127 }, { r: 0, g: 255, b: 0, a: 255 }, true, "#canvas2");
+      await secondProgramActor.highlight([0, 1, 0, 1]);
+      await ensurePixelIs(front, { x: 0, y: 0 }, { r: 255, g: 0, b: 0, a: 255 }, true, "#canvas1");
+      await ensurePixelIs(front, { x: 0, y: 0 }, { r: 0, g: 255, b: 0, a: 255 }, true, "#canvas2");
+      await ensurePixelIs(front, { x: 127, y: 127 }, { r: 255, g: 0, b: 0, a: 255 }, true, "#canvas1");
+      await ensurePixelIs(front, { x: 127, y: 127 }, { r: 0, g: 255, b: 0, a: 255 }, true, "#canvas2");
       ok(true, "The second canvas was correctly filled after highlighting.");
 
-      yield firstProgramActor.unhighlight();
-      yield secondProgramActor.unhighlight();
-      yield ensurePixelIs(front, { x: 0, y: 0 }, { r: 255, g: 255, b: 0, a: 255 }, true, "#canvas1");
-      yield ensurePixelIs(front, { x: 0, y: 0 }, { r: 0, g: 255, b: 255, a: 255 }, true, "#canvas2");
-      yield ensurePixelIs(front, { x: 127, y: 127 }, { r: 255, g: 255, b: 0, a: 255 }, true, "#canvas1");
-      yield ensurePixelIs(front, { x: 127, y: 127 }, { r: 0, g: 255, b: 255, a: 255 }, true, "#canvas2");
+      await firstProgramActor.unhighlight();
+      await secondProgramActor.unhighlight();
+      await ensurePixelIs(front, { x: 0, y: 0 }, { r: 255, g: 255, b: 0, a: 255 }, true, "#canvas1");
+      await ensurePixelIs(front, { x: 0, y: 0 }, { r: 0, g: 255, b: 255, a: 255 }, true, "#canvas2");
+      await ensurePixelIs(front, { x: 127, y: 127 }, { r: 255, g: 255, b: 0, a: 255 }, true, "#canvas1");
+      await ensurePixelIs(front, { x: 127, y: 127 }, { r: 0, g: 255, b: 255, a: 255 }, true, "#canvas2");
       ok(true, "The two canvases were correctly filled after unhighlighting.");
-    });
+    })();
   }
 }

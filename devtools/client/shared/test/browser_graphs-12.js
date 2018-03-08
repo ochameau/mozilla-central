@@ -9,9 +9,9 @@ const LineGraphWidget = require("devtools/client/shared/widgets/LineGraphWidget"
 const BarGraphWidget = require("devtools/client/shared/widgets/BarGraphWidget");
 const {CanvasGraphUtils} = require("devtools/client/shared/widgets/Graphs");
 
-add_task(function* () {
-  yield addTab("about:blank");
-  yield performTest();
+add_task(async function() {
+  await addTab("about:blank");
+  await performTest();
   gBrowser.removeCurrentTab();
 });
 

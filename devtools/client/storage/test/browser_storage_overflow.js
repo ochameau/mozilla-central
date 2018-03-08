@@ -4,17 +4,17 @@
 
 const ITEMS_PER_PAGE = 50;
 
-add_task(function* () {
-  yield openTabAndSetupStorage(MAIN_DOMAIN + "storage-overflow.html");
+add_task(async function() {
+  await openTabAndSetupStorage(MAIN_DOMAIN + "storage-overflow.html");
 
   gUI.tree.expandAll();
-  yield selectTreeItem(["localStorage", "http://test1.example.org"]);
+  await selectTreeItem(["localStorage", "http://test1.example.org"]);
   checkCellLength(ITEMS_PER_PAGE);
 
-  yield scroll();
+  await scroll();
   checkCellLength(ITEMS_PER_PAGE * 2);
 
-  yield scroll();
+  await scroll();
   checkCellLength(ITEMS_PER_PAGE * 3);
 
   // Check that the columns are sorted in a human readable way (ascending).
@@ -26,7 +26,7 @@ add_task(function* () {
   // Check that the columns are sorted in a human readable way (descending).
   checkCellValues("DEC");
 
-  yield finishTests();
+  await finishTests();
 });
 
 function checkCellLength(len) {

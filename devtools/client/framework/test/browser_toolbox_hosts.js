@@ -11,27 +11,27 @@ var toolbox, target;
 
 const URL = "data:text/html;charset=utf8,test for opening toolbox in different hosts";
 
-add_task(function* runTest() {
+add_task(async function runTest() {
   info("Create a test tab and open the toolbox");
-  let tab = yield addTab(URL);
+  let tab = await addTab(URL);
   target = TargetFactory.forTab(tab);
-  toolbox = yield gDevTools.showToolbox(target, "webconsole");
+  toolbox = await gDevTools.showToolbox(target, "webconsole");
 
-  yield testBottomHost();
-  yield testSidebarHost();
-  yield testWindowHost();
-  yield testToolSelect();
-  yield testDestroy();
-  yield testRememberHost();
-  yield testPreviousHost();
+  await testBottomHost();
+  await testSidebarHost();
+  await testWindowHost();
+  await testToolSelect();
+  await testDestroy();
+  await testRememberHost();
+  await testPreviousHost();
 
-  yield toolbox.destroy();
+  await toolbox.destroy();
 
   toolbox = target = null;
   gBrowser.removeCurrentTab();
 });
 
-function* testBottomHost() {
+function testBottomHost() {
   checkHostType(toolbox, BOTTOM);
 
   // test UI presence
@@ -83,7 +83,7 @@ function* testDestroy() {
   toolbox = yield gDevTools.showToolbox(target);
 }
 
-function* testRememberHost() {
+function testRememberHost() {
   // last host was the window - make sure it's the same when re-opening
   is(toolbox.hostType, WINDOW, "host remembered");
 

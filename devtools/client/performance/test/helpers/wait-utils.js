@@ -34,13 +34,13 @@ exports.idleWait = function (time) {
 /**
  * Waits until a predicate returns true.
  */
-exports.waitUntil = function* (predicate, interval = 100, tries = 100) {
+exports.waitUntil = async function(predicate, interval = 100, tries = 100) {
   for (let i = 1; i <= tries; i++) {
-    if (yield Task.spawn(predicate)) {
+    if (await (predicate)()) {
       dump(`Predicate returned true after ${i} tries.\n`);
       return;
     }
-    yield exports.idleWait(interval);
+    await exports.idleWait(interval);
   }
   throw new Error(`Predicate returned false after ${tries} tries, aborting.\n`);
 };

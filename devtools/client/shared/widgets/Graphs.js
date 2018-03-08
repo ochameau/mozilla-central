@@ -186,8 +186,8 @@ AbstractCanvasGraph.prototype = {
   /**
    * Destroys this graph.
    */
-  destroy: Task.async(function* () {
-    yield this.ready();
+  async destroy() {
+    await this.ready();
 
     this._topWindow.removeEventListener("mousemove", this._onMouseMove);
     this._topWindow.removeEventListener("mouseup", this._onMouseUp);
@@ -221,7 +221,7 @@ AbstractCanvasGraph.prototype = {
     gCachedStripePattern.clear();
 
     this.emit("destroyed");
-  }),
+  },
 
   /**
    * Rendering options. Subclasses should override these.
@@ -297,10 +297,10 @@ AbstractCanvasGraph.prototype = {
    * @return promise
    *         A promise resolved once the data is set.
    */
-  setDataWhenReady: Task.async(function* (data) {
-    yield this.ready();
+  async setDataWhenReady(data) {
+    await this.ready();
     this.setData(data);
-  }),
+  },
 
   /**
    * Adds a mask to this graph.
@@ -1316,12 +1316,12 @@ this.CanvasGraphUtils = {
   /**
    * Merges the animation loop of two graphs.
    */
-  linkAnimation: Task.async(function* (graph1, graph2) {
+  async linkAnimation(graph1, graph2) {
     if (!graph1 || !graph2) {
       return;
     }
-    yield graph1.ready();
-    yield graph2.ready();
+    await graph1.ready();
+    await graph2.ready();
 
     let window = graph1._window;
     window.cancelAnimationFrame(graph1._animationId);
@@ -1334,7 +1334,7 @@ this.CanvasGraphUtils = {
     };
 
     window.requestAnimationFrame(loop);
-  }),
+  },
 
   /**
    * Makes sure selections in one graph are reflected in another.

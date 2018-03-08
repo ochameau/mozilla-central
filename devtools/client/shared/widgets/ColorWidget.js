@@ -386,7 +386,7 @@ ColorWidget.prototype = {
     this.hslaValue.addEventListener("input", this.onHslaInputChange);
   },
 
-  show: Task.async(function* () {
+  async show() {
     this.initializeColorWidget();
     this.element.classList.add("colorwidget-show");
 
@@ -400,12 +400,12 @@ ColorWidget.prototype = {
 
     if (this.inspector && this.inspector.selection.nodeFront && this.contrastEnabled) {
       let node = this.inspector.selection.nodeFront;
-      this.closestBackgroundColor = yield node.getClosestBackgroundColor();
+      this.closestBackgroundColor = await node.getClosestBackgroundColor();
     }
     this.updateContrast();
 
     this.updateUI();
-  }),
+  },
 
   onElementClick: function (e) {
     e.stopPropagation();

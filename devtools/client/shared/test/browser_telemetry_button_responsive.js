@@ -32,19 +32,19 @@ registerCleanupFunction(() => {
 
 loader.lazyRequireGetter(this, "ResponsiveUIManager", "devtools/client/responsive.html/manager", true);
 
-add_task(function* () {
-  yield addTab(TEST_URI);
+add_task(async function() {
+  await addTab(TEST_URI);
   let Telemetry = loadTelemetryAndRecordLogs();
 
   let target = TargetFactory.forTab(gBrowser.selectedTab);
-  let toolbox = yield gDevTools.showToolbox(target, "inspector");
+  let toolbox = await gDevTools.showToolbox(target, "inspector");
   info("inspector opened");
 
   info("testing the responsivedesign button");
-  yield testButton(toolbox, Telemetry);
+  await testButton(toolbox, Telemetry);
 
   stopRecordingTelemetryLogs(Telemetry);
-  yield gDevTools.closeToolbox(target);
+  await gDevTools.closeToolbox(target);
   gBrowser.removeCurrentTab();
 });
 
@@ -71,16 +71,16 @@ function waitForToggle() {
   });
 }
 
-var delayedClicks = Task.async(function* (node, clicks) {
+var delayedClicks = async function(node, clicks) {
   for (let i = 0; i < clicks; i++) {
     info("Clicking button " + node.id);
     let toggled = waitForToggle();
     node.click();
-    yield toggled;
+    await toggled;
     // See TOOL_DELAY for why we need setTimeout here
-    yield DevToolsUtils.waitForTime(TOOL_DELAY);
+    await DevToolsUtils.waitForTime(TOOL_DELAY);
   }
-});
+};
 
 function checkResults(histIdFocus, Telemetry) {
   let result = Telemetry.prototype.telemetryInfo;

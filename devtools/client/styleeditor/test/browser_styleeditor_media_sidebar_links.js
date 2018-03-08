@@ -21,18 +21,18 @@ loader.lazyRequireGetter(this, "ResponsiveUIManager", "devtools/client/responsiv
 const TESTCASE_URI = TEST_BASE_HTTPS + "media-rules.html";
 const responsiveModeToggleClass = ".media-responsive-mode-toggle";
 
-add_task(function* () {
-  let {ui} = yield openStyleEditorForURL(TESTCASE_URI);
+add_task(async function() {
+  let {ui} = await openStyleEditorForURL(TESTCASE_URI);
 
   let editor = ui.editors[1];
-  yield openEditor(editor);
+  await openEditor(editor);
 
   let tab = gBrowser.selectedTab;
   testNumberOfLinks(editor);
-  yield testMediaLink(editor, tab, ui, 2, "width", 400);
-  yield testMediaLink(editor, tab, ui, 3, "height", 300);
+  await testMediaLink(editor, tab, ui, 2, "width", 400);
+  await testMediaLink(editor, tab, ui, 3, "height", 300);
 
-  yield closeRDM(tab, ui);
+  await closeRDM(tab, ui);
   doFinalChecks(editor);
 });
 
@@ -114,9 +114,9 @@ function waitForResizeTo(rdmUI, type, value) {
   });
 }
 
-function* getSizing(rdmUI) {
+async function getSizing(rdmUI) {
   let browser = rdmUI.getViewportBrowser();
-  let sizing = yield ContentTask.spawn(browser, {}, function* () {
+  let sizing = await ContentTask.spawn(browser, {}, async function() {
     return {
       width: content.innerWidth,
       height: content.innerHeight

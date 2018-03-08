@@ -588,7 +588,7 @@ StyleSheetEditor.prototype = {
    * @param {Number} x
    * @param {Number} y
    */
-  _highlightSelectorAt: Task.async(function* (x, y) {
+  async _highlightSelectorAt(x, y) {
     let pos = this.sourceEditor.getPositionFromCoords({left: x, top: y});
     let info = this.sourceEditor.getInfoAt(pos);
     if (!info || info.state !== "selector") {
@@ -596,8 +596,8 @@ StyleSheetEditor.prototype = {
     }
 
     let node =
-        yield this.walker.getStyleSheetOwnerNode(this.styleSheet.actorID);
-    yield this.highlighter.show(node, {
+        await this.walker.getStyleSheetOwnerNode(this.styleSheet.actorID);
+    await this.highlighter.show(node, {
       selector: info.selector,
       hideInfoBar: true,
       showOnly: "border",
@@ -605,7 +605,7 @@ StyleSheetEditor.prototype = {
     });
 
     this.emit("node-highlighted");
-  }),
+  },
 
   /**
    * Save the editor contents into a file and set savedFile property.

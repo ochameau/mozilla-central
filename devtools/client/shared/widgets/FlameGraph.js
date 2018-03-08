@@ -232,8 +232,8 @@ FlameGraph.prototype = {
   /**
    * Destroys this graph.
    */
-  destroy: Task.async(function* () {
-    yield this.ready();
+  async destroy() {
+    await this.ready();
 
     this._window.removeEventListener("keydown", this._onKeyDown);
     this._window.removeEventListener("keyup", this._onKeyUp);
@@ -262,7 +262,7 @@ FlameGraph.prototype = {
     this._data = null;
 
     this.emit("destroyed");
-  }),
+  },
 
   /**
    * Makes sure the canvas graph is of the specified width or height, and
@@ -312,10 +312,10 @@ FlameGraph.prototype = {
    * @return promise
    *         A promise resolved once the data is set.
    */
-  setDataWhenReady: Task.async(function* (data) {
-    yield this.ready();
+  async setDataWhenReady(data) {
+    await this.ready();
     this.setData(data);
-  }),
+  },
 
   /**
    * Gets whether or not this graph has a data source.

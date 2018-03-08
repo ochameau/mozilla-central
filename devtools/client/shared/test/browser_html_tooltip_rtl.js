@@ -19,11 +19,11 @@ const TOOLBOX_WIDTH = 500;
 const TOOLTIP_WIDTH = 150;
 const TOOLTIP_HEIGHT = 30;
 
-add_task(function* () {
+add_task(async function() {
   // Force the toolbox to be 500px wide (min width is 465px);
-  yield pushPref("devtools.toolbox.sidebar.width", TOOLBOX_WIDTH);
+  await pushPref("devtools.toolbox.sidebar.width", TOOLBOX_WIDTH);
 
-  let [,, doc] = yield createHost("side", TEST_URI);
+  let [,, doc] = await createHost("side", TEST_URI);
 
   info("Test a tooltip is not closed when clicking inside itself");
 
@@ -33,9 +33,9 @@ add_task(function* () {
   div.style.cssText = "box-sizing: border-box; border: 1px solid black";
   tooltip.setContent(div, {width: TOOLTIP_WIDTH, height: TOOLTIP_HEIGHT});
 
-  yield testRtlAnchors(doc, tooltip);
-  yield testLtrAnchors(doc, tooltip);
-  yield hideTooltip(tooltip);
+  await testRtlAnchors(doc, tooltip);
+  await testLtrAnchors(doc, tooltip);
+  await hideTooltip(tooltip);
 
   tooltip.destroy();
 });

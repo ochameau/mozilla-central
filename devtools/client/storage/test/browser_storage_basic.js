@@ -130,11 +130,11 @@ function* testTables() {
   }
 }
 
-add_task(function* () {
-  yield openTabAndSetupStorage(MAIN_DOMAIN + "storage-listings.html");
+add_task(async function() {
+  await openTabAndSetupStorage(MAIN_DOMAIN + "storage-listings.html");
 
   testTree();
-  yield testTables();
+  await testTables();
 
-  yield finishTests();
+  await finishTests();
 });

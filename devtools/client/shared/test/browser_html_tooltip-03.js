@@ -16,17 +16,17 @@ loadHelperScript("helper_html_tooltip.js");
 
 let useXulWrapper;
 
-add_task(function* () {
-  yield addTab("about:blank");
-  let [, , doc] = yield createHost("bottom", TEST_URI);
+add_task(async function() {
+  await addTab("about:blank");
+  let [, , doc] = await createHost("bottom", TEST_URI);
 
   info("Run tests for a Tooltip without using a XUL panel");
   useXulWrapper = false;
-  yield runTests(doc);
+  await runTests(doc);
 
   info("Run tests for a Tooltip with a XUL panel");
   useXulWrapper = true;
-  yield runTests(doc);
+  await runTests(doc);
 });
 
 function* runTests(doc) {
@@ -126,7 +126,7 @@ function blurNode(doc, selector) {
  * @return {Promise} promise that will resolve the HTMLTooltip instance created when the
  *         tooltip content will be ready.
  */
-function* createTooltip(doc, autofocus) {
+function createTooltip(doc, autofocus) {
   let tooltip = new HTMLTooltip(doc, {autofocus, useXulWrapper});
   let div = doc.createElementNS(HTML_NS, "div");
   div.classList.add("tooltip-content");

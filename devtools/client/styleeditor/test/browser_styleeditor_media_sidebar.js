@@ -17,26 +17,26 @@ const NEW_RULE = "\n@media (max-width: 600px) { div { color: blue; } }";
 
 waitForExplicitFinish();
 
-add_task(function* () {
-  let { ui } = yield openStyleEditorForURL(TESTCASE_URI);
+add_task(async function() {
+  let { ui } = await openStyleEditorForURL(TESTCASE_URI);
 
   is(ui.editors.length, 2, "correct number of editors");
 
   // Test first plain css editor
   let plainEditor = ui.editors[0];
-  yield openEditor(plainEditor);
+  await openEditor(plainEditor);
   testPlainEditor(plainEditor);
 
   // Test editor with @media rules
   let mediaEditor = ui.editors[1];
-  yield openEditor(mediaEditor);
+  await openEditor(mediaEditor);
   testMediaEditor(mediaEditor);
 
   // Test that sidebar hides when flipping pref
-  yield testShowHide(ui, mediaEditor);
+  await testShowHide(ui, mediaEditor);
 
   // Test adding a rule updates the list
-  yield testMediaRuleAdded(ui, mediaEditor);
+  await testMediaRuleAdded(ui, mediaEditor);
 
   // Test resizing and seeing @media matching state change
   let originalWidth = window.outerWidth;
@@ -44,7 +44,7 @@ add_task(function* () {
 
   let onMatchesChange = listenForMediaChange(ui);
   window.resizeTo(RESIZE, RESIZE);
-  yield onMatchesChange;
+  await onMatchesChange;
 
   testMediaMatchChanged(mediaEditor);
 

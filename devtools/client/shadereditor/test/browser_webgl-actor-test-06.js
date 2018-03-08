@@ -44,19 +44,19 @@ function* ifWebGLSupported() {
   ok(true, "The corner pixel colors are correct after unblackboxing.");
 
   function checkShaderSource(aMessage) {
-    return Task.spawn(function* () {
-      let newVertexShader = yield programActor.getVertexShader();
-      let newFragmentShader = yield programActor.getFragmentShader();
+    return (async function() {
+      let newVertexShader = await programActor.getVertexShader();
+      let newFragmentShader = await programActor.getFragmentShader();
       is(vertexShader, newVertexShader,
         "The same vertex shader actor was retrieved.");
       is(fragmentShader, newFragmentShader,
         "The same fragment shader actor was retrieved.");
 
-      let vertSource = yield newVertexShader.getText();
-      let fragSource = yield newFragmentShader.getText();
+      let vertSource = await newVertexShader.getText();
+      let fragSource = await newFragmentShader.getText();
       ok(vertSource.includes("I'm special!") &&
          fragSource.includes("I'm also special!"), aMessage);
-    });
+    })();
   }
 
   yield removeTab(target.tab);

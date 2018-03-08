@@ -32,14 +32,14 @@ exports.pickFileAndExportSnapshot = function (snapshot) {
 };
 
 const exportSnapshot = exports.exportSnapshot = function (snapshot, dest) {
-  return function* (dispatch, getState) {
+  return async function(dispatch, getState) {
     dispatch({ type: actions.EXPORT_SNAPSHOT_START, snapshot });
 
     assert(VALID_EXPORT_STATES.includes(snapshot.state),
       `Snapshot is in invalid state for exporting: ${snapshot.state}`);
 
     try {
-      yield OS.File.copy(snapshot.path, dest);
+      await OS.File.copy(snapshot.path, dest);
     } catch (error) {
       reportException("exportSnapshot", error);
       dispatch({ type: actions.EXPORT_SNAPSHOT_ERROR, snapshot, error });

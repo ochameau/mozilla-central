@@ -12,8 +12,8 @@ requestLongerTimeout(2);
  const { setSelectedRecording } = require("devtools/client/performance/test/helpers/recording-utils");
 Services.prefs.setBoolPref(INVERT_PREF, false);
 
-function* spawnTest() {
-  let { panel } = yield initPerformance(SIMPLE_URL);
+async function spawnTest() {
+  let { panel } = await initPerformance(SIMPLE_URL);
   let { EVENTS, $, $$, window, PerformanceController } = panel.panelWin;
   let { OverviewView, DetailsView, OptimizationsListView, JsCallTreeView } = panel.panelWin;
 
@@ -25,69 +25,69 @@ function* spawnTest() {
 
   // Make two recordings, so we have one to switch to later, as the
   // second one will have fake sample data
-  yield startRecording(panel);
-  yield stopRecording(panel);
+  await startRecording(panel);
+  await stopRecording(panel);
 
-  yield startRecording(panel);
-  yield stopRecording(panel);
+  await startRecording(panel);
+  await stopRecording(panel);
 
-  yield DetailsView.selectView("js-calltree");
+  await DetailsView.selectView("js-calltree");
 
-  yield injectAndRenderProfilerData();
+  await injectAndRenderProfilerData();
 
   is($("#jit-optimizations-view").classList.contains("hidden"), true,
     "JIT Optimizations should be hidden when pref is on, but no frame selected");
 
   // A is never a leaf, so it's optimizations should not be shown.
-  yield checkFrame(1);
+  await checkFrame(1);
 
   // gRawSite2 and gRawSite3 are both optimizations on B, so they'll have
   // indices in descending order of # of samples.
-  yield checkFrame(2, true);
+  await checkFrame(2, true);
 
   // Leaf node (C) with no optimizations should not display any opts.
-  yield checkFrame(3);
+  await checkFrame(3);
 
   // Select the node with optimizations and change to a new recording
   // to ensure the opts view is cleared
   let rendered = once(JsCallTreeView, "focus");
   mousedown(window, $$(".call-tree-item")[2]);
-  yield rendered;
+  await rendered;
   let isHidden = $("#jit-optimizations-view").classList.contains("hidden");
   ok(!isHidden, "opts view should be visible when selecting a frame with opts");
 
   let select = once(PerformanceController, EVENTS.RECORDING_SELECTED);
   rendered = once(JsCallTreeView, EVENTS.UI_JS_CALL_TREE_RENDERED);
   setSelectedRecording(panel, 0);
-  yield Promise.all([select, rendered]);
+  await Promise.all([select, rendered]);
 
   isHidden = $("#jit-optimizations-view").classList.contains("hidden");
   ok(isHidden, "opts view is hidden when switching recordings");
 
   rendered = once(JsCallTreeView, EVENTS.UI_JS_CALL_TREE_RENDERED);
   setSelectedRecording(panel, 1);
-  yield rendered;
+  await rendered;
 
   rendered = once(JsCallTreeView, "focus");
   mousedown(window, $$(".call-tree-item")[2]);
-  yield rendered;
+  await rendered;
   isHidden = $("#jit-optimizations-view").classList.contains("hidden");
   ok(!isHidden, "opts view should be visible when selecting a frame with opts");
 
   rendered = once(JsCallTreeView, EVENTS.UI_JS_CALL_TREE_RENDERED);
   Services.prefs.setBoolPref(JIT_PREF, false);
-  yield rendered;
+  await rendered;
   ok(true, "call tree rerendered when JIT pref changes");
   isHidden = $("#jit-optimizations-view").classList.contains("hidden");
   ok(isHidden, "opts view hidden when toggling off jit pref");
 
   rendered = once(JsCallTreeView, "focus");
   mousedown(window, $$(".call-tree-item")[2]);
-  yield rendered;
+  await rendered;
   isHidden = $("#jit-optimizations-view").classList.contains("hidden");
   ok(isHidden, "opts view hidden when jit pref off and selecting a frame with opts");
 
-  yield teardown(panel);
+  await teardown(panel);
   finish();
 
   function* injectAndRenderProfilerData() {

@@ -133,12 +133,12 @@ function* testTables() {
   }
 }
 
-add_task(function* () {
-  yield openTabAndSetupStorage(
+add_task(async function() {
+  await openTabAndSetupStorage(
     MAIN_DOMAIN + "storage-listings-with-fragment.html#abc");
 
   testTree();
-  yield testTables();
+  await testTables();
 
-  yield finishTests();
+  await finishTests();
 });

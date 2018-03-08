@@ -12,7 +12,7 @@ const URL = "data:text/html;charset=utf-8,Toggling devtools using shortcuts";
 
 var {Toolbox} = require("devtools/client/framework/toolbox");
 
-add_task(function* () {
+add_task(async function() {
   // Make sure this test starts with the selectedTool pref cleared. Previous
   // tests select various tools, and that sets this pref.
   Services.prefs.clearUserPref("devtools.toolbox.selectedTool");
@@ -21,7 +21,7 @@ add_task(function* () {
   // - toolbox-key-toggle in devtools/client/framework/toolbox-window.xul
   // - key_devToolboxMenuItem in browser/base/content/browser.xul
   info("Test toggle using CTRL+SHIFT+I/CMD+ALT+I");
-  yield testToggle("I", {
+  await testToggle("I", {
     accelKey: true,
     shiftKey: !navigator.userAgent.match(/Mac/),
     altKey: navigator.userAgent.match(/Mac/)
@@ -29,7 +29,7 @@ add_task(function* () {
 
   // Test with F12 ; no modifiers
   info("Test toggle using F12");
-  yield testToggle("VK_F12", {});
+  await testToggle("VK_F12", {});
 });
 
 function* testToggle(key, modifiers) {
@@ -61,23 +61,23 @@ function* testToggleDockedToolbox(tab, key, modifiers) {
   ok(true, "Toolbox is created by using when toggle key");
 }
 
-function* testToggleDetachedToolbox(tab, key, modifiers) {
+async function testToggleDetachedToolbox(tab, key, modifiers) {
   let toolbox = getToolboxForTab(tab);
 
   info("change the toolbox hostType to WINDOW");
 
-  yield toolbox.switchHost(Toolbox.HostType.WINDOW);
+  await toolbox.switchHost(Toolbox.HostType.WINDOW);
   is(toolbox.hostType, Toolbox.HostType.WINDOW,
     "Toolbox opened on separate window");
 
   info("Wait for focus on the toolbox window");
-  yield new Promise(res => waitForFocus(res, toolbox.win));
+  await new Promise(res => waitForFocus(res, toolbox.win));
 
   info("Focus main window to put the toolbox window in the background");
 
   let onMainWindowFocus = once(window, "focus");
   window.focus();
-  yield onMainWindowFocus;
+  await onMainWindowFocus;
   ok(true, "Main window focused");
 
   info("Verify windowed toolbox is focused instead of closed when using " +
@@ -85,7 +85,7 @@ function* testToggleDetachedToolbox(tab, key, modifiers) {
   let toolboxWindow = toolbox.win.top;
   let onToolboxWindowFocus = once(toolboxWindow, "focus", true);
   EventUtils.synthesizeKey(key, modifiers);
-  yield onToolboxWindowFocus;
+  await onToolboxWindowFocus;
   ok(true, "Toolbox focused and not destroyed");
 
   info("Verify windowed toolbox is destroyed when using toggle key from its " +
@@ -93,7 +93,7 @@ function* testToggleDetachedToolbox(tab, key, modifiers) {
 
   let onToolboxDestroyed = once(gDevTools, "toolbox-destroyed");
   EventUtils.synthesizeKey(key, modifiers, toolboxWindow);
-  yield onToolboxDestroyed;
+  await onToolboxDestroyed;
   ok(true, "Toolbox destroyed");
 }
 
@@ -101,7 +101,7 @@ function getToolboxForTab(tab) {
   return gDevTools.getToolbox(TargetFactory.forTab(tab));
 }
 
-function* cleanup() {
+function cleanup() {
   Services.prefs.setCharPref("devtools.toolbox.host",
     Toolbox.HostType.BOTTOM);
   gBrowser.removeCurrentTab();

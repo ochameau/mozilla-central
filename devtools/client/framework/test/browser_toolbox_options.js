@@ -14,20 +14,20 @@ const {LocalizationHelper} = require("devtools/shared/l10n");
 const L10N = new LocalizationHelper("devtools/client/locales/toolbox.properties");
 const {PrefObserver} = require("devtools/client/shared/prefs");
 
-add_task(function* () {
+add_task(async function() {
   const URL = "data:text/html;charset=utf8,test for dynamically registering " +
               "and unregistering tools";
   registerNewTool();
-  let tab = yield addTab(URL);
+  let tab = await addTab(URL);
   let target = TargetFactory.forTab(tab);
-  toolbox = yield gDevTools.showToolbox(target);
+  toolbox = await gDevTools.showToolbox(target);
   doc = toolbox.doc;
-  yield registerNewPerToolboxTool();
-  yield testSelectTool();
-  yield testOptionsShortcut();
-  yield testOptions();
-  yield testToggleTools();
-  yield cleanup();
+  await registerNewPerToolboxTool();
+  await testSelectTool();
+  await testOptionsShortcut();
+  await testOptions();
+  await testToggleTools();
+  await cleanup();
 });
 
 function registerNewTool() {
@@ -130,7 +130,7 @@ function* testOptions() {
   }
 }
 
-function* testSelect(select) {
+async function testSelect(select) {
   let pref = select.getAttribute("data-pref");
   let options = Array.from(select.options);
   info("Checking select for: " + pref);
@@ -157,14 +157,14 @@ function* testSelect(select) {
     let changeEvent = new Event("change");
     select.dispatchEvent(changeEvent);
 
-    yield deferred.promise;
+    await deferred.promise;
 
     ok(changeSeen, "Correct pref was changed");
     observer.destroy();
   }
 }
 
-function* testMouseClick(node, prefValue) {
+async function testMouseClick(node, prefValue) {
   let deferred = defer();
 
   let observer = new PrefObserver("devtools.");
@@ -186,7 +186,7 @@ function* testMouseClick(node, prefValue) {
     EventUtils.synthesizeMouseAtCenter(node, {}, panelWin);
   });
 
-  yield deferred.promise;
+  await deferred.promise;
 
   ok(changeSeen, "Correct pref was changed");
   observer.destroy();
@@ -251,7 +251,7 @@ function* testToggleTools() {
   yield toggleTool(lastTool);
 }
 
-function* toggleTool(node) {
+async function toggleTool(node) {
   let deferred = defer();
 
   let toolId = node.getAttribute("id");
@@ -265,7 +265,7 @@ function* toggleTool(node) {
   node.scrollIntoView();
   EventUtils.synthesizeMouseAtCenter(node, {}, panelWin);
 
-  yield deferred.promise;
+  await deferred.promise;
 }
 
 function checkUnregistered(toolId, deferred, event, data) {

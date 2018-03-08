@@ -101,17 +101,17 @@ function promiseXHR(data) {
  *   response: XMLHttpRequest.response
  * }
  */
-addMessageListener("devtools:test:xhr", Task.async(function* ({ data }) {
+addMessageListener("devtools:test:xhr", async function({ data }) {
   let requests = Array.isArray(data) ? data : [data];
   let responses = [];
 
   for (let request of requests) {
-    let response = yield promiseXHR(request);
+    let response = await promiseXHR(request);
     responses.push(response);
   }
 
   sendAsyncMessage("devtools:test:xhr", responses);
-}));
+});
 
 addMessageListener("devtools:test:profiler", function ({ data }) {
   let { method, args, id } = data;

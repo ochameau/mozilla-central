@@ -40,10 +40,10 @@ StyleEditorPanel.prototype = {
   /**
    * open is effectively an asynchronous constructor
    */
-  open: Task.async(function* () {
+  async open() {
     // We always interact with the target as if it were remote
     if (!this.target.isRemote) {
-      yield this.target.makeRemote();
+      await this.target.makeRemote();
     }
 
     this.target.on("close", this.destroy);
@@ -51,18 +51,18 @@ StyleEditorPanel.prototype = {
     this._debuggee = this._toolbox.initStyleSheetsFront();
 
     // Initialize the CSS properties database.
-    const {cssProperties} = yield initCssProperties(this._toolbox);
+    const {cssProperties} = await initCssProperties(this._toolbox);
 
     // Initialize the UI
     this.UI = new StyleEditorUI(this._debuggee, this.target, this._panelDoc,
                                 cssProperties);
     this.UI.on("error", this._showError);
-    yield this.UI.initialize();
+    await this.UI.initialize();
 
     this.isReady = true;
 
     return this;
-  }),
+  },
 
   /**
    * Show an error message from the style editor in the toolbox

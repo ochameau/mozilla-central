@@ -14,8 +14,8 @@ const {PREDEFINED} = require("devtools/client/shared/widgets/CubicBezierPresets"
 // in order to remove its margin and prevent shifted positions
 const TEST_URI = CHROME_URL_ROOT + "doc_cubic-bezier-02.html";
 
-add_task(function* () {
-  let [host, win, doc] = yield createHost("bottom", TEST_URI);
+add_task(async function() {
+  let [host, win, doc] = await createHost("bottom", TEST_URI);
 
   // Required or widget will be clipped inside of 'bottom'
   // host by -14. Setting `fixed` zeroes this which is needed for
@@ -30,9 +30,9 @@ add_task(function* () {
   rect.graphBottom = rect.height - rect.graphTop;
   rect.graphHeight = rect.graphBottom - rect.graphTop;
 
-  yield pointsCanBeDragged(w, win, doc, rect);
-  yield curveCanBeClicked(w, win, doc, rect);
-  yield pointsCanBeMovedWithKeyboard(w, win, doc, rect);
+  await pointsCanBeDragged(w, win, doc, rect);
+  await curveCanBeClicked(w, win, doc, rect);
+  await pointsCanBeMovedWithKeyboard(w, win, doc, rect);
 
   w.destroy();
   host.destroy();

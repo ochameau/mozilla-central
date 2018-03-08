@@ -11,20 +11,20 @@ const TEST_URI = "data:text/html;charset=utf-8," +
 // opened we make use of setTimeout() to create tool active times.
 const TOOL_DELAY = 200;
 
-add_task(function* () {
-  yield addTab(TEST_URI);
+add_task(async function() {
+  await addTab(TEST_URI);
   let Telemetry = loadTelemetryAndRecordLogs();
-  yield pushPref("devtools.command-button-paintflashing.enabled", true);
+  await pushPref("devtools.command-button-paintflashing.enabled", true);
 
   let target = TargetFactory.forTab(gBrowser.selectedTab);
-  let toolbox = yield gDevTools.showToolbox(target, "inspector");
+  let toolbox = await gDevTools.showToolbox(target, "inspector");
   info("inspector opened");
 
   info("testing the paintflashing button");
-  yield testButton(toolbox, Telemetry);
+  await testButton(toolbox, Telemetry);
 
   stopRecordingTelemetryLogs(Telemetry);
-  yield gDevTools.closeToolbox(target);
+  await gDevTools.closeToolbox(target);
   gBrowser.removeCurrentTab();
 });
 
@@ -38,9 +38,9 @@ function* testButton(toolbox, Telemetry) {
   checkResults("_PAINTFLASHING_", Telemetry);
 }
 
-function* delayedClicks(toolbox, node, clicks) {
+async function delayedClicks(toolbox, node, clicks) {
   for (let i = 0; i < clicks; i++) {
-    yield new Promise(resolve => {
+    await new Promise(resolve => {
       // See TOOL_DELAY for why we need setTimeout here
       setTimeout(() => resolve(), TOOL_DELAY);
     });
@@ -58,7 +58,7 @@ function* delayedClicks(toolbox, node, clicks) {
     info("Clicking button " + node.id);
     node.click();
 
-    yield clicked;
+    await clicked;
   }
 }
 

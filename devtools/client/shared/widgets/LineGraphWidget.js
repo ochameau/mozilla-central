@@ -146,17 +146,17 @@ LineGraphWidget.prototype = extend(AbstractCanvasGraph.prototype, {
    * @param number duration
    *        The duration of the recording in milliseconds.
    */
-  setDataFromTimestamps: Task.async(function* (timestamps, interval, duration) {
+  async setDataFromTimestamps(timestamps, interval, duration) {
     let {
       plottedData,
       plottedMinMaxSum
-    } = yield CanvasGraphUtils._performTaskInWorker("plotTimestampsGraph", {
+    } = await CanvasGraphUtils._performTaskInWorker("plotTimestampsGraph", {
       timestamps, interval, duration
     });
 
     this._tempMinMaxSum = plottedMinMaxSum;
     this.setData(plottedData);
-  }),
+  },
 
   /**
    * Renders the graph's data source.

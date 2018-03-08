@@ -14,14 +14,14 @@ const { once } = require("devtools/client/performance/test/helpers/event-utils")
 
 let gPanelWinTuples = [];
 
-add_task(function* () {
-  yield testNormalWindow();
-  yield testPrivateWindow();
-  yield testRecordingFailingInWindow(0);
-  yield testRecordingFailingInWindow(1);
-  yield teardownPerfInWindow(1, { shouldCloseWindow: true, dontWaitForTabClose: true });
-  yield testRecordingSucceedingInWindow(0);
-  yield teardownPerfInWindow(0, { shouldCloseWindow: false });
+add_task(async function() {
+  await testNormalWindow();
+  await testPrivateWindow();
+  await testRecordingFailingInWindow(0);
+  await testRecordingFailingInWindow(1);
+  await teardownPerfInWindow(1, { shouldCloseWindow: true, dontWaitForTabClose: true });
+  await testRecordingSucceedingInWindow(0);
+  await teardownPerfInWindow(0, { shouldCloseWindow: false });
 
   gPanelWinTuples = null;
 });

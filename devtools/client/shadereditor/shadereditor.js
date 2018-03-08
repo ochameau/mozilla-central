@@ -379,14 +379,14 @@ var ShadersEditorsView = {
   /**
    * Destruction function, called when the tool is closed.
    */
-  destroy: Task.async(function* () {
+  async destroy() {
     this._destroyed = true;
-    yield this._toggleListeners("off");
+    await this._toggleListeners("off");
     for (let p of this._editorPromises.values()) {
-      let editor = yield p;
+      let editor = await p;
       editor.destroy();
     }
-  }),
+  },
 
   /**
    * Sets the text displayed in the vertex and fragment shader editors.
@@ -405,14 +405,14 @@ var ShadersEditorsView = {
       editor.clearHistory();
     }
 
-    return Task.spawn(function* () {
-      yield view._toggleListeners("off");
-      yield promise.all([
+    return (async function() {
+      await view._toggleListeners("off");
+      await promise.all([
         view._getEditor("vs").then(e => setTextAndClearHistory(e, sources.vs)),
         view._getEditor("fs").then(e => setTextAndClearHistory(e, sources.fs))
       ]);
-      yield view._toggleListeners("on");
-    }).then(() => window.emit(EVENTS.SOURCES_SHOWN, sources));
+      await view._toggleListeners("on");
+    })().then(() => window.emit(EVENTS.SOURCES_SHOWN, sources));
   },
 
   /**
@@ -498,17 +498,17 @@ var ShadersEditorsView = {
    *        The corresponding shader type for the focused editor (e.g. "vs").
    */
   _doCompile: function (type) {
-    Task.spawn(function* () {
-      let editor = yield this._getEditor(type);
-      let shaderActor = yield ShadersListView.selectedAttachment[type];
+    (async function() {
+      let editor = await this._getEditor(type);
+      let shaderActor = await ShadersListView.selectedAttachment[type];
 
       try {
-        yield shaderActor.compile(editor.getText());
+        await shaderActor.compile(editor.getText());
         this._onSuccessfulCompilation();
       } catch (e) {
         this._onFailedCompilation(type, editor, e);
       }
-    }.bind(this));
+    }.bind(this))();
   },
 
   /**

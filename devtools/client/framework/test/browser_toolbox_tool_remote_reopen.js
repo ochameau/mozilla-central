@@ -38,7 +38,7 @@ requestLongerTimeout(2);
  */
 
 function runTools(target) {
-  return Task.spawn(function* () {
+  return (async function() {
     let toolIds = gDevTools.getToolDefinitionArray()
                            .filter(def => def.isTargetSupported(target))
                            .map(def => def.id);
@@ -48,7 +48,7 @@ function runTools(target) {
       let toolId = toolIds[index];
 
       info("About to open " + index + "/" + toolId);
-      toolbox = yield gDevTools.showToolbox(target, toolId, "window");
+      toolbox = await gDevTools.showToolbox(target, toolId, "window");
       ok(toolbox, "toolbox exists for " + toolId);
       is(toolbox.currentToolId, toolId, "currentToolId should be " + toolId);
 
@@ -56,8 +56,8 @@ function runTools(target) {
       ok(panel.isReady, toolId + " panel should be ready");
     }
 
-    yield toolbox.destroy();
-  });
+    await toolbox.destroy();
+  })();
 }
 
 function getClient() {

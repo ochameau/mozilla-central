@@ -133,14 +133,14 @@ function* testTables(tests) {
   }
 }
 
-add_task(function* () {
+add_task(async function() {
   // First, open a tab with the default userContextId and setup its storages.
-  let tabDefault = yield openTab(MAIN_DOMAIN + "storage-listings.html");
+  let tabDefault = await openTab(MAIN_DOMAIN + "storage-listings.html");
 
   // Second, start testing for userContextId 1.
   // We use the same item name as the default page has to see deleting items
   // from userContextId 1 will affect default one or not.
-  yield openTabAndSetupStorage(MAIN_DOMAIN + "storage-listings.html", {userContextId: 1});
+  await openTabAndSetupStorage(MAIN_DOMAIN + "storage-listings.html", {userContextId: 1});
 
   let contextMenu = gPanelWindow.document.getElementById("storage-table-popup");
   let menuDeleteItem = contextMenu.querySelector("#storage-table-popup-delete");
@@ -149,14 +149,14 @@ add_task(function* () {
     let treeItemName = treeItem.join(" > ");
 
     info(`Selecting tree item ${treeItemName}`);
-    yield selectTreeItem(treeItem);
+    await selectTreeItem(treeItem);
 
     let row = getRowCells(rowName);
     ok(gUI.table.items.has(rowName), `There is a row '${rowName}' in ${treeItemName}`);
 
     let eventWait = gUI.once("store-objects-updated");
 
-    yield waitForContextMenu(contextMenu, row[cellToClick], () => {
+    await waitForContextMenu(contextMenu, row[cellToClick], () => {
       info(`Opened context menu in ${treeItemName}, row '${rowName}'`);
       menuDeleteItem.click();
       let truncatedRowName = String(rowName).replace(SEPARATOR_GUID, "-").substr(0, 16);
@@ -164,18 +164,18 @@ add_task(function* () {
         `Context menu item label contains '${rowName}' (maybe truncated)`);
     });
 
-    yield eventWait;
+    await eventWait;
 
     ok(!gUI.table.items.has(rowName),
       `There is no row '${rowName}' in ${treeItemName} after deletion`);
   }
 
   // Final, we see that the default tab is intact or not.
-  yield BrowserTestUtils.switchTab(gBrowser, tabDefault);
-  yield openStoragePanel();
+  await BrowserTestUtils.switchTab(gBrowser, tabDefault);
+  await openStoragePanel();
 
   testTree(storageItemsForDefault);
-  yield testTables(storageItemsForDefault);
+  await testTables(storageItemsForDefault);
 
-  yield finishTests();
+  await finishTests();
 });

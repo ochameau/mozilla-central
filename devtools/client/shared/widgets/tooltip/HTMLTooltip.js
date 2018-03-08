@@ -324,7 +324,7 @@ HTMLTooltip.prototype = {
    *        - {Number} x: optional, horizontal offset between the anchor and the tooltip
    *        - {Number} y: optional, vertical offset between the anchor and the tooltip
    */
-  show: Task.async(function* (anchor, {position, x = 0, y = 0} = {}) {
+  async show(anchor, {position, x = 0, y = 0} = {}) {
     // Get anchor geometry
     let anchorRect = getRelativeRect(anchor, this.doc);
     if (this.useXulWrapper) {
@@ -373,7 +373,7 @@ HTMLTooltip.prototype = {
     }
 
     if (this.useXulWrapper) {
-      yield this._showXulWrapperAt(left, top);
+      await this._showXulWrapperAt(left, top);
     } else {
       this.container.style.left = left + "px";
       this.container.style.top = top + "px";
@@ -392,7 +392,7 @@ HTMLTooltip.prototype = {
       this.topWindow.addEventListener("click", this._onClick, true);
       this.emit("shown");
     }, 0);
-  }),
+  },
 
   /**
    * Calculate the rect of the viewport that limits the tooltip dimensions. When using a
@@ -446,7 +446,7 @@ HTMLTooltip.prototype = {
    * Hide the current tooltip. The event "hidden" will be fired when the tooltip
    * is hidden.
    */
-  hide: Task.async(function* () {
+  async hide() {
     this.doc.defaultView.clearTimeout(this.attachEventsTimer);
     if (!this.isVisible()) {
       this.emit("hidden");
@@ -456,7 +456,7 @@ HTMLTooltip.prototype = {
     this.topWindow.removeEventListener("click", this._onClick, true);
     this.container.classList.remove("tooltip-visible");
     if (this.useXulWrapper) {
-      yield this._hideXulWrapper();
+      await this._hideXulWrapper();
     }
 
     this.emit("hidden");
@@ -466,7 +466,7 @@ HTMLTooltip.prototype = {
       this._focusedElement.focus();
       this._focusedElement = null;
     }
-  }),
+  },
 
   /**
    * Check if the tooltip is currently displayed.

@@ -45,20 +45,20 @@ function* checkCacheStateForAllTabs(states) {
   }
 }
 
-function* checkCacheEnabled(tabX, expected) {
+async function checkCacheEnabled(tabX, expected) {
   gBrowser.selectedTab = tabX.tab;
 
-  yield reloadTab(tabX);
+  await reloadTab(tabX);
 
-  let oldGuid = yield ContentTask.spawn(gBrowser.selectedBrowser, {}, function () {
+  let oldGuid = await ContentTask.spawn(gBrowser.selectedBrowser, {}, function () {
     let doc = content.document;
     let h1 = doc.querySelector("h1");
     return h1.textContent;
   });
 
-  yield reloadTab(tabX);
+  await reloadTab(tabX);
 
-  let guid = yield ContentTask.spawn(gBrowser.selectedBrowser, {}, function () {
+  let guid = await ContentTask.spawn(gBrowser.selectedBrowser, {}, function () {
     let doc = content.document;
     let h1 = doc.querySelector("h1");
     return h1.textContent;
@@ -71,7 +71,7 @@ function* checkCacheEnabled(tabX, expected) {
   }
 }
 
-function* setDisableCacheCheckboxChecked(tabX, state) {
+async function setDisableCacheCheckboxChecked(tabX, state) {
   gBrowser.selectedTab = tabX.tab;
 
   let panel = tabX.toolbox.getCurrentPanel();
@@ -83,7 +83,7 @@ function* setDisableCacheCheckboxChecked(tabX, state) {
 
     // We need to wait for all checkboxes to be updated and the docshells to
     // apply the new cache settings.
-    yield waitForTick();
+    await waitForTick();
   }
 }
 

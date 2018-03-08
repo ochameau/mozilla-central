@@ -79,13 +79,13 @@ exports.getHighlighterUtils = function (toolbox) {
    */
   let isInspectorInitialized = false;
   let requireInspector = generator => {
-    return Task.async(function* (...args) {
+    return async function(...args) {
       if (!isInspectorInitialized) {
-        yield toolbox.initInspector();
+        await toolbox.initInspector();
         isInspectorInitialized = true;
       }
-      return yield generator.apply(null, args);
-    });
+      return await generator.apply(null, args);
+    };
   };
 
   /**
@@ -173,10 +173,10 @@ exports.getHighlighterUtils = function (toolbox) {
   /**
    * Stop the picker, but also emit an event that the picker was canceled.
    */
-  let cancelPicker = exported.cancelPicker = Task.async(function* () {
-    yield stopPicker();
+  let cancelPicker = exported.cancelPicker = async function() {
+    await stopPicker();
     toolbox.emit("picker-canceled");
-  });
+  };
 
   /**
    * When a node is hovered by the mouse when the highlighter is in picker mode
@@ -274,7 +274,7 @@ exports.getHighlighterUtils = function (toolbox) {
    * markup view, which is when this param is passed to true
    * @return a promise that resolves when the highlighter is hidden
    */
-  exported.unhighlight = Task.async(function* (forceHide = false) {
+  exported.unhighlight = async function(forceHide = false) {
     forceHide = forceHide || !flags.testing;
 
     // Note that if isRemoteHighlightable is true, there's no need to hide the
@@ -282,7 +282,7 @@ exports.getHighlighterUtils = function (toolbox) {
     if (isNodeFrontHighlighted && forceHide && toolbox.highlighter &&
         isRemoteHighlightable()) {
       isNodeFrontHighlighted = false;
-      yield toolbox.highlighter.hideBoxModel();
+      await toolbox.highlighter.hideBoxModel();
     }
 
     // unhighlight is called when destroying the toolbox, which means that by
@@ -290,7 +290,7 @@ exports.getHighlighterUtils = function (toolbox) {
     if (toolbox) {
       toolbox.emit("node-unhighlight");
     }
-  });
+  };
 
   /**
    * If the main, box-model, highlighter isn't enough, or if multiple

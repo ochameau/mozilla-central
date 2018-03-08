@@ -44,11 +44,11 @@ function endTests() {
   finish();
 }
 
-var startTests = Task.async(function* () {
+var startTests = async function() {
   populateTable();
-  yield testKeyboardInteraction();
+  await testKeyboardInteraction();
   endTests();
-});
+};
 
 function populateTable() {
   table.push({
@@ -131,33 +131,33 @@ function getNodeByValue(value) {
  * Tests if pressing navigation keys on the table items does the expected
  * behavior.
  */
-var testKeyboardInteraction = Task.async(function* () {
+var testKeyboardInteraction = async function() {
   info("Testing keyboard interaction with the table");
   info("clicking on the row containing id2");
   let node = getNodeByValue("id2");
   let event = table.once(TableWidget.EVENTS.ROW_SELECTED);
   click(node);
-  yield event;
+  await event;
 
-  yield testRow("id3", "DOWN", "next row");
-  yield testRow("id4", "DOWN", "next row");
-  yield testRow("id3", "UP", "previous row");
-  yield testRow("id4", "DOWN", "next row");
-  yield testRow("id5", "DOWN", "next row");
-  yield testRow("id6", "DOWN", "next row");
-  yield testRow("id5", "UP", "previous row");
-  yield testRow("id4", "UP", "previous row");
-  yield testRow("id3", "UP", "previous row");
+  await testRow("id3", "DOWN", "next row");
+  await testRow("id4", "DOWN", "next row");
+  await testRow("id3", "UP", "previous row");
+  await testRow("id4", "DOWN", "next row");
+  await testRow("id5", "DOWN", "next row");
+  await testRow("id6", "DOWN", "next row");
+  await testRow("id5", "UP", "previous row");
+  await testRow("id4", "UP", "previous row");
+  await testRow("id3", "UP", "previous row");
 
   // selecting last item node to test edge navigation cycling case
   table.selectedRow = "id9";
 
   // pressing down on last row should move to first row.
-  yield testRow("id1", "DOWN", "first row");
+  await testRow("id1", "DOWN", "first row");
 
   // pressing up now should move to last row.
-  yield testRow("id9", "UP", "last row");
-});
+  await testRow("id9", "UP", "last row");
+};
 
 function* testRow(id, key, destination) {
   let node = getNodeByValue(id);

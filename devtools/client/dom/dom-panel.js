@@ -36,7 +36,7 @@ DomPanel.prototype = {
    * @return object
    *         A promise that is resolved when the DOM panel completes opening.
    */
-  open: Task.async(function* () {
+  async open() {
     if (this._opening) {
       return this._opening;
     }
@@ -46,7 +46,7 @@ DomPanel.prototype = {
 
     // Local monitoring needs to make the target remote.
     if (!this.target.isRemote) {
-      yield this.target.makeRemote();
+      await this.target.makeRemote();
     }
 
     this.initialize();
@@ -56,7 +56,7 @@ DomPanel.prototype = {
     deferred.resolve(this);
 
     return this._opening;
-  }),
+  },
 
   // Initialization
 
@@ -78,7 +78,7 @@ DomPanel.prototype = {
     this.shouldRefresh = true;
   },
 
-  destroy: Task.async(function* () {
+  async destroy() {
     if (this._destroying) {
       return this._destroying;
     }
@@ -93,7 +93,7 @@ DomPanel.prototype = {
 
     deferred.resolve();
     return this._destroying;
-  }),
+  },
 
   // Events
 

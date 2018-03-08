@@ -55,14 +55,14 @@ registerCleanupFunction(() => {
  *
  * @return {Promise} A promise that resolves after the tab is ready
  */
-function* openTab(url, options = {}) {
-  let tab = yield addTab(url, options);
+async function openTab(url, options = {}) {
+  let tab = await addTab(url, options);
   let content = tab.linkedBrowser.contentWindowAsCPOW;
 
   gWindow = content.wrappedJSObject;
 
   // Setup the async storages in main window and for all its iframes
-  yield ContentTask.spawn(gBrowser.selectedBrowser, null, function* () {
+  await ContentTask.spawn(gBrowser.selectedBrowser, null, async function() {
     /**
      * Get all windows including frames recursively.
      *
@@ -92,7 +92,7 @@ function* openTab(url, options = {}) {
       let readyState = win.document.readyState;
       info(`Found a window: ${readyState}`);
       if (readyState != "complete") {
-        yield new Promise(resolve => {
+        await new Promise(resolve => {
           let onLoad = () => {
             win.removeEventListener("load", onLoad);
             resolve();
@@ -101,7 +101,7 @@ function* openTab(url, options = {}) {
         });
       }
       if (win.setup) {
-        yield win.setup();
+        await win.setup();
       }
     }
   });
@@ -136,7 +136,7 @@ function* openTabAndSetupStorage(url, options = {}) {
  *
  * @return {Promise} a promise that resolves when the storage inspector is ready
  */
-var openStoragePanel = Task.async(function* (cb) {
+var openStoragePanel = async function(cb) {
   info("Opening the storage inspector");
   let target = TargetFactory.forTab(gBrowser.selectedTab);
 
@@ -165,7 +165,7 @@ var openStoragePanel = Task.async(function* (cb) {
   }
 
   info("Opening the toolbox");
-  toolbox = yield gDevTools.showToolbox(target, "storage");
+  toolbox = await gDevTools.showToolbox(target, "storage");
   storage = toolbox.getPanel("storage");
   gPanelWindow = storage.panelWindow;
   gUI = storage.UI;
@@ -176,9 +176,9 @@ var openStoragePanel = Task.async(function* (cb) {
   gUI.animationsEnabled = false;
 
   info("Waiting for the stores to update");
-  yield gUI.once("store-objects-updated");
+  await gUI.once("store-objects-updated");
 
-  yield waitForToolboxFrameFocus(toolbox);
+  await waitForToolboxFrameFocus(toolbox);
 
   if (cb) {
     return cb(storage, toolbox);
@@ -188,7 +188,7 @@ var openStoragePanel = Task.async(function* (cb) {
     toolbox: toolbox,
     storage: storage
   };
-});
+};
 
 /**
  * Wait for the toolbox frame to receive focus after it loads
@@ -218,11 +218,11 @@ function forceCollections() {
 /**
  * Cleans up and finishes the test
  */
-function* finishTests() {
+async function finishTests() {
   // Bug 1233497 makes it so that we can no longer yield CPOWs from Tasks.
   // We work around this by calling clear() via a ContentTask instead.
   while (gBrowser.tabs.length > 1) {
-    yield ContentTask.spawn(gBrowser.selectedBrowser, null, function* () {
+    await ContentTask.spawn(gBrowser.selectedBrowser, null, async function() {
       /**
        * Get all windows including frames recursively.
        *
@@ -258,12 +258,12 @@ function* finishTests() {
         }
 
         if (win.clear) {
-          yield win.clear();
+          await win.clear();
         }
       }
     });
 
-    yield closeTabAndToolbox(gBrowser.selectedTab);
+    await closeTabAndToolbox(gBrowser.selectedTab);
   }
 
   Services.cookies.removeAll();
@@ -272,7 +272,7 @@ function* finishTests() {
 }
 
 // Sends a click event on the passed DOM node in an async manner
-function* click(node) {
+function click(node) {
   node.scrollIntoView();
 
   return new Promise(resolve => {
@@ -722,7 +722,7 @@ function* editCell(id, column, newValue, validate = true) {
  * @param {Boolean} selectText
  *        Select text? Default true.
  */
-function* startCellEdit(id, column, selectText = true) {
+function startCellEdit(id, column, selectText = true) {
   let row = getRowCells(id, true);
   let editableFieldsEngine = gUI.table._editableFieldsEngine;
   let cell = row[column];
@@ -915,7 +915,7 @@ function containsFocus(doc, container) {
   return false;
 }
 
-var focusSearchBoxUsingShortcut = Task.async(function* (panelWin, callback) {
+var focusSearchBoxUsingShortcut = async function(panelWin, callback) {
   info("Focusing search box");
   let searchBox = panelWin.document.getElementById("storage-searchbox");
   let focused = once(searchBox, "focus");
@@ -925,12 +925,12 @@ var focusSearchBoxUsingShortcut = Task.async(function* (panelWin, callback) {
     "chrome://devtools/locale/storage.properties");
   synthesizeKeyShortcut(strings.GetStringFromName("storage.filter.key"));
 
-  yield focused;
+  await focused;
 
   if (callback) {
     callback();
   }
-});
+};
 
 function getCookieId(name, domain, path) {
   return `${name}${SEPARATOR_GUID}${domain}${SEPARATOR_GUID}${path}`;

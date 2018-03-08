@@ -335,7 +335,7 @@ ToolSidebar.prototype = {
    * @param {String} tabPanelId Optional. If provided, this ID will be used
    * instead of the tabId to retrieve and remove the corresponding <tabpanel>
    */
-  removeTab: Task.async(function* (tabId, tabPanelId) {
+  async removeTab(tabId, tabPanelId) {
     // Remove the tab if it can be found
     let tab = this.getTab(tabId);
     if (!tab) {
@@ -344,7 +344,7 @@ ToolSidebar.prototype = {
 
     let win = this.getWindowForTab(tabId);
     if (win && ("destroy" in win)) {
-      yield win.destroy();
+      await win.destroy();
     }
 
     tab.remove();
@@ -357,7 +357,7 @@ ToolSidebar.prototype = {
 
     this._tabs.delete(tabId);
     this.emit("tab-unregistered", tabId);
-  }),
+  },
 
   /**
    * Show or hide a specific tab.
@@ -549,7 +549,7 @@ ToolSidebar.prototype = {
   /**
    * Clean-up.
    */
-  destroy: Task.async(function* () {
+  async destroy() {
     if (this._destroyed) {
       return;
     }
@@ -570,7 +570,7 @@ ToolSidebar.prototype = {
       let panel = this._tabbox.tabpanels.firstChild;
       let win = panel.firstChild.contentWindow;
       if (win && ("destroy" in win)) {
-        yield win.destroy();
+        await win.destroy();
       }
       panel.remove();
     }
@@ -589,5 +589,5 @@ ToolSidebar.prototype = {
     this._tabbox = null;
     this._panelDoc = null;
     this._toolPanel = null;
-  })
+  }
 };

@@ -13,8 +13,8 @@ const {PRESETS} = require("devtools/client/shared/widgets/CubicBezierPresets");
 
 const TEST_URI = CHROME_URL_ROOT + "doc_cubic-bezier-01.html";
 
-add_task(function* () {
-  let [host, win, doc] = yield createHost("bottom", TEST_URI);
+add_task(async function() {
+  let [host, win, doc] = await createHost("bottom", TEST_URI);
 
   let container = doc.querySelector("#cubic-bezier-container");
   let w = new CubicBezierWidget(container,
@@ -24,14 +24,14 @@ add_task(function* () {
   let rect = w.curve.getBoundingClientRect();
   rect.graphTop = rect.height * w.bezierCanvas.padding[0];
 
-  yield adjustingBezierUpdatesPreset(w, win, doc, rect);
-  yield selectingPresetUpdatesBezier(w, win, doc, rect);
+  await adjustingBezierUpdatesPreset(w, win, doc, rect);
+  await selectingPresetUpdatesBezier(w, win, doc, rect);
 
   w.destroy();
   host.destroy();
 });
 
-function* adjustingBezierUpdatesPreset(widget, win, doc, rect) {
+function adjustingBezierUpdatesPreset(widget, win, doc, rect) {
   info("Checking that changing the bezier refreshes the preset menu");
 
   is(widget.presets.activeCategory,

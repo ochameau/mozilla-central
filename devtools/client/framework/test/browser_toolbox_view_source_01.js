@@ -13,7 +13,7 @@ var JS_URL = `${URL_ROOT}code_math.js`;
 
 // Force the old debugger UI since it's directly used (see Bug 1301705)
 Services.prefs.setBoolPref("devtools.debugger.new-debugger-frontend", false);
-registerCleanupFunction(function* () {
+registerCleanupFunction(function() {
   Services.prefs.clearUserPref("devtools.debugger.new-debugger-frontend");
 });
 
@@ -39,7 +39,7 @@ function* viewSource() {
 }
 
 function test() {
-  Task.spawn(viewSource).then(finish, (aError) => {
+  (viewSource)().then(finish, (aError) => {
     ok(false, "Got an error: " + aError.message + "\n" + aError.stack);
     finish();
   });

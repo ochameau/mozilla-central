@@ -27,14 +27,14 @@ function* runTests([win, sp]) {
 }
 
 // Helper function that does the actual testing.
-var checkResults = Task.async(function* (sp, value, isString = false) {
+var checkResults = async function(sp, value, isString = false) {
   let sourceValue = value;
   if (isString) {
     sourceValue = '"' + value + '"';
   }
   let source = "var foobar = " + sourceValue + "; foobar";
   sp.setText(source);
-  yield sp.inspect();
+  await sp.inspect();
 
   let sidebar = sp.sidebar;
   ok(sidebar.visible, "sidebar is open");
@@ -58,4 +58,4 @@ var checkResults = Task.async(function* (sp, value, isString = false) {
   ok(!tabbox.hasAttribute("hidden"), "Scratchpad sidebar visible");
   sidebar.hide();
   ok(tabbox.hasAttribute("hidden"), "Scratchpad sidebar hidden");
-});
+};

@@ -8,9 +8,9 @@ const {InspectorFront} = require("devtools/shared/fronts/inspector");
 const TEST_URI = "data:text/html;charset=UTF-8,<html><body><bar></bar>" +
                  "<div id='baz'></div><body></html>";
 
-add_task(function* () {
-  yield addTab(TEST_URI);
-  yield runTests();
+add_task(async function() {
+  await addTab(TEST_URI);
+  await runTests();
 });
 
 function* runTests() {

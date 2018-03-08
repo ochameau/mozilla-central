@@ -3085,7 +3085,7 @@ Widgets.ObjectRenderers.add({
    * if the node is in a DocumentFragment or not part of the tree, or not of
    * type nodeConstants.ELEMENT_NODE).
    */
-  linkToInspector: Task.async(function* () {
+  async linkToInspector() {
     if (this._linkedToInspector) {
       return;
     }
@@ -3105,8 +3105,8 @@ Widgets.ObjectRenderers.add({
     }
 
     // Checking that the inspector supports the node
-    yield this.toolbox.initInspector();
-    this._nodeFront = yield this.toolbox.walker.getNodeActorFromObjectActor(
+    await this.toolbox.initInspector();
+    this._nodeFront = await this.toolbox.walker.getNodeActorFromObjectActor(
       this.objectActor.actor);
     if (!this._nodeFront) {
       throw new Error("The object cannot be linked to the inspector, the " +
@@ -3135,22 +3135,22 @@ Widgets.ObjectRenderers.add({
       onClick: this.openNodeInInspector.bind(this)
     });
     this._openInspectorNode.title = l10n.getStr("openNodeInInspector");
-  }),
+  },
 
   /**
    * Highlight the DOMNode corresponding to the ObjectActor in the page.
    * @return a promise that resolves when the node has been highlighted, or
    * rejects if the node cannot be highlighted (detached from the DOM)
    */
-  highlightDomNode: Task.async(function* () {
-    yield this.linkToInspector();
-    let isAttached = yield this.toolbox.walker.isInDOMTree(this._nodeFront);
+  async highlightDomNode() {
+    await this.linkToInspector();
+    let isAttached = await this.toolbox.walker.isInDOMTree(this._nodeFront);
     if (isAttached) {
-      yield this.toolbox.highlighterUtils.highlightNodeFront(this._nodeFront);
+      await this.toolbox.highlighterUtils.highlightNodeFront(this._nodeFront);
     } else {
       throw new Error("Node is not attached.");
     }
-  }),
+  },
 
   /**
    * Unhighlight a previously highlit node
@@ -3170,20 +3170,20 @@ Widgets.ObjectRenderers.add({
    * (detached from the DOM). Note that in any case, the inspector panel will
    * be switched to.
    */
-  openNodeInInspector: Task.async(function* () {
-    yield this.linkToInspector();
-    yield this.toolbox.selectTool("inspector");
+  async openNodeInInspector() {
+    await this.linkToInspector();
+    await this.toolbox.selectTool("inspector");
 
-    let isAttached = yield this.toolbox.walker.isInDOMTree(this._nodeFront);
+    let isAttached = await this.toolbox.walker.isInDOMTree(this._nodeFront);
     if (isAttached) {
       let onReady = defer();
       this.toolbox.inspector.once("inspector-updated", onReady.resolve);
-      yield this.toolbox.selection.setNodeFront(this._nodeFront, "console");
-      yield onReady.promise;
+      await this.toolbox.selection.setNodeFront(this._nodeFront, "console");
+      await onReady.promise;
     } else {
       throw new Error("Node is not attached.");
     }
-  }),
+  },
 
   destroy: function () {
     if (this.toolbox && this._nodeFront) {

@@ -7,25 +7,25 @@
 
 const TESTCASE_URI = TEST_BASE_HTTP + "four.html";
 
-add_task(function* () {
-  let { ui } = yield openStyleEditorForURL(TESTCASE_URI);
+add_task(async function() {
+  let { ui } = await openStyleEditorForURL(TESTCASE_URI);
   gBrowser.tabContainer.addEventListener("TabOpen", onTabAdded);
 
-  yield ui.editors[0].getSourceEditor();
+  await ui.editors[0].getSourceEditor();
   info("first editor selected");
 
   info("Left-clicking on the second editor link.");
-  yield clickOnStyleSheetLink(ui.editors[1], 0);
+  await clickOnStyleSheetLink(ui.editors[1], 0);
 
   info("Waiting for the second editor to be selected.");
-  let editor = yield ui.once("editor-selected");
+  let editor = await ui.once("editor-selected");
 
   ok(editor.sourceEditor.hasFocus(),
      "Left mouse click gave second editor focus.");
 
   // middle mouse click should not open a new tab
   info("Middle clicking on the third editor link.");
-  yield clickOnStyleSheetLink(ui.editors[2], 1);
+  await clickOnStyleSheetLink(ui.editors[2], 1);
 });
 
 /**

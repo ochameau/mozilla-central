@@ -122,7 +122,7 @@ const takeCensusDiff = exports.takeCensusDiff = function (heapWorker, first, sec
  * @param {HeapAnalysesClient} heapWorker
  */
 const refreshDiffing = exports.refreshDiffing = function (heapWorker) {
-  return function* (dispatch, getState) {
+  return function(dispatch, getState) {
     if (getState().diffing.secondSnapshotId === null) {
       return;
     }

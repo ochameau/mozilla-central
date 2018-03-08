@@ -725,7 +725,7 @@ const selectSnapshot = exports.selectSnapshot = function (id) {
  * @param {HeapAnalysesClient} heapWorker
  */
 exports.clearSnapshots = function (heapWorker) {
-  return function* (dispatch, getState) {
+  return async function(dispatch, getState) {
     let snapshots = getState().snapshots.filter(s => {
       let snapshotReady = s.state === states.READ || s.state === states.ERROR;
       let censusReady = (s.treeMap && s.treeMap.state === treeMapState.SAVED) ||
@@ -745,7 +745,7 @@ exports.clearSnapshots = function (heapWorker) {
       dispatch(view.popView());
     }
 
-    yield Promise.all(snapshots.map(snapshot => {
+    await Promise.all(snapshots.map(snapshot => {
       return heapWorker.deleteHeapSnapshot(snapshot.path).catch(error => {
         reportException("clearSnapshots", error);
         dispatch({ type: actions.SNAPSHOT_ERROR, id: snapshot.id, error });

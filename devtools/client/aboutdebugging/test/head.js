@@ -210,9 +210,9 @@ function* installAddon({document, path, name, isWebExtension}) {
   yield waitUntilAddonContainer(name, document);
 }
 
-function* uninstallAddon({document, id, name}) {
+async function uninstallAddon({document, id, name}) {
   // Now uninstall this addon
-  yield new Promise(done => {
+  await new Promise(done => {
     AddonManager.getAddonByID(id, addon => {
       let listener = {
         onUninstalled: function (uninstalledAddon) {
@@ -230,7 +230,7 @@ function* uninstallAddon({document, id, name}) {
   });
 
   info("Wait until the addon is removed from about:debugging");
-  yield waitUntil(() => !getAddonContainer(name, document), 100);
+  await waitUntil(() => !getAddonContainer(name, document), 100);
 }
 
 function getAddonCount(document) {
@@ -289,10 +289,10 @@ function assertHasTarget(expected, document, type, name) {
  * @return {Promise} Resolves when the service worker is registered.
  */
 function waitForServiceWorkerRegistered(tab) {
-  return ContentTask.spawn(tab.linkedBrowser, {}, function* () {
+  return ContentTask.spawn(tab.linkedBrowser, {}, async function() {
     // Retrieve the `sw` promise created in the html page.
     let { sw } = content.wrappedJSObject;
-    yield sw;
+    await sw;
   });
 }
 
@@ -305,7 +305,7 @@ function waitForServiceWorkerRegistered(tab) {
  * @param {Node} serviceWorkersElement
  * @return {Promise} Resolves when the service worker is unregistered.
  */
-function* unregisterServiceWorker(tab, serviceWorkersElement) {
+async function unregisterServiceWorker(tab, serviceWorkersElement) {
   // Get the initial count of service worker registrations.
   let registrations = serviceWorkersElement.querySelectorAll(".target-container");
   let registrationCount = registrations.length;
@@ -317,11 +317,11 @@ function* unregisterServiceWorker(tab, serviceWorkersElement) {
   }, 100);
 
   // Unregister the service worker from the content page
-  yield ContentTask.spawn(tab.linkedBrowser, {}, function* () {
+  await ContentTask.spawn(tab.linkedBrowser, {}, async function() {
     // Retrieve the `sw` promise created in the html page
     let { sw } = content.wrappedJSObject;
-    let registration = yield sw;
-    yield registration.unregister();
+    let registration = await sw;
+    await registration.unregister();
   });
 
   return isRemoved;
@@ -347,8 +347,8 @@ function waitForDelayedStartupFinished(win) {
 /**
  * open the about:debugging page and install an addon
  */
-function* setupTestAboutDebuggingWebExtension(name, path) {
-  yield new Promise(resolve => {
+async function setupTestAboutDebuggingWebExtension(name, path) {
+  await new Promise(resolve => {
     let options = {"set": [
       // Force enabling of addons debugging
       ["devtools.chrome.enabled", true],
@@ -361,10 +361,10 @@ function* setupTestAboutDebuggingWebExtension(name, path) {
     SpecialPowers.pushPrefEnv(options, resolve);
   });
 
-  let { tab, document } = yield openAboutDebugging("addons");
-  yield waitForInitialAddonList(document);
+  let { tab, document } = await openAboutDebugging("addons");
+  await waitForInitialAddonList(document);
 
-  yield installAddon({
+  await installAddon({
     document,
     path,
     name,
@@ -401,7 +401,7 @@ function* waitForServiceWorkerActivation(swUrl, document) {
 /**
  * Set all preferences needed to enable service worker debugging and testing.
  */
-function* enableServiceWorkerDebugging() {
+async function enableServiceWorkerDebugging() {
   let options = { "set": [
     // Enable service workers.
     ["dom.serviceWorkers.enabled", true],
@@ -412,7 +412,7 @@ function* enableServiceWorkerDebugging() {
   ]};
 
   // Wait for dom.ipc.processCount to be updated before releasing processes.
-  yield new Promise(done => {
+  await new Promise(done => {
     SpecialPowers.pushPrefEnv(options, done);
   });
 
