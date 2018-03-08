@@ -15,7 +15,7 @@ const { startRecording, stopRecording } = require("devtools/client/performance/t
 const { waitUntil } = require("devtools/client/performance/test/helpers/wait-utils");
 const { once } = require("devtools/client/performance/test/helpers/event-utils");
 
-add_task(async function() {
+add_task(async function () {
   // Make sure the profiler module is stopped so we can set a new buffer limit.
   pmmLoadFrameScripts(gBrowser);
   await pmmStopProfiler();
@@ -40,7 +40,7 @@ add_task(async function() {
   // Start a manual recording.
   await startRecording(panel);
 
-  await waitUntil(async function() {
+  await waitUntil(async function () {
     [, gPercent] = await once(PerformanceView,
                               EVENTS.UI_RECORDING_PROFILER_STATUS_RENDERED,
                               { spreadArgs: true });

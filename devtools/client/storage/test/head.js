@@ -62,7 +62,7 @@ async function openTab(url, options = {}) {
   gWindow = content.wrappedJSObject;
 
   // Setup the async storages in main window and for all its iframes
-  await ContentTask.spawn(gBrowser.selectedBrowser, null, async function() {
+  await ContentTask.spawn(gBrowser.selectedBrowser, null, async function () {
     /**
      * Get all windows including frames recursively.
      *
@@ -136,7 +136,7 @@ async function openTabAndSetupStorage(url, options = {}) {
  *
  * @return {Promise} a promise that resolves when the storage inspector is ready
  */
-var openStoragePanel = async function(cb) {
+var openStoragePanel = async function (cb) {
   info("Opening the storage inspector");
   let target = TargetFactory.forTab(gBrowser.selectedTab);
 
@@ -222,7 +222,7 @@ async function finishTests() {
   // Bug 1233497 makes it so that we can no longer yield CPOWs from Tasks.
   // We work around this by calling clear() via a ContentTask instead.
   while (gBrowser.tabs.length > 1) {
-    await ContentTask.spawn(gBrowser.selectedBrowser, null, async function() {
+    await ContentTask.spawn(gBrowser.selectedBrowser, null, async function () {
       /**
        * Get all windows including frames recursively.
        *
@@ -915,7 +915,7 @@ function containsFocus(doc, container) {
   return false;
 }
 
-var focusSearchBoxUsingShortcut = async function(panelWin, callback) {
+var focusSearchBoxUsingShortcut = async function (panelWin, callback) {
   info("Focusing search box");
   let searchBox = panelWin.document.getElementById("storage-searchbox");
   let focused = once(searchBox, "focus");

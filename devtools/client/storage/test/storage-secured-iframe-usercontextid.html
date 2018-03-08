@@ -14,7 +14,7 @@ localStorage.setItem("iframe-s-ls1uc1", "foobar");
 sessionStorage.setItem("iframe-s-ss1uc1", "foobar-2");
 dump("added cookies and storage from secured iframe\n");
 
-let idbGenerator = async function() {
+let idbGenerator = async function () {
   let request = indexedDB.open("idb-s1uc1", 1);
   request.onerror = function() {
     throw new Error("error opening db connection");
@@ -76,11 +76,11 @@ function deleteDB(dbName) {
   });
 }
 
-window.setup = async function() {
+window.setup = async function () {
   await idbGenerator();
 };
 
-window.clear = async function() {
+window.clear = async function () {
   await deleteDB("idb-s1uc1");
   await deleteDB("idb-s2uc1");
 

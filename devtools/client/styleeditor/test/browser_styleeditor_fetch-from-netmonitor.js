@@ -8,7 +8,7 @@
 
 const TEST_URL = TEST_BASE_HTTP + "doc_fetch_from_netmonitor.html";
 
-add_task(async function() {
+add_task(async function () {
   info("Opening netmonitor");
   let tab = await addTab("about:blank");
   let target = TargetFactory.forTab(tab);

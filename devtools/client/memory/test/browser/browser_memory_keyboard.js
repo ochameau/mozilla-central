@@ -34,7 +34,7 @@ function waitUntilExpanded(store, node) {
     state.snapshots[0].census.expanded.has(node.id));
 }
 
-this.test = makeMemoryTest(TEST_URL, async function({ tab, panel }) {
+this.test = makeMemoryTest(TEST_URL, async function ({ tab, panel }) {
   const heapWorker = panel.panelWin.gHeapAnalysesClient;
   const front = panel.panelWin.gFront;
   const store = panel.panelWin.gStore;

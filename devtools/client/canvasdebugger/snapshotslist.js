@@ -179,7 +179,7 @@ var SnapshotsListView = extend(WidgetMethods, {
     $("#screenshot-container").hidden = true;
     $("#snapshot-filmstrip").hidden = true;
 
-    (async function() {
+    (async function () {
       // Wait for a few milliseconds between presenting the function calls,
       // screenshot and thumbnails, to allow each component being
       // sequentially drawn. This gives the illusion of snappiness.
@@ -205,7 +205,7 @@ var SnapshotsListView = extend(WidgetMethods, {
    * The click listener for the "clear" button in this container.
    */
   _onClearButtonClick: function () {
-    (async function() {
+    (async function () {
       SnapshotsListView.empty();
       CallsListView.empty();
 
@@ -408,7 +408,7 @@ var SnapshotsListView = extend(WidgetMethods, {
 
     // Start serializing all the function call actors for the specified snapshot,
     // while the nsIFilePicker dialog is being opened. Snappy.
-    let serialized = (async function() {
+    let serialized = (async function () {
       let data = {
         fileType: CALLS_LIST_SERIALIZER_IDENTIFIER,
         version: CALLS_LIST_SERIALIZER_VERSION,

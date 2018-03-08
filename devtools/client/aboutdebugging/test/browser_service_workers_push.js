@@ -14,7 +14,7 @@
 const SERVICE_WORKER = URL_ROOT + "service-workers/push-sw.js";
 const TAB_URL = URL_ROOT + "service-workers/push-sw.html";
 
-add_task(async function() {
+add_task(async function () {
   await enableServiceWorkerDebugging();
   let { tab, document } = await openAboutDebugging("workers");
 

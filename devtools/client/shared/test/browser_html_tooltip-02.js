@@ -15,7 +15,7 @@ loadHelperScript("helper_html_tooltip.js");
 
 let useXulWrapper;
 
-add_task(async function() {
+add_task(async function () {
   await addTab("about:blank");
   let [,, doc] = await createHost("bottom", TEST_URI);
 

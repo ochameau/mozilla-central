@@ -101,7 +101,7 @@ function promiseXHR(data) {
  *   response: XMLHttpRequest.response
  * }
  */
-addMessageListener("devtools:test:xhr", async function({ data }) {
+addMessageListener("devtools:test:xhr", async function ({ data }) {
   let requests = Array.isArray(data) ? data : [data];
   let responses = [];
 

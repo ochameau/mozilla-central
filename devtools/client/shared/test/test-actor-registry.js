@@ -14,7 +14,7 @@
   const ACTOR_URL = TEST_URL_ROOT + "test-actor.js";
 
   // Register a test actor that can operate on the remote document
-  exports.registerTestActor = async function(client) {
+  exports.registerTestActor = async function (client) {
     // First, instanciate ActorRegistryFront to be able to dynamically register an actor
     let response = await client.listTabs();
     let { ActorRegistryFront } = require("devtools/shared/fronts/actor-registry");
@@ -31,7 +31,7 @@
   };
 
   // Load the test actor in a custom sandbox as we can't use SDK module loader with URIs
-  let loadFront = async function() {
+  let loadFront = async function () {
     let sourceText = await request(ACTOR_URL);
     const principal = CC("@mozilla.org/systemprincipal;1", "nsIPrincipal")();
     const sandbox = Cu.Sandbox(principal);
@@ -49,14 +49,14 @@
   };
 
   // Spawn an instance of the test actor for the given toolbox
-  exports.getTestActor = async function(toolbox) {
+  exports.getTestActor = async function (toolbox) {
     let client = toolbox.target.client;
     return getTestActor(client, toolbox.target.tab, toolbox);
   };
 
   // Sometimes, we need the test actor before opening or without a toolbox then just
   // create a front for the given `tab`
-  exports.getTestActorWithoutToolbox = async function(tab) {
+  exports.getTestActorWithoutToolbox = async function (tab) {
     let { DebuggerServer } = require("devtools/server/main");
     let { DebuggerClient } = require("devtools/shared/client/debugger-client");
 
@@ -79,7 +79,7 @@
     return fetch(uri).then(({ content }) => content);
   };
 
-  let getTestActor = async function(client, tab, toolbox) {
+  let getTestActor = async function (client, tab, toolbox) {
     // We may have to update the form in order to get the dynamically registered
     // test actor.
     let form = await getUpdatedForm(client, tab);

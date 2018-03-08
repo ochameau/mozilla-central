@@ -7,7 +7,7 @@
 
 const TESTCASE_URI = TEST_BASE_HTTP + "four.html";
 
-add_task(async function() {
+add_task(async function () {
   let { ui } = await openStyleEditorForURL(TESTCASE_URI);
   gBrowser.tabContainer.addEventListener("TabOpen", onTabAdded);
 

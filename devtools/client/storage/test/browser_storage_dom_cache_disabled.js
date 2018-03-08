@@ -8,7 +8,7 @@
 
 // Test the storage inspector when dom.caches.enabled=false.
 
-add_task(async function() {
+add_task(async function () {
   // Disable the DOM cache
   Services.prefs.setBoolPref(DOM_CACHE, false);
 

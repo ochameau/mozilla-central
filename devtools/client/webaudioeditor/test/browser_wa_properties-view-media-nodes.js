@@ -32,7 +32,7 @@ function waitForDeviceClosed() {
   });
 }
 
-add_task(async function() {
+add_task(async function () {
   let { target, panel } = await initWebAudioEditor(MEDIA_NODES_URL);
   let { panelWin } = panel;
   let { gFront, $, $$, EVENTS, PropertiesView } = panelWin;

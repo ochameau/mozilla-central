@@ -14,7 +14,7 @@ ChromeUtils.import("resource://gre/modules/NetUtil.jsm", tempScope);
 var FileUtils = tempScope.FileUtils;
 var NetUtil = tempScope.NetUtil;
 
-add_task(async function() {
+add_task(async function () {
   let htmlFile = await copy(TESTCASE_URI_HTML, "simple.html");
   await copy(TESTCASE_URI_CSS, "simple.css");
   let uri = Services.io.newFileURI(htmlFile);

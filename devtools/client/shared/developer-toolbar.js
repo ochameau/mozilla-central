@@ -371,7 +371,7 @@ DeveloperToolbar.prototype.show = function (focus) {
     return this._showPromise;
   }
 
-  this._showPromise = ((async function() {
+  this._showPromise = ((async function () {
     // hide() is async, so ensure we don't need to wait for hide() to
     // finish.  We unconditionally yield here, even if _hidePromise is
     // null, so that the spawn call returns a promise before starting

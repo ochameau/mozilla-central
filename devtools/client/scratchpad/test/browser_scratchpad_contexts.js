@@ -26,7 +26,7 @@ function runTests() {
 
   let tests = [{
     method: "run",
-    prepare: async function() {
+    prepare: async function () {
       sp.setContentContext();
 
       is(sp.executionContext, gScratchpadWindow.SCRATCHPAD_CONTEXT_CONTENT,

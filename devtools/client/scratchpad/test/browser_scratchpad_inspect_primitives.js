@@ -27,7 +27,7 @@ async function runTests([win, sp]) {
 }
 
 // Helper function that does the actual testing.
-var checkResults = async function(sp, value, isString = false) {
+var checkResults = async function (sp, value, isString = false) {
   let sourceValue = value;
   if (isString) {
     sourceValue = '"' + value + '"';

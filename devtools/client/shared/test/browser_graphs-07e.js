@@ -30,7 +30,7 @@ const TEST_DATA = [
 const LineGraphWidget = require("devtools/client/shared/widgets/LineGraphWidget");
 let CURRENT_ZOOM = 1;
 
-add_task(async function() {
+add_task(async function () {
   await addTab("about:blank");
   await performTest();
   gBrowser.removeCurrentTab();

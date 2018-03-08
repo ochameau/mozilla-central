@@ -7,7 +7,7 @@
 
 const {FlameGraph} = require("devtools/client/shared/widgets/FlameGraph");
 
-add_task(async function() {
+add_task(async function () {
   await addTab("about:blank");
   await performTest();
   gBrowser.removeCurrentTab();

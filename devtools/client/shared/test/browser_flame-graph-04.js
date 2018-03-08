@@ -11,7 +11,7 @@ const {FlameGraph} = require("devtools/client/shared/widgets/FlameGraph");
 const {FLAME_GRAPH_BLOCK_TEXT_FONT_SIZE} = require("devtools/client/shared/widgets/FlameGraph");
 const {FLAME_GRAPH_BLOCK_TEXT_FONT_FAMILY} = require("devtools/client/shared/widgets/FlameGraph");
 
-add_task(async function() {
+add_task(async function () {
   await addTab("about:blank");
   await performTest();
   gBrowser.removeCurrentTab();

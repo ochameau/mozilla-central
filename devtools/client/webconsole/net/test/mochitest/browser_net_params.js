@@ -13,7 +13,7 @@ const JSON_XHR_URL = URL_ROOT + "test.json";
  * networks details in the Console panel and checks that
  * HTTP parameters (query string) are there.
  */
-add_task(async function() {
+add_task(async function () {
   info("Test XHR Spy params started");
 
   let {hud} = await addTestTab(TEST_PAGE_URL);
@@ -44,7 +44,7 @@ add_task(async function() {
 /**
  * Test URL parameters with the same name.
  */
-add_task(async function() {
+add_task(async function () {
   info("Test XHR Spy params started");
 
   let {hud} = await addTestTab(TEST_PAGE_URL);

@@ -10,7 +10,7 @@ waitForExplicitFinish();
 
 const TEST_URL = TEST_BASE + "doc_xulpage.xul";
 
-add_task(async function() {
+add_task(async function () {
   let tab = await addTab(TEST_URL);
   let target = TargetFactory.forTab(tab);
 

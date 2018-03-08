@@ -8,7 +8,7 @@
 // https rather than chrome to improve coverage
 const TESTCASE_URI = TEST_BASE_HTTPS + "simple.html";
 
-add_task(async function() {
+add_task(async function () {
   let { panel, ui } = await openStyleEditorForURL(TESTCASE_URI);
   let editor = await ui.editors[0].getSourceEditor();
 

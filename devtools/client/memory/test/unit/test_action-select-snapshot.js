@@ -10,7 +10,7 @@
 let actions = require("devtools/client/memory/actions/snapshot");
 let { snapshotState: states } = require("devtools/client/memory/constants");
 
-add_task(async function() {
+add_task(async function () {
   let front = new StubbedMemoryFront();
   await front.attach();
   let store = Store();

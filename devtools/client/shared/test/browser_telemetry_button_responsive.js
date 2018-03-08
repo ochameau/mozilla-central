@@ -32,7 +32,7 @@ registerCleanupFunction(() => {
 
 loader.lazyRequireGetter(this, "ResponsiveUIManager", "devtools/client/responsive.html/manager", true);
 
-add_task(async function() {
+add_task(async function () {
   await addTab(TEST_URI);
   let Telemetry = loadTelemetryAndRecordLogs();
 
@@ -71,7 +71,7 @@ function waitForToggle() {
   });
 }
 
-var delayedClicks = async function(node, clicks) {
+var delayedClicks = async function (node, clicks) {
   for (let i = 0; i < clicks; i++) {
     info("Clicking button " + node.id);
     let toggled = waitForToggle();

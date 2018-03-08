@@ -43,7 +43,7 @@ const mockGetCSSValuesForPropertyName = function (propertyName) {
   return values[propertyName] || [];
 };
 
-add_task(async function() {
+add_task(async function () {
   await addTab("data:text/html;charset=utf-8," +
     "inplace editor CSS value autocomplete");
   let [host, win, doc] = await createHost();
@@ -68,7 +68,7 @@ add_task(async function() {
   gBrowser.removeCurrentTab();
 });
 
-let runAutocompletionTest = async function(editor) {
+let runAutocompletionTest = async function (editor) {
   info("Starting to test for css property completion");
   editor._getCSSValuesForPropertyName = mockGetCSSValuesForPropertyName;
 

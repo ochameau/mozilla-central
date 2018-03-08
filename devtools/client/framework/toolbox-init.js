@@ -47,7 +47,7 @@ if (url.search.length > 1) {
   // Specify the default tool to open
   let tool = url.searchParams.get("tool");
 
-  (async function() {
+  (async function () {
     let target;
     if (url.searchParams.has("target")) {
       // Attach toolbox to a given browser iframe (<xul:browser> or <html:iframe

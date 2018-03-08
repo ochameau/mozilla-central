@@ -22,7 +22,7 @@ function getTooltipContent(doc) {
   return div;
 }
 
-add_task(async function() {
+add_task(async function () {
   let [,, doc] = await createHost("bottom", TEST_URI);
 
   let box1 = doc.getElementById("box1");

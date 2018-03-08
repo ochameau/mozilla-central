@@ -23,7 +23,7 @@ var { getSourceText } = require("devtools/client/debugger/content/queries");
  *
  * @return {Promise<boolean>}
  */
-exports.viewSourceInStyleEditor = async function(toolbox, sourceURL,
+exports.viewSourceInStyleEditor = async function (toolbox, sourceURL,
                                                         sourceLine) {
   let panel = await toolbox.loadTool("styleeditor");
 
@@ -50,7 +50,7 @@ exports.viewSourceInStyleEditor = async function(toolbox, sourceURL,
  *
  * @return {Promise<boolean>}
  */
-exports.viewSourceInDebugger = async function(toolbox, sourceURL, sourceLine) {
+exports.viewSourceInDebugger = async function (toolbox, sourceURL, sourceLine) {
   // If the Debugger was already open, switch to it and try to show the
   // source immediately. Otherwise, initialize it and wait for the sources
   // to be added first.
@@ -130,7 +130,7 @@ exports.viewSourceInDebugger = async function(toolbox, sourceURL, sourceLine) {
  *
  * @return {Promise}
  */
-exports.viewSourceInScratchpad = async function(sourceURL, sourceLine) {
+exports.viewSourceInScratchpad = async function (sourceURL, sourceLine) {
   // Check for matching top level scratchpad window.
   let wins = Services.wm.getEnumerator("devtools:scratchpad");
 
@@ -169,7 +169,7 @@ exports.viewSourceInScratchpad = async function(sourceURL, sourceLine) {
  *
  * @return {Promise}
  */
-exports.viewSource = async function(toolbox, sourceURL, sourceLine) {
+exports.viewSource = async function (toolbox, sourceURL, sourceLine) {
   let utils = toolbox.gViewSourceUtils;
   utils.viewSource({
     URL: sourceURL,

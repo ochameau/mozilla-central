@@ -5,7 +5,7 @@
  * Test `destroy-node` event on WebAudioActor.
  */
 
-add_task(async function() {
+add_task(async function () {
   let { target, front } = await initBackend(DESTROY_NODES_URL);
 
   let [, , created] = await Promise.all([

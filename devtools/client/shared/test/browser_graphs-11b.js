@@ -13,7 +13,7 @@ const CATEGORIES = [
   { color: "#70bf53", label: "Baz" }
 ];
 
-add_task(async function() {
+add_task(async function () {
   await addTab("about:blank");
   await performTest();
   gBrowser.removeCurrentTab();

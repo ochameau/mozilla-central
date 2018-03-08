@@ -133,7 +133,7 @@ async function testTables(tests) {
   }
 }
 
-add_task(async function() {
+add_task(async function () {
   // First, open a tab with the default userContextId and setup its storages.
   let tabDefault = await openTab(MAIN_DOMAIN + "storage-listings.html");
 

@@ -12,7 +12,7 @@
 const TEST_URI = "data:text/html;charset=utf8,test for bug 787981 - check " +
                  "that long strings can be expanded in the output.";
 
-add_task(async function() {
+add_task(async function () {
   let { DebuggerServer } = require("devtools/server/main");
 
   let longString = (new Array(DebuggerServer.LONG_STRING_LENGTH + 4))

@@ -46,7 +46,7 @@ function testTree() {
 /**
  * Test that correct table entries are shown for each of the tree item
  */
-let testTables = async function() {
+let testTables = async function () {
   let doc = gPanelWindow.document;
   // Expand all nodes so that the synthesized click event actually works
   gUI.tree.expandAll();
@@ -68,7 +68,7 @@ let testTables = async function() {
   }
 };
 
-add_task(async function() {
+add_task(async function () {
   await openTabAndSetupStorage(MAIN_DOMAIN + "storage-empty-objectstores.html");
 
   testTree();

@@ -5,7 +5,7 @@
 
 "use strict";
 
-add_task(async function() {
+add_task(async function () {
   info("Test JSON encoding started");
 
   const bom = "%EF%BB%BF"; // UTF-8 BOM

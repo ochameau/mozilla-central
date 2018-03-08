@@ -48,7 +48,7 @@ const ORIGINAL_SOURCE = "" +
 
 const EXPAND_TAB = "devtools.editor.expandtab";
 
-add_task(async function() {
+add_task(async function () {
   let oldExpandTabPref = SpecialPowers.getBoolPref(EXPAND_TAB);
   // The 'EXPAND_TAB' preference has to be set to false because
   // the constant 'PRETTIFIED_SOURCE' uses tabs for indentation.

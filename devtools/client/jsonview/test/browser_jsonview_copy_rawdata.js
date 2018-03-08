@@ -10,7 +10,7 @@ const TEST_JSON_URL = URL_ROOT + "simple_json.json";
 let jsonText = "{\"name\": \"value\"}\n";
 let prettyJson = "{\n  \"name\": \"value\"\n}";
 
-add_task(async function() {
+add_task(async function () {
   info("Test copy raw data started");
 
   await addJsonViewTab(TEST_JSON_URL);

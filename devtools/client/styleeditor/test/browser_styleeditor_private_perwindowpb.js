@@ -10,7 +10,7 @@
 const TEST_URL = "http://" + TEST_HOST + "/browser/devtools/client/" +
   "styleeditor/test/test_private.html";
 
-add_task(async function() {
+add_task(async function () {
   info("Opening a new private window");
   let win = OpenBrowserWindow({private: true});
   await waitForDelayedStartupFinished(win);

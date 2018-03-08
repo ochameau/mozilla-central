@@ -7,7 +7,7 @@
 // Test that hovering over a simple selector in the style-editor requests the
 // highlighting of the corresponding nodes
 
-add_task(async function() {
+add_task(async function () {
   let url = TEST_BASE_HTTP + "selector-highlighter.html";
   let { ui } = await openStyleEditorForURL(url);
   let editor = ui.editors[0];

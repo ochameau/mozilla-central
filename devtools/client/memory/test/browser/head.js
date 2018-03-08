@@ -21,7 +21,7 @@ Services.prefs.setBoolPref("devtools.memory.enabled", true);
 /**
  * Open the memory panel for the given tab.
  */
-this.openMemoryPanel = async function(tab) {
+this.openMemoryPanel = async function (tab) {
   info("Opening memory panel.");
   const target = TargetFactory.forTab(tab);
   const toolbox = await gDevTools.showToolbox(target, "memory");
@@ -33,7 +33,7 @@ this.openMemoryPanel = async function(tab) {
 /**
  * Close the memory panel for the given tab.
  */
-this.closeMemoryPanel = async function(tab) {
+this.closeMemoryPanel = async function (tab) {
   info("Closing memory panel.");
   const target = TargetFactory.forTab(tab);
   const toolbox = gDevTools.getToolbox(target);
@@ -53,7 +53,7 @@ this.closeMemoryPanel = async function(tab) {
  *     });
  */
 function makeMemoryTest(url, generator) {
-  return async function() {
+  return async function () {
     waitForExplicitFinish();
 
     // It can take a long time to save a snapshot to disk, read the snapshots

@@ -6,7 +6,7 @@
 
 "use strict";
 
-add_task(async function() {
+add_task(async function () {
   await openTabAndSetupStorage(MAIN_DOMAIN + "storage-sessionstorage.html");
 
   await selectTreeItem(["sessionStorage", "http://test1.example.org"]);

@@ -225,7 +225,7 @@ function waitForDispatch(panel, type, eventRepeat = 1) {
   const actionType = constants[type];
   let count = 0;
 
-  return (async function() {
+  return (async function () {
     info("Waiting for " + type + " to dispatch " + eventRepeat + " time(s)");
     while (count < eventRepeat) {
       await _afterDispatchDone(store, actionType);

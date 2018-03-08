@@ -33,7 +33,7 @@ var DetailsSubview = {
       this._wasRendered = true;
     };
 
-    this.render = async function(...args) {
+    this.render = async function (...args) {
       let maybeRetval = await originalRenderFn.apply(self, args);
       afterRenderFn();
       return maybeRetval;

@@ -12,7 +12,7 @@ const { startRecording, stopRecording } = require("devtools/client/performance/t
 const { once } = require("devtools/client/performance/test/helpers/event-utils");
 const { command } = require("devtools/client/performance/test/helpers/input-utils");
 
-add_task(async function() {
+add_task(async function () {
   let { panel } = await initPerformanceInNewTab({
     url: SIMPLE_URL,
     win: window

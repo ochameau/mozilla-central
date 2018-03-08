@@ -32,7 +32,7 @@
       });
     }
 
-    window.clear = async function() {
+    window.clear = async function () {
       await deleteDB("idb1", "temporary");
       await deleteDB("idb1", "default");
       await deleteDB("idb1", "persistent");

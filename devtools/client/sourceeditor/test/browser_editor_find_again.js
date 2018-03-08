@@ -70,7 +70,7 @@ function testFindAgain(ed, inputLine, expectCursor, isFindPrev = false) {
     "find: " + inputLine + " expects cursor: " + expectCursor.toSource());
 }
 
-const testSearchBoxTextIsSelected = async function(ed) {
+const testSearchBoxTextIsSelected = async function (ed) {
   let edDoc = ed.container.contentDocument;
   let edWin = edDoc.defaultView;
 
@@ -114,7 +114,7 @@ const testSearchBoxTextIsSelected = async function(ed) {
   EventUtils.synthesizeKey("VK_ESCAPE", {}, edWin);
 };
 
-const testReplaceBoxTextIsSelected = async function(ed) {
+const testReplaceBoxTextIsSelected = async function (ed) {
   let edDoc = ed.container.contentDocument;
   let edWin = edDoc.defaultView;
 
@@ -153,7 +153,7 @@ const testReplaceBoxTextIsSelected = async function(ed) {
   EventUtils.synthesizeKey("VK_ESCAPE", {}, edWin);
 };
 
-add_task(async function() {
+add_task(async function () {
   let { ed, win } = await setup();
 
   ed.setText([

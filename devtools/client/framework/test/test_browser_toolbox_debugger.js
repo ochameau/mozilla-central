@@ -2,7 +2,7 @@
 
 info(`START: ${new Error().lineNumber}`);
 
-(async function() {
+(async function () {
   Services.prefs.clearUserPref("devtools.debugger.tabs")
   Services.prefs.clearUserPref("devtools.debugger.pending-selected-location")
 

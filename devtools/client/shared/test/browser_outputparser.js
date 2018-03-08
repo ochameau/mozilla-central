@@ -7,7 +7,7 @@ const OutputParser = require("devtools/client/shared/output-parser");
 const {initCssProperties, getCssProperties} = require("devtools/shared/fronts/css-properties");
 const CSS_SHAPES_ENABLED_PREF = "devtools.inspector.shapesHighlighter.enabled";
 
-add_task(async function() {
+add_task(async function () {
   await addTab("about:blank");
   await performTest();
   gBrowser.removeCurrentTab();

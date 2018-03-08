@@ -21,7 +21,7 @@ loader.lazyRequireGetter(this, "ResponsiveUIManager", "devtools/client/responsiv
 const TESTCASE_URI = TEST_BASE_HTTPS + "media-rules.html";
 const responsiveModeToggleClass = ".media-responsive-mode-toggle";
 
-add_task(async function() {
+add_task(async function () {
   let {ui} = await openStyleEditorForURL(TESTCASE_URI);
 
   let editor = ui.editors[1];
@@ -116,7 +116,7 @@ function waitForResizeTo(rdmUI, type, value) {
 
 async function getSizing(rdmUI) {
   let browser = rdmUI.getViewportBrowser();
-  let sizing = await ContentTask.spawn(browser, {}, async function() {
+  let sizing = await ContentTask.spawn(browser, {}, async function () {
     return {
       width: content.innerWidth,
       height: content.innerHeight

@@ -10,7 +10,7 @@ const { toggleDiffing } = require("devtools/client/memory/actions/diffing");
 const { takeSnapshotAndCensus } = require("devtools/client/memory/actions/snapshot");
 const { changeView } = require("devtools/client/memory/actions/view");
 
-add_task(async function() {
+add_task(async function () {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   await front.attach();

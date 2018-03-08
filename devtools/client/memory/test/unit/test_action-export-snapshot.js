@@ -9,7 +9,7 @@ let { exportSnapshot } = require("devtools/client/memory/actions/io");
 let { takeSnapshotAndCensus } = require("devtools/client/memory/actions/snapshot");
 let { actions, treeMapState } = require("devtools/client/memory/constants");
 
-add_task(async function() {
+add_task(async function () {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   await front.attach();

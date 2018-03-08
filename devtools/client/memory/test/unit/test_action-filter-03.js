@@ -11,7 +11,7 @@ let { setFilterString, setFilterStringAndRefresh } = require("devtools/client/me
 let { takeSnapshotAndCensus } = require("devtools/client/memory/actions/snapshot");
 let { changeView } = require("devtools/client/memory/actions/view");
 
-add_task(async function() {
+add_task(async function () {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   await front.attach();

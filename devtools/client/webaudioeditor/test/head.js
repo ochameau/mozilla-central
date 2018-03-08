@@ -62,7 +62,7 @@ function initBackend(aUrl) {
   DebuggerServer.init();
   DebuggerServer.registerAllActors();
 
-  return (async function() {
+  return (async function () {
     let tab = await addTab(aUrl);
     let target = TargetFactory.forTab(tab);
 
@@ -81,7 +81,7 @@ function initBackend(aUrl) {
 function initWebAudioEditor(aUrl) {
   info("Initializing a web audio editor pane.");
 
-  return (async function() {
+  return (async function () {
     let tab = await addTab(aUrl);
     let target = TargetFactory.forTab(tab);
 
@@ -325,7 +325,7 @@ function countGraphObjects(win) {
 * Forces cycle collection and GC, used in AudioNode destruction tests.
 */
 function forceNodeCollection() {
-  ContentTask.spawn(gBrowser.selectedBrowser, {}, async function() {
+  ContentTask.spawn(gBrowser.selectedBrowser, {}, async function () {
     // Kill the reference keeping stuff alive.
     content.wrappedJSObject.keepAlive = null;
 

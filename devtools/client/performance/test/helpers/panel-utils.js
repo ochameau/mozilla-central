@@ -12,7 +12,7 @@ const { once } = require("devtools/client/performance/test/helpers/event-utils")
 /**
  * Initializes a toolbox panel in a new tab.
  */
-exports.initPanelInNewTab = async function({ tool, url, win }, options = {}) {
+exports.initPanelInNewTab = async function ({ tool, url, win }, options = {}) {
   let tab = await addTab({ url, win }, options);
   return (await exports.initPanelInTab({ tool, tab }));
 };
@@ -20,7 +20,7 @@ exports.initPanelInNewTab = async function({ tool, url, win }, options = {}) {
 /**
  * Initializes a toolbox panel in the specified tab.
  */
-exports.initPanelInTab = async function({ tool, tab }) {
+exports.initPanelInTab = async function ({ tool, tab }) {
   dump(`Initializing a ${tool} panel.\n`);
 
   let target = TargetFactory.forTab(tab);
@@ -39,7 +39,7 @@ exports.initPanelInTab = async function({ tool, tab }) {
 /**
  * Initializes a performance panel in a new tab.
  */
-exports.initPerformanceInNewTab = async function({ url, win }, options = {}) {
+exports.initPerformanceInNewTab = async function ({ url, win }, options = {}) {
   let tab = await addTab({ url, win }, options);
   return (await exports.initPerformanceInTab({ tab }));
 };
@@ -47,7 +47,7 @@ exports.initPerformanceInNewTab = async function({ url, win }, options = {}) {
 /**
  * Initializes a performance panel in the specified tab.
  */
-exports.initPerformanceInTab = async function({ tab }) {
+exports.initPerformanceInTab = async function ({ tab }) {
   return (await exports.initPanelInTab({
     tool: "performance",
     tab: tab
@@ -58,7 +58,7 @@ exports.initPerformanceInTab = async function({ tab }) {
  * Initializes a webconsole panel in a new tab.
  * Returns a console property that allows calls to `profile` and `profileEnd`.
  */
-exports.initConsoleInNewTab = async function({ url, win }, options = {}) {
+exports.initConsoleInNewTab = async function ({ url, win }, options = {}) {
   let tab = await addTab({ url, win }, options);
   return (await exports.initConsoleInTab({ tab }));
 };
@@ -67,13 +67,13 @@ exports.initConsoleInNewTab = async function({ url, win }, options = {}) {
  * Initializes a webconsole panel in the specified tab.
  * Returns a console property that allows calls to `profile` and `profileEnd`.
  */
-exports.initConsoleInTab = async function({ tab }) {
+exports.initConsoleInTab = async function ({ tab }) {
   let { target, toolbox, panel } = await exports.initPanelInTab({
     tool: "webconsole",
     tab: tab
   });
 
-  let consoleMethod = async function(method, label, event) {
+  let consoleMethod = async function (method, label, event) {
     let recordingEventReceived = once(toolbox.performance, event);
     if (label === undefined) {
       await panel.hud.jsterm.execute(`console.${method}()`);
@@ -83,11 +83,11 @@ exports.initConsoleInTab = async function({ tab }) {
     await recordingEventReceived;
   };
 
-  let profile = async function(label) {
+  let profile = async function (label) {
     return await consoleMethod("profile", label, "recording-started");
   };
 
-  let profileEnd = async function(label) {
+  let profileEnd = async function (label) {
     return await consoleMethod("profileEnd", label, "recording-stopped");
   };
 
@@ -97,7 +97,7 @@ exports.initConsoleInTab = async function({ tab }) {
 /**
  * Tears down a toolbox panel and removes an associated tab.
  */
-exports.teardownToolboxAndRemoveTab = async function(panel, options) {
+exports.teardownToolboxAndRemoveTab = async function (panel, options) {
   dump("Destroying panel.\n");
 
   let tab = panel.target.tab;

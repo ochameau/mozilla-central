@@ -10,7 +10,7 @@ const {Spectrum} = require("devtools/client/shared/widgets/Spectrum");
 
 const TEST_URI = CHROME_URL_ROOT + "doc_spectrum.html";
 
-add_task(async function() {
+add_task(async function () {
   let [host,, doc] = await createHost("bottom", TEST_URI);
 
   let container = doc.getElementById("spectrum-container");

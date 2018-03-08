@@ -5,7 +5,7 @@
 
 const TAB_URL = "data:text/html,<title>foo</title>";
 
-add_task(async function() {
+add_task(async function () {
   let { tab, document } = await openAboutDebugging("tabs");
 
   // Wait for initial tabs list which may be empty

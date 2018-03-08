@@ -21,7 +21,7 @@ const SECTIONS = [
   { color: "blue" }
 ];
 
-add_task(async function() {
+add_task(async function () {
   await addTab("about:blank");
   await performTest();
   gBrowser.removeCurrentTab();

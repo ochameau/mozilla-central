@@ -65,7 +65,7 @@ var panelAttrs = {
  *        The selector that the doorhanger should be appended to within
  *        `window`.  Defaults to a XUL Document's `window` element.
  */
-exports.showDoorhanger = async function({ window, type, anchor }) {
+exports.showDoorhanger = async function ({ window, type, anchor }) {
   let { predicate, success, url, action } = TYPES[type];
   // Abort if predicate fails
   if (!predicate()) {

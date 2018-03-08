@@ -69,7 +69,7 @@ var PROFILER_DATA = (function () {
   return data;
 })();
 
-var test = async function() {
+var test = async function () {
   let { target, panel, toolbox } = await initPerformance(SIMPLE_URL);
   let { $, EVENTS, PerformanceController, DetailsView, OverviewView, JsCallTreeView } = panel.panelWin;
 

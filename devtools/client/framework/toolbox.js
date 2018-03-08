@@ -426,7 +426,7 @@ Toolbox.prototype = {
    * Open the toolbox
    */
   open: function () {
-    return (async function() {
+    return (async function () {
       this.browserRequire = BrowserLoader({
         window: this.doc.defaultView,
         useOnlyShared: true
@@ -2553,7 +2553,7 @@ Toolbox.prototype = {
    */
   initInspector: function () {
     if (!this._initInspector) {
-      this._initInspector = (async function() {
+      this._initInspector = (async function () {
         this._inspector = InspectorFront(this._target.client, this._target.form);
         let pref = "devtools.inspector.showAllAnonymousContent";
         let showAllAnonymousContent = Services.prefs.getBoolPref(pref);
@@ -2616,7 +2616,7 @@ Toolbox.prototype = {
       return this._destroyingInspector;
     }
 
-    this._destroyingInspector = (async function() {
+    this._destroyingInspector = (async function () {
       if (!this._inspector) {
         return;
       }

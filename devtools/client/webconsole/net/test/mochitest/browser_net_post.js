@@ -18,7 +18,7 @@ const xmlPostBody = "<xml><name>John</name></xml>";
  * networks details in the Console panel and checks that
  * Post data are properly rendered.
  */
-add_task(async function() {
+add_task(async function () {
   info("Test XHR Spy post plain body started");
 
   let {hud} = await addTestTab(TEST_PAGE_URL);
@@ -37,7 +37,7 @@ add_task(async function() {
     "Post body must be properly rendered");
 });
 
-add_task(async function() {
+add_task(async function () {
   info("Test XHR Spy post JSON body started");
 
   let {hud} = await addTestTab(TEST_PAGE_URL);
@@ -64,7 +64,7 @@ add_task(async function() {
   ok(!rawPostContent, "Raw response group must be collapsed");
 });
 
-add_task(async function() {
+add_task(async function () {
   info("Test XHR Spy post XML body started");
 
   let {hud} = await addTestTab(TEST_PAGE_URL);

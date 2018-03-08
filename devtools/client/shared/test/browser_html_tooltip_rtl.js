@@ -19,7 +19,7 @@ const TOOLBOX_WIDTH = 500;
 const TOOLTIP_WIDTH = 150;
 const TOOLTIP_HEIGHT = 30;
 
-add_task(async function() {
+add_task(async function () {
   // Force the toolbox to be 500px wide (min width is 465px);
   await pushPref("devtools.toolbox.sidebar.width", TOOLBOX_WIDTH);
 

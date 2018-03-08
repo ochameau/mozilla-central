@@ -66,7 +66,7 @@ exports.pmmIsProfilerActive = () => {
 /**
  * Starts the nsProfiler module.
  */
-exports.pmmStartProfiler = async function({ entries, interval, features }) {
+exports.pmmStartProfiler = async function ({ entries, interval, features }) {
   let isActive = (await exports.pmmSendProfilerCommand("IsActive")).isActive;
   if (!isActive) {
     return exports.pmmSendProfilerCommand("StartProfiler", [entries, interval, features,
@@ -77,7 +77,7 @@ exports.pmmStartProfiler = async function({ entries, interval, features }) {
 /**
  * Stops the nsProfiler module.
  */
-exports.pmmStopProfiler = async function() {
+exports.pmmStopProfiler = async function () {
   let isActive = (await exports.pmmSendProfilerCommand("IsActive")).isActive;
   if (isActive) {
     return exports.pmmSendProfilerCommand("StopProfiler");

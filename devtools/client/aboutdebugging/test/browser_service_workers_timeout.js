@@ -11,7 +11,7 @@ const TAB_URL = URL_ROOT + "service-workers/empty-sw.html";
 
 const SW_TIMEOUT = 1000;
 
-add_task(async function() {
+add_task(async function () {
   await enableServiceWorkerDebugging();
   await pushPref("dom.serviceWorkers.idle_timeout", SW_TIMEOUT);
   await pushPref("dom.serviceWorkers.idle_extended_timeout", SW_TIMEOUT);

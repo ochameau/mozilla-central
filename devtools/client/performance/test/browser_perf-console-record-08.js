@@ -39,7 +39,7 @@ function hasBitFlag(expected, actual) {
   return !!(expected & actual);
 }
 
-add_task(async function() {
+add_task(async function () {
   // This test seems to take a very long time to finish on Linux VMs.
   requestLongerTimeout(4);
 

@@ -20,7 +20,7 @@
 
         let {OS} = ChromeUtils.import("resource://gre/modules/osfile.jsm", {});
 
-        (async function() {
+        (async function () {
             let win = await openWebIDE();
             let winProject = getProjectWindow(win);
             let AppManager = win.AppManager;

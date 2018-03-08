@@ -2776,7 +2776,7 @@ Variable.prototype = extend(Scope.prototype, {
 
     event && event.stopPropagation();
 
-    return (async function() {
+    return (async function () {
       await this.toolbox.initInspector();
 
       let nodeFront = this._nodeFront;

@@ -19,7 +19,7 @@ const expectedText = `
   }
   `;
 
-add_task(async function() {
+add_task(async function () {
   await addTab(TESTCASE_URI);
 
   let { inspector, view, toolbox } = await openRuleView();

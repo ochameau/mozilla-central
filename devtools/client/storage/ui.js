@@ -913,7 +913,7 @@ StorageUI.prototype = {
    * @param {string} [subType]
    *        The sub type under the given type.
    */
-  resetColumns: async function(type, host, subtype) {
+  resetColumns: async function (type, host, subtype) {
     this.table.host = host;
     this.table.datatype = type;
 

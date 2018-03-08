@@ -42,7 +42,7 @@ async function testBody(url, expecting) {
   await closeAboutDebugging(tab);
 }
 
-add_task(async function() {
+add_task(async function () {
   await testBody(FETCH_SW_TAB_URL, "Listening for fetch events.");
   await testBody(EMPTY_SW_TAB_URL, "Not listening for fetch events.");
 });

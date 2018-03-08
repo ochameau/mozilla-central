@@ -20,7 +20,7 @@ const jsonResponseBody = "name\"John\"";
 /**
  * Validate plain text response
  */
-add_task(async function() {
+add_task(async function () {
   info("Test XHR Spy respone plain body started");
 
   let {hud} = await addTestTab(TEST_PAGE_URL);
@@ -42,7 +42,7 @@ add_task(async function() {
 /**
  * Validate XML response
  */
-add_task(async function() {
+add_task(async function () {
   info("Test XHR Spy response XML body started");
 
   let {hud} = await addTestTab(TEST_PAGE_URL);
@@ -62,7 +62,7 @@ add_task(async function() {
 /**
  * Validate JSON response
  */
-add_task(async function() {
+add_task(async function () {
   info("Test XHR Spy response JSON body started");
 
   let {hud} = await addTestTab(TEST_PAGE_URL);

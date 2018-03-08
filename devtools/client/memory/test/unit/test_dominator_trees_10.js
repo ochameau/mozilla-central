@@ -22,7 +22,7 @@ const {
   setLabelDisplayAndRefresh,
 } = require("devtools/client/memory/actions/label-display");
 
-add_task(async function() {
+add_task(async function () {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   await front.attach();

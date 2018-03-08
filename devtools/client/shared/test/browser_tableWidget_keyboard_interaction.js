@@ -44,7 +44,7 @@ function endTests() {
   finish();
 }
 
-var startTests = async function() {
+var startTests = async function () {
   populateTable();
   await testKeyboardInteraction();
   endTests();
@@ -131,7 +131,7 @@ function getNodeByValue(value) {
  * Tests if pressing navigation keys on the table items does the expected
  * behavior.
  */
-var testKeyboardInteraction = async function() {
+var testKeyboardInteraction = async function () {
   info("Testing keyboard interaction with the table");
   info("clicking on the row containing id2");
   let node = getNodeByValue("id2");

@@ -12,7 +12,7 @@
 
 const TEST_URI = "data:text/html;charset=utf8,<p>hello";
 
-add_task(async function() {
+add_task(async function () {
   await loadTab(TEST_URI);
   let hud = await openConsole();
   hud.jsterm.clearOutput();

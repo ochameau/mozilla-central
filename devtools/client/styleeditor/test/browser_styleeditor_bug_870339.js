@@ -16,7 +16,7 @@ const DOCUMENT_WITH_ONE_STYLESHEET = "data:text/html;charset=UTF-8," +
            "</html>"
           ].join("\n"));
 
-add_task(async function() {
+add_task(async function () {
   let { ui } = await openStyleEditorForURL(DOCUMENT_WITH_ONE_STYLESHEET);
 
   // Spam the _onNewDocument callback multiple times before the

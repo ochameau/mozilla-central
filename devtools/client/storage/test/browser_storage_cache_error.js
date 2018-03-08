@@ -6,7 +6,7 @@
 
 // Test handling errors in CacheStorage
 
-add_task(async function() {
+add_task(async function () {
   await openTabAndSetupStorage(MAIN_DOMAIN + "storage-cache-error.html");
 
   const cacheItemId = ["Cache", "javascript:parent.frameContent"];

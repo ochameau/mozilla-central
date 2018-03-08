@@ -8,7 +8,7 @@
 
 // Test that the samesite cookie attribute is displayed correctly.
 
-add_task(async function() {
+add_task(async function () {
   await openTabAndSetupStorage(MAIN_DOMAIN + "storage-cookies-samesite.html");
 
   let id1 = getCookieId("test1", "test1.example.org",

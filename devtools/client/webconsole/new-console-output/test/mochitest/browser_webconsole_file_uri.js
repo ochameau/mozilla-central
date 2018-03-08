@@ -12,7 +12,7 @@ const TEST_FILE = "test-network.html";
 
 var hud;
 
-add_task(async function() {
+add_task(async function () {
   Services.prefs.setBoolPref(PREF, true);
 
   let jar = getJar(getRootDirectory(gTestPath));

@@ -139,7 +139,7 @@ function runTests2() {
   });
 }
 
-var continueTests = async function(toolbox, panel) {
+var continueTests = async function (toolbox, panel) {
   ok(toolbox.getCurrentPanel(), "panel value is correct");
   is(toolbox.currentToolId, toolId2, "toolbox _currentToolId is correct");
 

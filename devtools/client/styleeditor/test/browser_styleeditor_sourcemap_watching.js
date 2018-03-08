@@ -19,7 +19,7 @@ const CSS_TEXT = "* { color: blue }";
 const {FileUtils} = ChromeUtils.import("resource://gre/modules/FileUtils.jsm", {});
 const {NetUtil} = ChromeUtils.import("resource://gre/modules/NetUtil.jsm", {});
 
-add_task(async function() {
+add_task(async function () {
   await new Promise(resolve => {
     SpecialPowers.pushPrefEnv({"set": [
       [TRANSITIONS_PREF, false]

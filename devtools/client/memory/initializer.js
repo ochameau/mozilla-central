@@ -32,7 +32,7 @@ var gToolbox, gFront, gHeapAnalysesClient;
  */
 var gStore, gRoot, gApp, gProvider, unsubscribe, isHighlighted;
 
-var initialize = async function() {
+var initialize = async function () {
   gRoot = document.querySelector("#app");
   gStore = Store();
   gApp = createElement(App,
@@ -42,7 +42,7 @@ var initialize = async function() {
   unsubscribe = gStore.subscribe(onStateChange);
 };
 
-var destroy = async function() {
+var destroy = async function () {
   const ok = ReactDOM.unmountComponentAtNode(gRoot);
   assert(ok, "Should successfully unmount the memory tool's top level React component");
 

@@ -275,7 +275,7 @@ var AppManager = exports.AppManager = {
       return Promise.reject("Can't find app front for selected project");
     }
 
-    return (async function() {
+    return (async function () {
       // Once we asked the app to launch, the app isn't necessary completely loaded.
       // launch request only ask the app to launch and immediatly returns.
       // We have to keep trying to get app tab actors required to create its target.
@@ -571,7 +571,7 @@ var AppManager = exports.AppManager = {
       return Promise.reject("Can't install");
     }
 
-    return (async function() {
+    return (async function () {
       let self = AppManager;
 
       // Validate project
@@ -652,7 +652,7 @@ var AppManager = exports.AppManager = {
       return Promise.reject();
     }
 
-    return (async function() {
+    return (async function () {
 
       let packageDir = project.location;
       let validation = new AppValidator({

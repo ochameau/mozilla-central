@@ -5,7 +5,7 @@
 
 var isOSX = Services.appinfo.OS === "Darwin";
 
-add_task(async function() {
+add_task(async function () {
   let shortcuts = new KeyShortcuts({
     window
   });

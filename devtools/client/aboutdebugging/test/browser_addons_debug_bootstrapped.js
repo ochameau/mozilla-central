@@ -10,7 +10,7 @@ const ADDON_NAME = "test-devtools";
 
 const { BrowserToolboxProcess } = ChromeUtils.import("resource://devtools/client/framework/ToolboxProcess.jsm", {});
 
-add_task(async function() {
+add_task(async function () {
   await new Promise(resolve => {
     let options = {"set": [
       // Force enabling of addons debugging

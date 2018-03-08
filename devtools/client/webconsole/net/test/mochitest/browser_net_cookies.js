@@ -13,7 +13,7 @@ const JSON_XHR_URL = URL_ROOT + "test-cookies.json";
  * networks details in the Console panel and checks that
  * Cookies are properly displayed.
  */
-add_task(async function() {
+add_task(async function () {
   info("Test XHR Spy cookies started");
 
   let {hud} = await addTestTab(TEST_PAGE_URL);

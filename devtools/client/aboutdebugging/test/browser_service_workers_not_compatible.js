@@ -11,7 +11,7 @@
 
 var imgClass = ".service-worker-disabled .warning";
 
-add_task(async function() {
+add_task(async function () {
   await new Promise(done => {
     info("disable service workers");
     let options = {"set": [
@@ -28,7 +28,7 @@ add_task(async function() {
   await closeAboutDebugging(tab);
 });
 
-add_task(async function() {
+add_task(async function () {
   await new Promise(done => {
     info("set private browsing mode as default");
     let options = {"set": [
@@ -45,7 +45,7 @@ add_task(async function() {
   await closeAboutDebugging(tab);
 });
 
-add_task(async function() {
+add_task(async function () {
   info("Opening a new private window");
   let win = OpenBrowserWindow({private: true});
   await waitForDelayedStartupFinished(win);

@@ -22,7 +22,7 @@ const EXPECTED_SHEETS = [
   }
 ];
 
-add_task(async function() {
+add_task(async function () {
   // Using the personal container.
   let userContextId = 1;
   let { tab } = await openTabInUserContext(TESTCASE_URI, userContextId);

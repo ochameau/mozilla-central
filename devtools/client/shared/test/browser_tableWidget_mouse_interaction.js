@@ -45,7 +45,7 @@ function endTests() {
   finish();
 }
 
-var startTests = async function() {
+var startTests = async function () {
   populateTable();
   await testMouseInteraction();
   endTests();
@@ -127,7 +127,7 @@ function click(node, button = 0) {
 /**
  * Tests if clicking the table items does the expected behavior
  */
-var testMouseInteraction = async function() {
+var testMouseInteraction = async function () {
   info("Testing mouse interaction with the table");
   ok(!table.selectedRow, "Nothing should be selected beforehand");
 

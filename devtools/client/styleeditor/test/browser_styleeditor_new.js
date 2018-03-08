@@ -9,7 +9,7 @@ const TESTCASE_URI = TEST_BASE_HTTP + "simple.html";
 
 const TESTCASE_CSS_SOURCE = "body{background-color:red;";
 
-add_task(async function() {
+add_task(async function () {
   let { panel, ui } = await openStyleEditorForURL(TESTCASE_URI);
 
   let editor = await createNew(ui, panel.panelWindow);

@@ -14,7 +14,7 @@ const snapshot = require("./snapshot");
  * @param {HeapAnalysesWorker} heapWorker
  */
 exports.refresh = function (heapWorker) {
-  return async function(dispatch, getState) {
+  return async function (dispatch, getState) {
     switch (getState().view.state) {
       case viewState.DIFFING:
         assert(getState().diffing, "Should have diffing state if in diffing view");

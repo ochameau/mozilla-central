@@ -14,7 +14,7 @@ const { once } = require("devtools/client/performance/test/helpers/event-utils")
 
 let gPanelWinTuples = [];
 
-add_task(async function() {
+add_task(async function () {
   await testNormalWindow();
   await testPrivateWindow();
   await testRecordingFailingInWindow(0);

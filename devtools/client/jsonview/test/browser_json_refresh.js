@@ -7,7 +7,7 @@
 
 const TEST_JSON_FILE = "simple_json.json";
 
-add_task(async function() {
+add_task(async function () {
   info("Test JSON refresh started");
 
   // generate file:// URI for JSON file and load in new tab
@@ -17,7 +17,7 @@ add_task(async function() {
   let tab = await addJsonViewTab(uri.spec);
 
   // perform sanity checks for URI and pricnipals in loadInfo
-  await ContentTask.spawn(tab.linkedBrowser, {TEST_JSON_FILE}, async function({TEST_JSON_FILE}) { // eslint-disable-line
+  await ContentTask.spawn(tab.linkedBrowser, {TEST_JSON_FILE}, async function ({TEST_JSON_FILE}) { // eslint-disable-line
     let channel = content.document.docShell.currentDocumentChannel;
     let channelURI = channel.URI.spec;
     ok(channelURI.startsWith("file://") && channelURI.includes(TEST_JSON_FILE),
@@ -43,7 +43,7 @@ add_task(async function() {
   await loaded;
 
   // check principals in loadInfo are still correct
-  await ContentTask.spawn(tab.linkedBrowser, {TEST_JSON_FILE}, async function({TEST_JSON_FILE}) { // eslint-disable-line
+  await ContentTask.spawn(tab.linkedBrowser, {TEST_JSON_FILE}, async function ({TEST_JSON_FILE}) { // eslint-disable-line
     let channel = content.document.docShell.currentDocumentChannel;
     let channelURI = channel.URI.spec;
     ok(channelURI.startsWith("file://") && channelURI.includes(TEST_JSON_FILE),

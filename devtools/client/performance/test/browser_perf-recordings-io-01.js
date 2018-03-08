@@ -6,7 +6,7 @@
  * Tests if the performance tool is able to save and load recordings.
  */
 
-var test = async function() {
+var test = async function () {
   var { target, panel, toolbox } = await initPerformance(SIMPLE_URL);
   var { $, EVENTS, PerformanceController, PerformanceView, DetailsView, DetailsSubview } = panel.panelWin;
 

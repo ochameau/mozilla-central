@@ -155,7 +155,7 @@ TabStore.prototype = {
       return this._selectedTabTargetPromise;
     }
     let store = this;
-    this._selectedTabTargetPromise = (async function() {
+    this._selectedTabTargetPromise = (async function () {
       // If you connect to a tab, then detach from it, the root actor may have
       // de-listed the actors that belong to the tab.  This breaks the toolbox
       // if you try to connect to the same tab again.  To work around this

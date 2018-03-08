@@ -30,7 +30,7 @@ const TEST_DATA = [
   }
 ];
 
-add_task(async function() {
+add_task(async function () {
   for (let testData of TEST_DATA) {
     await testCheckboxState(testData);
   }

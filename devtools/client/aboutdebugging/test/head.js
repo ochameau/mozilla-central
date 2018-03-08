@@ -289,7 +289,7 @@ function assertHasTarget(expected, document, type, name) {
  * @return {Promise} Resolves when the service worker is registered.
  */
 function waitForServiceWorkerRegistered(tab) {
-  return ContentTask.spawn(tab.linkedBrowser, {}, async function() {
+  return ContentTask.spawn(tab.linkedBrowser, {}, async function () {
     // Retrieve the `sw` promise created in the html page.
     let { sw } = content.wrappedJSObject;
     await sw;
@@ -317,7 +317,7 @@ async function unregisterServiceWorker(tab, serviceWorkersElement) {
   }, 100);
 
   // Unregister the service worker from the content page
-  await ContentTask.spawn(tab.linkedBrowser, {}, async function() {
+  await ContentTask.spawn(tab.linkedBrowser, {}, async function () {
     // Retrieve the `sw` promise created in the html page
     let { sw } = content.wrappedJSObject;
     let registration = await sw;

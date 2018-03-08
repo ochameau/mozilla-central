@@ -154,7 +154,7 @@ registerCleanupFunction(async function cleanup() {
  *   - {String} preferredRemoteType
  * @return a promise that resolves to the tab object when the url is loaded
  */
-var addTab = async function(url, options = { background: false, window: window }) {
+var addTab = async function (url, options = { background: false, window: window }) {
   info("Adding a new tab with URL: " + url);
 
   let { background } = options;
@@ -178,7 +178,7 @@ var addTab = async function(url, options = { background: false, window: window }
  * @param {Object} tab The tab to be removed.
  * @return Promise<undefined> resolved when the tab is successfully removed.
  */
-var removeTab = async function(tab) {
+var removeTab = async function (tab) {
   info("Removing tab.");
 
   let { gBrowser } = tab.ownerDocument.defaultView;
@@ -396,7 +396,7 @@ function wait(ms) {
  * @param {String} hostType Optional. The type of toolbox host to be used.
  * @return {Promise} Resolves with the toolbox, when it has been opened.
  */
-var openToolboxForTab = async function(tab, toolId, hostType) {
+var openToolboxForTab = async function (tab, toolId, hostType) {
   info("Opening the toolbox");
 
   let toolbox;
@@ -431,7 +431,7 @@ var openToolboxForTab = async function(tab, toolId, hostType) {
  * @return {Promise} Resolves when the tab has been added, loaded and the
  * toolbox has been opened. Resolves to the toolbox.
  */
-var openNewTabAndToolbox = async function(url, toolId, hostType) {
+var openNewTabAndToolbox = async function (url, toolId, hostType) {
   let tab = await addTab(url);
   return openToolboxForTab(tab, toolId, hostType);
 };
@@ -442,7 +442,7 @@ var openNewTabAndToolbox = async function(url, toolId, hostType) {
  * @return {Promise} Resolves when the toolbox and tab have been destroyed and
  * closed.
  */
-var closeTabAndToolbox = async function(tab = gBrowser.selectedTab) {
+var closeTabAndToolbox = async function (tab = gBrowser.selectedTab) {
   let target = TargetFactory.forTab(tab);
   if (target) {
     await gDevTools.closeToolbox(target);
@@ -457,7 +457,7 @@ var closeTabAndToolbox = async function(tab = gBrowser.selectedTab) {
  * @return {Promise} Resolves when the toolbox and tab have been destroyed and
  * closed.
  */
-var closeToolboxAndTab = async function(toolbox) {
+var closeToolboxAndTab = async function (toolbox) {
   await toolbox.destroy();
   await removeTab(gBrowser.selectedTab);
 };
@@ -597,7 +597,7 @@ function lookupPath(obj, path) {
   return segments.reduce((prev, current) => prev[current], obj);
 }
 
-var closeToolbox = async function() {
+var closeToolbox = async function () {
   let target = TargetFactory.forTab(gBrowser.selectedTab);
   await gDevTools.closeToolbox(target);
 };
@@ -725,7 +725,7 @@ function createTestHTTPServer() {
  *        Reference to the browser in which we load content task
  */
 async function injectEventUtilsInContentTask(browser) {
-  await ContentTask.spawn(browser, {}, async function() {
+  await ContentTask.spawn(browser, {}, async function () {
     if ("EventUtils" in this) {
       return;
     }

@@ -50,7 +50,7 @@ const DESCRIPTION = {
   }
 };
 
-this.test = makeMemoryTest(TEST_URL, async function({ tab, panel }) {
+this.test = makeMemoryTest(TEST_URL, async function ({ tab, panel }) {
   const front = panel.panelWin.gFront;
 
   const startWindows = await getWindowsInSnapshot(front);

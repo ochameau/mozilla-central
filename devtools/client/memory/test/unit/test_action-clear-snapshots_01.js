@@ -9,7 +9,7 @@ let { takeSnapshotAndCensus, clearSnapshots } = require("devtools/client/memory/
 let { actions } = require("devtools/client/memory/constants");
 const { treeMapState } = require("devtools/client/memory/constants");
 
-add_task(async function() {
+add_task(async function () {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   await front.attach();

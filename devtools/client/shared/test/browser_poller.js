@@ -8,7 +8,7 @@
 
 const { Poller } = require("devtools/client/shared/poller");
 
-add_task(async function() {
+add_task(async function () {
   let count1 = 0, count2 = 0, count3 = 0;
 
   let poller1 = new Poller(function () {
@@ -55,7 +55,7 @@ add_task(async function() {
   ok(!poller2.isPolling(), "isPolling() returns false for an off poller");
 });
 
-add_task(async function() {
+add_task(async function () {
   let count = -1;
   // Create a poller that returns a promise.
   // The promise is resolved asynchronously after adding 9 to the count, ensuring
@@ -81,7 +81,7 @@ add_task(async function() {
   await asyncPoller.off();
 });
 
-add_task(async function() {
+add_task(async function () {
   // Create a poller that returns a promise. This poll call
   // is called immediately, and then subsequently turned off.
   // The call to `off` should not resolve until the inflight call
@@ -105,7 +105,7 @@ add_task(async function() {
   is(pollCalls, 1, "should only be one poll call to occur before turning off polling");
 });
 
-add_task(async function() {
+add_task(async function () {
   // Create a poller that returns a promise. This poll call
   // is called immediately, and then subsequently turned off.
   // The call to `off` should not resolve until the inflight call

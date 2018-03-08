@@ -42,7 +42,7 @@ exports.debugWorker = function (client, workerActor) {
  *         - {Array} workers
  *           Array of WorkerActor forms
  */
-exports.getWorkerForms = async function(client) {
+exports.getWorkerForms = async function (client) {
   let registrations = [];
   let workers = [];
 

@@ -116,7 +116,7 @@ function isApproxColor(aFirst, aSecond, aMargin) {
 }
 
 function ensurePixelIs(aFront, aPosition, aColor, aWaitFlag = false, aSelector = "canvas") {
-  return (async function() {
+  return (async function () {
     let pixel = await aFront.getPixel({ selector: aSelector, position: aPosition });
     if (isApproxColor(pixel, aColor)) {
       ok(true, "Expected pixel is shown at: " + aPosition.toSource());
@@ -159,7 +159,7 @@ function initBackend(aUrl) {
   DebuggerServer.init();
   DebuggerServer.registerAllActors();
 
-  return (async function() {
+  return (async function () {
     let tab = await addTab(aUrl);
     let target = TargetFactory.forTab(tab);
 
@@ -173,7 +173,7 @@ function initBackend(aUrl) {
 function initShaderEditor(aUrl) {
   info("Initializing a shader editor pane.");
 
-  return (async function() {
+  return (async function () {
     let tab = await addTab(aUrl);
     let target = TargetFactory.forTab(tab);
 

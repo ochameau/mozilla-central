@@ -50,13 +50,13 @@ var navigateTo = function (url) {
   return BrowserTestUtils.browserLoaded(browser);
 };
 
-var navigateToAndWaitForStyleSheets = async function(url, ui) {
+var navigateToAndWaitForStyleSheets = async function (url, ui) {
   let onReset = ui.once("stylesheets-reset");
   await navigateTo(url);
   await onReset;
 };
 
-var reloadPageAndWaitForStyleSheets = async function(ui) {
+var reloadPageAndWaitForStyleSheets = async function (ui) {
   info("Reloading the page.");
 
   let onReset = ui.once("stylesheets-reset");
@@ -68,7 +68,7 @@ var reloadPageAndWaitForStyleSheets = async function(ui) {
 /**
  * Open the style editor for the current tab.
  */
-var openStyleEditor = async function(tab) {
+var openStyleEditor = async function (tab) {
   if (!tab) {
     tab = gBrowser.selectedTab;
   }
@@ -88,7 +88,7 @@ var openStyleEditor = async function(tab) {
  * Creates a new tab in specified window navigates it to the given URL and
  * opens style editor in it.
  */
-var openStyleEditorForURL = async function(url, win) {
+var openStyleEditorForURL = async function (url, win) {
   let tab = await addTab(url, win);
   let result = await openStyleEditor(tab);
   result.tab = tab;
@@ -106,7 +106,7 @@ var openStyleEditorForURL = async function(url, win) {
  * @param {String} name
  *        name of the property.
  */
-var getComputedStyleProperty = async function(args) {
+var getComputedStyleProperty = async function (args) {
   return await ContentTask.spawn(gBrowser.selectedBrowser, args,
     function ({selector, pseudo, name}) {
       let element = content.document.querySelector(selector);

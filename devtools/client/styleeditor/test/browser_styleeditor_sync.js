@@ -26,7 +26,7 @@ async function closeAndReopenToolbox() {
   return newui;
 }
 
-add_task(async function() {
+add_task(async function () {
   await addTab(TESTCASE_URI);
   let { inspector, view } = await openRuleView();
   await selectNode("#testid", inspector);
@@ -64,7 +64,7 @@ add_task(async function() {
   // For the time being, the actor does not update the style's owning
   // node's textContent.  See bug 1205380.
   let textContent = await ContentTask.spawn(gBrowser.selectedBrowser, null,
-    async function() {
+    async function () {
       return content.document.querySelector("style").textContent;
     });
 

@@ -14,7 +14,7 @@ const { startRecording, stopRecording } = require("devtools/client/performance/t
 const { waitForRecordingStartedEvents } = require("devtools/client/performance/test/helpers/actions");
 const { idleWait } = require("devtools/client/performance/test/helpers/wait-utils");
 
-add_task(async function() {
+add_task(async function () {
   let { target, console } = await initConsoleInNewTab({
     url: SIMPLE_URL,
     win: window

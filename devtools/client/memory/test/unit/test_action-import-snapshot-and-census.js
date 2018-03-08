@@ -12,7 +12,7 @@ let { actions, snapshotState: states, treeMapState } = require("devtools/client/
 let { exportSnapshot, importSnapshotAndCensus } = require("devtools/client/memory/actions/io");
 let { takeSnapshotAndCensus } = require("devtools/client/memory/actions/snapshot");
 
-add_task(async function() {
+add_task(async function () {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   await front.attach();

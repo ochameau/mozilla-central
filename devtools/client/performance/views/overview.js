@@ -209,7 +209,7 @@ var OverviewView = {
   /**
    * Called when recording state changes.
    */
-  _onRecordingStateChange: OverviewViewOnStateChange(async function(_, state, recording) {
+  _onRecordingStateChange: OverviewViewOnStateChange(async function (_, state, recording) {
       if (state !== "recording-stopped") {
         return;
       }
@@ -228,7 +228,7 @@ var OverviewView = {
   /**
    * Called when a new recording is selected.
    */
-  _onRecordingSelected: OverviewViewOnStateChange(async function(_, recording) {
+  _onRecordingSelected: OverviewViewOnStateChange(async function (_, recording) {
     this._setGraphVisibilityFromRecordingFeatures(recording);
 
     // If this recording is complete, render the high res graph

@@ -65,7 +65,7 @@ TaskCache.declareCacheableTask = function ({ getCacheKey, task }) {
   const cache = new TaskCache();
 
   return function (...args) {
-    return async function(dispatch, getState) {
+    return async function (dispatch, getState) {
       const key = getCacheKey(...args);
 
       const extantResult = cache.get(key);
@@ -80,7 +80,7 @@ TaskCache.declareCacheableTask = function ({ getCacheKey, task }) {
         resolve = r;
       }));
 
-      resolve(dispatch(async function() {
+      resolve(dispatch(async function () {
         try {
           args.push(() => cache.remove(key), dispatch, getState);
           return await task(...args);

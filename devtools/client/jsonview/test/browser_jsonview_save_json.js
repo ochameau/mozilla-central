@@ -84,7 +84,7 @@ registerCleanupFunction(function () {
   ok(!destDir.exists(), "Destination dir should be removed");
 });
 
-add_task(async function() {
+add_task(async function () {
   info("Test 1 save JSON started");
 
   const JSON_FILE = "simple_json.json";
@@ -141,7 +141,7 @@ add_task(async function() {
   });
 });
 
-add_task(async function() {
+add_task(async function () {
   info("Test 2 save JSON started");
 
   const TEST_JSON_URL = "data:application/json,2";
@@ -154,7 +154,7 @@ add_task(async function() {
   await promise.then(getFileContents);
 });
 
-add_task(async function() {
+add_task(async function () {
   info("Test 3 save JSON started");
 
   const TEST_JSON_URL = "data:application/manifest+json,3";

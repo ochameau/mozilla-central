@@ -46,7 +46,7 @@ async function performDelete(store, rowName, action) {
   await eventWait;
 }
 
-add_task(async function() {
+add_task(async function () {
   await openTabAndSetupStorage(MAIN_DOMAIN + "storage-listings.html");
 
   info("test state before delete");

@@ -13,7 +13,7 @@ const {PREDEFINED, PRESETS, DEFAULT_PRESET_CATEGORY} =
 
 const TEST_URI = CHROME_URL_ROOT + "doc_cubic-bezier-01.html";
 
-add_task(async function() {
+add_task(async function () {
   let [host,, doc] = await createHost("bottom", TEST_URI);
 
   let container = doc.querySelector("#cubic-bezier-container");

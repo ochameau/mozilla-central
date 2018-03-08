@@ -59,7 +59,7 @@ const mockGetCSSValuesForPropertyName = function (propertyName) {
   return values[propertyName] || [];
 };
 
-add_task(async function() {
+add_task(async function () {
   await addTab("data:text/html;charset=utf-8,inplace editor CSS value autocomplete");
   let [host,, doc] = await createHost("bottom", TEST_URI);
 
@@ -81,7 +81,7 @@ add_task(async function() {
   gBrowser.removeCurrentTab();
 });
 
-let runAutocompletionTest = async function(editor) {
+let runAutocompletionTest = async function (editor) {
   info("Starting autocomplete test for inplace-editor popup offset");
   editor._getCSSPropertyList = mockGetCSSPropertyList;
   editor._getCSSValuesForPropertyName = mockGetCSSValuesForPropertyName;

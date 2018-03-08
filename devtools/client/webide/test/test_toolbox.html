@@ -21,7 +21,7 @@
         let win;
 
         SimpleTest.registerCleanupFunction(() => {
-          (async function() {
+          (async function () {
             if (win) {
               await closeWebIDE(win);
             }
@@ -30,7 +30,7 @@
           })();
         });
 
-        (async function() {
+        (async function () {
           DebuggerServer.init();
           DebuggerServer.registerAllActors();
 

@@ -9,7 +9,7 @@
 
 let { toggleRecordingAllocationStacks } = require("devtools/client/memory/actions/allocations");
 
-add_task(async function() {
+add_task(async function () {
   let front = new StubbedMemoryFront();
   await front.attach();
   let store = Store();

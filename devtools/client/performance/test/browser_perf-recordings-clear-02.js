@@ -13,7 +13,7 @@ const { startRecording, stopRecording } = require("devtools/client/performance/t
 const { times, once } = require("devtools/client/performance/test/helpers/event-utils");
 const { getRecordingsCount } = require("devtools/client/performance/test/helpers/recording-utils");
 
-add_task(async function() {
+add_task(async function () {
   let { panel } = await initPanelInNewTab({
     tool: "performance",
     url: SIMPLE_URL,

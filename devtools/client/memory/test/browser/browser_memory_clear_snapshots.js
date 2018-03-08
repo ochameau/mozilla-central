@@ -10,7 +10,7 @@
 const { treeMapState } = require("devtools/client/memory/constants");
 const TEST_URL = "http://example.com/browser/devtools/client/memory/test/browser/doc_steady_allocation.html";
 
-this.test = makeMemoryTest(TEST_URL, async function({ tab, panel }) {
+this.test = makeMemoryTest(TEST_URL, async function ({ tab, panel }) {
   const { gStore, document } = panel.panelWin;
   const { getState } = gStore;
 

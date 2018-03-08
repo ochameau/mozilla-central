@@ -5,7 +5,7 @@
 // On debug test slave, it takes about 50s to run the test.
 requestLongerTimeout(4);
 
-add_task(async function() {
+add_task(async function () {
   await new Promise(done => {
     let options = {"set": [
       ["devtools.debugger.prompt-connection", false],

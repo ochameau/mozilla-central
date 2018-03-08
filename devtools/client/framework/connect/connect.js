@@ -48,7 +48,7 @@ window.addEventListener("DOMContentLoaded", function () {
 /**
  * Called when the "connect" button is clicked.
  */
-var submit = async function() {
+var submit = async function () {
   // Show the "connecting" screen
   document.body.classList.add("connecting");
 
@@ -75,7 +75,7 @@ var submit = async function() {
 /**
  * Connection is ready. List actors and build buttons.
  */
-var onConnectionReady = async function([aType, aTraits]) {
+var onConnectionReady = async function ([aType, aTraits]) {
   clearTimeout(gConnectionTimeout);
 
   let addons = [];

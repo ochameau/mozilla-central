@@ -9,7 +9,7 @@ const {gDevToolsBrowser} = require("devtools/client/framework/devtools-browser")
 
 const TEST_URI = TEST_URI_ROOT + "doc_toolbar_basic.html";
 
-add_task(async function() {
+add_task(async function () {
   info("Starting browser_toolbar_basic.js");
   await addTab(TEST_URI);
 

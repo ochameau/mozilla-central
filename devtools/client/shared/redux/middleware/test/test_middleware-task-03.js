@@ -15,7 +15,7 @@ function run_test() {
   run_next_test();
 }
 
-add_task(async function() {
+add_task(async function () {
   let store = applyMiddleware(task)(createStore)(reducer);
 
   store.dispatch(generatorError());

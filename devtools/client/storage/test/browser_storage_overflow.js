@@ -4,7 +4,7 @@
 
 const ITEMS_PER_PAGE = 50;
 
-add_task(async function() {
+add_task(async function () {
   await openTabAndSetupStorage(MAIN_DOMAIN + "storage-overflow.html");
 
   gUI.tree.expandAll();

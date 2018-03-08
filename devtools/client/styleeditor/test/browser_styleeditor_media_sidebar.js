@@ -17,7 +17,7 @@ const NEW_RULE = "\n@media (max-width: 600px) { div { color: blue; } }";
 
 waitForExplicitFinish();
 
-add_task(async function() {
+add_task(async function () {
   let { ui } = await openStyleEditorForURL(TESTCASE_URI);
 
   is(ui.editors.length, 2, "correct number of editors");

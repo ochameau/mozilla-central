@@ -4,7 +4,7 @@
 
 // Test that sheets inside iframes are shown in the editor.
 
-add_task(async function() {
+add_task(async function () {
   function makeStylesheet(selector) {
     return ("data:text/css;charset=UTF-8," +
             encodeURIComponent(selector + " { }"));

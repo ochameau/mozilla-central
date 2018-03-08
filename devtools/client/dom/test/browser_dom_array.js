@@ -14,7 +14,7 @@ const TEST_ARRAY = [
 /**
  * Basic test that checks content of the DOM panel.
  */
-add_task(async function() {
+add_task(async function () {
   info("Test DOM Panel Array Expansion started");
 
   let { panel } = await addTestTab(TEST_PAGE_URL);

@@ -141,7 +141,7 @@ var UI = {
         this.updateConnectionTelemetry();
         break;
       case "project":
-        this._updatePromise = (async function() {
+        this._updatePromise = (async function () {
           UI.updateTitle();
           await UI.destroyToolbox();
           UI.updateCommands();
@@ -853,7 +853,7 @@ var Cmds = {
   },
 
   disconnectRuntime: function () {
-    let disconnecting = (async function() {
+    let disconnecting = (async function () {
       await UI.destroyToolbox();
       await AppManager.disconnectRuntime();
     })();

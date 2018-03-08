@@ -15,7 +15,7 @@ var FileUtils = tempScope.FileUtils;
 const FILENAME = "styleeditor-import-test.css";
 const SOURCE = "body{background:red;}";
 
-add_task(async function() {
+add_task(async function () {
   let { panel, ui } = await openStyleEditorForURL(TESTCASE_URI);
 
   let added = ui.once("test:editor-updated");

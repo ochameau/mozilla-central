@@ -91,7 +91,7 @@ var gToolbox, gTarget, gFront;
 /**
  * Initializes the profiler controller and views.
  */
-var startupPerformance = async function() {
+var startupPerformance = async function () {
   await PerformanceController.initialize();
   await PerformanceView.initialize();
   PerformanceController.enableFrontEventListeners();
@@ -100,7 +100,7 @@ var startupPerformance = async function() {
 /**
  * Destroys the profiler controller and views.
  */
-var shutdownPerformance = async function() {
+var shutdownPerformance = async function () {
   await PerformanceController.destroy();
   await PerformanceView.destroy();
   PerformanceController.disableFrontEventListeners();

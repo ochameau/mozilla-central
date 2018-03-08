@@ -23,7 +23,7 @@ const TEST_CASES = [
    MAIN_DOMAIN + "404_cached_file.js", "url"],
 ];
 
-add_task(async function() {
+add_task(async function () {
   await openTabAndSetupStorage(MAIN_DOMAIN + "storage-listings.html");
 
   let contextMenu = gPanelWindow.document.getElementById("storage-table-popup");

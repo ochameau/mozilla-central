@@ -6,7 +6,7 @@
 
 // Test dynamic updates in the storage inspector for sessionStorage.
 
-add_task(async function() {
+add_task(async function () {
   await openTabAndSetupStorage(MAIN_DOMAIN + "storage-updates.html");
 
   gUI.tree.expandAll();

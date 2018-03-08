@@ -6,7 +6,7 @@
 
 var {angleUtils} = require("devtools/client/shared/css-angle");
 
-add_task(async function() {
+add_task(async function () {
   await addTab("about:blank");
   let [host] = await createHost("bottom");
 

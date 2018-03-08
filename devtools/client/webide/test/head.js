@@ -40,7 +40,7 @@ registerCleanupFunction(() => {
   Services.prefs.clearUserPref("devtools.webide.lastConnectedRuntime");
 });
 
-var openWebIDE = async function(autoInstallAddons) {
+var openWebIDE = async function (autoInstallAddons) {
   info("opening WebIDE");
 
   Services.prefs.setBoolPref("devtools.webide.autoinstallADBHelper", !!autoInstallAddons);
@@ -74,7 +74,7 @@ function closeWebIDE(win) {
 }
 
 function removeAllProjects() {
-  return (async function() {
+  return (async function () {
     await AppProjects.load();
     // use a new array so we're not iterating over the same
     // underlying array that's being modified by AppProjects

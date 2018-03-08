@@ -15,7 +15,7 @@ var { changeView } = require("devtools/client/memory/actions/view");
 // triggers an assertion failure.
 EXPECTED_DTU_ASSERT_FAILURE_COUNT = 1;
 
-add_task(async function() {
+add_task(async function () {
   let front = new StubbedMemoryFront();
   let heapWorker = new HeapAnalysesClient();
   await front.attach();

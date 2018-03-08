@@ -37,7 +37,7 @@ registerCleanupFunction(function() {
 function addTestTab(url) {
   info("Adding a new JSON tab with URL: '" + url + "'");
 
-  return (async function() {
+  return (async function () {
     let tab = await addTab(url);
 
     // Load devtools/shared/test/frame-script-utils.js
@@ -73,7 +73,7 @@ function executeAndInspectXhr(hud, options) {
     requestHeaders: options.requestHeaders
   });
 
-  return (async function() {
+  return (async function () {
     // Wait till the appropriate Net log appears in the Console panel.
     let rules = await waitForMessages({
       webconsole: hud,
@@ -128,7 +128,7 @@ function selectNetInfoTab(hud, netInfoBody, tabId) {
   // UI is populated with data from the backend.
   // There must be no pending RDP requests before we can
   // continue testing the UI.
-  return (async function() {
+  return (async function () {
     await synthesizeMouseClickSoon(hud, tab);
     let msg = getAncestorByClass(netInfoBody, "message");
     await waitForBackend(msg);

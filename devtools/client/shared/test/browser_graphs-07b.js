@@ -29,7 +29,7 @@ const TEST_DATA = [
 ];
 var LineGraphWidget = require("devtools/client/shared/widgets/LineGraphWidget");
 
-add_task(async function() {
+add_task(async function () {
   await addTab("about:blank");
   await performTest();
   gBrowser.removeCurrentTab();

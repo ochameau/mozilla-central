@@ -8,7 +8,7 @@
 const TEST_URI = "http://example.com/browser/devtools/client/webconsole/" +
                  "new-console-output/test/mochitest/test-console.html";
 
-add_task(async function() {
+add_task(async function () {
   let toolbox = await openNewTabAndToolbox(TEST_URI, "webconsole");
   let hud = toolbox.getCurrentPanel().hud;
   let {ui} = hud;

@@ -4,7 +4,7 @@
 
 "use strict";
 
-add_task(async function() {
+add_task(async function () {
   let target = TargetFactory.forTab(gBrowser.selectedTab);
   let toolbox = await gDevTools.showToolbox(target);
   let doc = toolbox.doc;

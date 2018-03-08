@@ -7,7 +7,7 @@
 
 const TESTCASE_URI = TEST_BASE_HTTP + "four.html";
 
-add_task(async function() {
+add_task(async function () {
   let { panel, ui } = await openStyleEditorForURL(TESTCASE_URI);
 
   info("Waiting for source editor to load.");

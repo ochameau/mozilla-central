@@ -192,7 +192,7 @@ function runAsyncTests(aScratchpad, aTests)
  * @return Promise
  *         The promise that will be resolved when all tests are finished.
  */
-var runAsyncCallbackTests = async function(aScratchpad, aTests) {
+var runAsyncCallbackTests = async function (aScratchpad, aTests) {
   for (let {prepare, method, then} of aTests) {
     await prepare();
     let res = await aScratchpad[method]();

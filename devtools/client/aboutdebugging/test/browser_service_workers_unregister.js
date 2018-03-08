@@ -14,7 +14,7 @@ const SCOPE = URL_ROOT + "service-workers/";
 const SERVICE_WORKER = SCOPE + "empty-sw.js";
 const TAB_URL = SCOPE + "empty-sw.html";
 
-add_task(async function() {
+add_task(async function () {
   await enableServiceWorkerDebugging();
 
   let { tab, document } = await openAboutDebugging("workers");

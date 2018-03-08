@@ -13,7 +13,7 @@ const JSON_XHR_URL = URL_ROOT + "test.json";
  * networks details in the Console panel and checks that
  * HTTP headers are there.
  */
-add_task(async function() {
+add_task(async function () {
   // Disable rcwn to make cache behavior deterministic.
   await pushPref("network.http.rcwn.enabled", false);
 

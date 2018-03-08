@@ -6,7 +6,7 @@
  * Tests if the performance tool gracefully handles loading bogus files.
  */
 
-var test = async function() {
+var test = async function () {
   let { target, panel, toolbox } = await initPerformance(SIMPLE_URL);
   let { EVENTS, PerformanceController } = panel.panelWin;
 

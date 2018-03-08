@@ -9,7 +9,7 @@
 const ADDON_ID = "test-devtools@mozilla.org";
 const ADDON_NAME = "test-devtools";
 
-add_task(async function() {
+add_task(async function () {
   info("Turn off addon debugging.");
   await new Promise(resolve => {
     let options = {"set": [

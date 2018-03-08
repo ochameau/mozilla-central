@@ -5,7 +5,7 @@
 
 ChromeUtils.import("resource://gre/modules/osfile.jsm", {});
 
-add_task(async function() {
+add_task(async function () {
   let fileContent = await generateCssMessageStubs();
   let filePath = OS.Path.join(`${BASE_PATH}/stubs`, "cssMessage.js");
   await OS.File.writeAtomic(filePath, fileContent);

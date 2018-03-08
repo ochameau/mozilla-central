@@ -6,7 +6,7 @@
 // error page.
 // Every url navigating including #invalid-hash should be kept in history and
 // navigate back as expected.
-add_task(async function() {
+add_task(async function () {
   let { tab, document } = await openAboutDebugging("invalid-hash");
   let element = document.querySelector(".header-name");
   is(element.textContent, "Page not found", "Show error page");

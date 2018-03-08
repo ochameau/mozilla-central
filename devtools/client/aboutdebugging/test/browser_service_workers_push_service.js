@@ -16,7 +16,7 @@ const FAKE_ENDPOINT = "https://fake/endpoint";
 const PushService = Cc["@mozilla.org/push/Service;1"]
   .getService(Ci.nsIPushService).wrappedJSObject;
 
-add_task(async function() {
+add_task(async function () {
   info("Turn on workers via mochitest http.");
   await enableServiceWorkerDebugging();
   // Enable the push service.

@@ -30,7 +30,7 @@ body > h1 {
 "4gICAgY29sb3I6IHdoaXRlO1xuICB9XG59XG4iXSwKIm5hbWVzIjogW10sCiJmaWxlIjogInRlc" +
 "3QuY3NzIgp9Cg== */";
 
-add_task(async function() {
+add_task(async function () {
   let {ui} = await openStyleEditorForURL(TESTCASE_URI);
 
   is(ui.editors.length, 1,

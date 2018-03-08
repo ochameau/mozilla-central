@@ -7,7 +7,7 @@
 
 ChromeUtils.import("resource://gre/modules/osfile.jsm", {});
 
-add_task(async function() {
+add_task(async function () {
   let generatedStubs = await generateEvaluationResultStubs();
 
   let repoStubFilePath = getTestFilePath("../stubs/evaluationResult.js");

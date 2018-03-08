@@ -9,7 +9,7 @@ const {
   addDevice
 } = require("devtools/client/shared/devices");
 
-add_task(async function() {
+add_task(async function () {
   Services.prefs.setCharPref("devtools.devices.url",
                              TEST_URI_ROOT + "browser_devices.json");
 

@@ -105,7 +105,7 @@ function getTestCases(cssProperties) {
   ];
 }
 
-add_task(async function() {
+add_task(async function () {
   let { panel, ui } = await openStyleEditorForURL(TESTCASE_URI);
   let { cssProperties } = await initCssProperties(panel._toolbox);
   let testCases = getTestCases(cssProperties);

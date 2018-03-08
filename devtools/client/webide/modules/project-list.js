@@ -69,7 +69,7 @@ ProjectList.prototype = {
   newApp: function (testOptions) {
     let parentWindow = this._parentWindow;
     let self = this;
-    return this._UI.busyUntil((async function() {
+    return this._UI.busyUntil((async function () {
       // Open newapp.xul, which will feed ret.location
       let ret = {location: null, testOptions: testOptions};
       parentWindow.openDialog("chrome://webide/content/newapp.xul", "newapp", "chrome,modal", ret);
@@ -89,7 +89,7 @@ ProjectList.prototype = {
   importPackagedApp: function (location) {
     let parentWindow = this._parentWindow;
     let UI = this._UI;
-    return UI.busyUntil((async function() {
+    return UI.busyUntil((async function () {
       let directory = await utils.getPackagedDirectory(parentWindow, location);
 
       if (!directory) {
@@ -104,7 +104,7 @@ ProjectList.prototype = {
   importHostedApp: function (location) {
     let parentWindow = this._parentWindow;
     let UI = this._UI;
-    return UI.busyUntil((async function() {
+    return UI.busyUntil((async function () {
       let url = utils.getHostedURL(parentWindow, location);
 
       if (!url) {

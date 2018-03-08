@@ -7,7 +7,7 @@
 
 ChromeUtils.import("resource://gre/modules/osfile.jsm", {});
 
-add_task(async function() {
+add_task(async function () {
   let generatedStubs = await generateCssMessageStubs();
 
   let repoStubFilePath = getTestFilePath("../stubs/cssMessage.js");

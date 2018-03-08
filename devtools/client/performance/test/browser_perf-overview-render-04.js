@@ -15,7 +15,7 @@ const { waitUntil } = require("devtools/client/performance/test/helpers/wait-uti
 const { isVisible } = require("devtools/client/performance/test/helpers/dom-utils");
 const { setSelectedRecording } = require("devtools/client/performance/test/helpers/recording-utils");
 
-add_task(async function() {
+add_task(async function () {
   let { panel } = await initPerformanceInNewTab({
     url: SIMPLE_URL,
     win: window

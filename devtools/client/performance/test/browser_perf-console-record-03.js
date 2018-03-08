@@ -13,7 +13,7 @@ const { waitForRecordingStoppedEvents } = require("devtools/client/performance/t
 const { waitUntil } = require("devtools/client/performance/test/helpers/wait-utils");
 const { getSelectedRecording } = require("devtools/client/performance/test/helpers/recording-utils");
 
-add_task(async function() {
+add_task(async function () {
   let { target, console } = await initConsoleInNewTab({
     url: SIMPLE_URL,
     win: window

@@ -11,7 +11,7 @@ const SW_TIMEOUT = 2000;
 
 requestLongerTimeout(2);
 
-add_task(async function() {
+add_task(async function () {
   await enableServiceWorkerDebugging();
   await pushPref("dom.serviceWorkers.idle_timeout", SW_TIMEOUT);
   await pushPref("dom.serviceWorkers.idle_extended_timeout", SW_TIMEOUT);

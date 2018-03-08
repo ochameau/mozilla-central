@@ -9,7 +9,7 @@ const PAGE_URL = "data:text/html;charset=utf-8,test select events";
 
 requestLongerTimeout(2);
 
-add_task(async function() {
+add_task(async function () {
   let tab = await addTab(PAGE_URL);
 
   let toolbox = await openToolboxForTab(tab, "webconsole", "bottom");

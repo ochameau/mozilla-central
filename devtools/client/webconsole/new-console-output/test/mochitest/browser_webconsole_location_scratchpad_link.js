@@ -7,7 +7,7 @@
 
 const TEST_URI = "data:text/html;charset=utf8,<p>test Scratchpad panel linking</p>";
 
-add_task(async function() {
+add_task(async function () {
   await pushPref("devtools.scratchpad.enabled", true);
   await openNewTabAndToolbox(TEST_URI);
 

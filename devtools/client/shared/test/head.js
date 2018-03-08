@@ -105,7 +105,7 @@ function oneTimeObserve(name, callback) {
 }
 
 let createHost =
-async function(type = "bottom", src = CHROME_URL_ROOT + "dummy.html") {
+async function (type = "bottom", src = CHROME_URL_ROOT + "dummy.html") {
   let host = new Hosts[type](gBrowser.selectedTab);
   let iframe = await host.create();
 
@@ -225,7 +225,7 @@ function showFilterPopupPresets(widget) {
  * @return {Promise}
  */
 let showFilterPopupPresetsAndCreatePreset =
-async function(widget, name, value) {
+async function (widget, name, value) {
   await showFilterPopupPresets(widget);
 
   let onRender = widget.once("render");

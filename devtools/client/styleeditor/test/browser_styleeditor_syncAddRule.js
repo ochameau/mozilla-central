@@ -11,7 +11,7 @@ const expectedText = `
 #testid {
 }`;
 
-add_task(async function() {
+add_task(async function () {
   await addTab(TESTCASE_URI);
   let { inspector, view } = await openRuleView();
   await selectNode("#testid", inspector);

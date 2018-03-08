@@ -14,7 +14,7 @@ Services.scriptloader.loadSubScript(
 const TEST_URI = "http://example.com/browser/devtools/client/styleeditor/" +
                  "test/browser_styleeditor_cmd_edit.html";
 
-add_task(async function() {
+add_task(async function () {
   let options = await helpers.openTab(TEST_URI);
   await helpers.openToolbar(options);
 

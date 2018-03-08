@@ -10,7 +10,7 @@ const TEST_URI = "data:text/html;charset=utf-8," +
 // opened we make use of setTimeout() to create tool active times.
 const TOOL_DELAY = 200;
 
-add_task(async function() {
+add_task(async function () {
   info("Activating the webaudioeditor");
   let originalPref = Services.prefs.getBoolPref("devtools.webaudioeditor.enabled");
   Services.prefs.setBoolPref("devtools.webaudioeditor.enabled", true);

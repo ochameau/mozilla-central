@@ -6,7 +6,7 @@
  * from the AudioNode actors.
  */
 
-add_task(async function() {
+add_task(async function () {
   let { target, front } = await initBackend(SIMPLE_NODES_URL);
   let [_, nodes] = await Promise.all([
     front.setup({ reload: true }),

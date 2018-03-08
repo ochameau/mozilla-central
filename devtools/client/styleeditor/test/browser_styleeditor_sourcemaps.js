@@ -77,7 +77,7 @@ const origNames = ["sourcemaps.scss", "contained.scss", "test-stylus.styl"];
 
 waitForExplicitFinish();
 
-add_task(async function() {
+add_task(async function () {
   let {ui} = await openStyleEditorForURL(TESTCASE_URI);
 
   is(ui.editors.length, 4,

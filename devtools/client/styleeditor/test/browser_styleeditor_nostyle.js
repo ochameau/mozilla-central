@@ -8,7 +8,7 @@
 
 const TESTCASE_URI = TEST_BASE_HTTP + "nostyle.html";
 
-add_task(async function() {
+add_task(async function () {
   let { panel } = await openStyleEditorForURL(TESTCASE_URI);
   let { panelWindow } = panel;
 

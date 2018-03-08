@@ -119,7 +119,7 @@ AppValidator.findManifestPath = function (manifestURL) {
 };
 
 AppValidator.checkAlternateManifest = function (manifestURL) {
-  return (async function() {
+  return (async function () {
     let result;
     try {
       result = await AppValidator.findManifestPath(manifestURL);

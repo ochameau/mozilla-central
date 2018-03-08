@@ -13,7 +13,7 @@ const { startRecording, stopRecording } = require("devtools/client/performance/t
 const { once } = require("devtools/client/performance/test/helpers/event-utils");
 const { getSelectedRecordingIndex, setSelectedRecording, getRecordingsCount } = require("devtools/client/performance/test/helpers/recording-utils");
 
-add_task(async function() {
+add_task(async function () {
   // This test seems to take a very long time to finish on Linux VMs.
   requestLongerTimeout(4);
 

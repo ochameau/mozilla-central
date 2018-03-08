@@ -8,7 +8,7 @@
 // context menu item for stylesheets (bug 992947).
 const TESTCASE_URI = TEST_BASE_HTTPS + "simple.html";
 
-add_task(async function() {
+add_task(async function () {
   let { ui } = await openStyleEditorForURL(TESTCASE_URI);
 
   await rightClickStyleSheet(ui, ui.editors[0]);

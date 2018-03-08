@@ -13,7 +13,7 @@ const TEST_URI = "http://example.com/browser/devtools/client/webconsole/" +
                  "new-console-output/test/mochitest/" +
                  "test-bug-859170-longstring-hang.html";
 
-add_task(async function() {
+add_task(async function () {
   await loadTab(TEST_URI);
 
   let hud = await openConsole();

@@ -7,7 +7,7 @@
  * `getMappedSelection` error.
  */
 
-var test = async function() {
+var test = async function () {
   var { target, panel, toolbox } = await initPerformance(SIMPLE_URL);
   var { EVENTS, PerformanceController, WaterfallView } = panel.panelWin;
 

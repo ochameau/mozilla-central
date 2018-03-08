@@ -10,7 +10,7 @@
 const { appendAndWaitForPaint } = require("devtools/client/performance/test/helpers/dom-utils");
 const { synthesizeCustomTreeClass } = require("devtools/client/performance/test/helpers/synth-utils");
 
-add_task(async function() {
+add_task(async function () {
   let { MyCustomTreeItem, myDataSrc } = synthesizeCustomTreeClass();
 
   let container = document.createElement("vbox");

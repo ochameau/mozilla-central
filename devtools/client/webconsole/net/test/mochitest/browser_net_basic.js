@@ -13,7 +13,7 @@ const JSON_XHR_URL = URL_ROOT + "test.json";
  * checks the related log in the Console panel can
  * be expanded.
  */
-add_task(async function() {
+add_task(async function () {
   info("Test XHR Spy basic started");
 
   let {hud} = await addTestTab(TEST_PAGE_URL);

@@ -12,7 +12,7 @@ const { initPerformanceInNewTab, teardownToolboxAndRemoveTab } = require("devtoo
 const { startRecording, stopRecording } = require("devtools/client/performance/test/helpers/actions");
 const { waitUntil } = require("devtools/client/performance/test/helpers/wait-utils");
 
-add_task(async function() {
+add_task(async function () {
   let { panel } = await initPerformanceInNewTab({
     url: SIMPLE_URL,
     win: window

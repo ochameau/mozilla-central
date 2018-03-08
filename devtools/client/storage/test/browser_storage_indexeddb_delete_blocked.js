@@ -8,7 +8,7 @@
 
 // Test what happens when deleting indexedDB database is blocked
 
-add_task(async function() {
+add_task(async function () {
   await openTabAndSetupStorage(MAIN_DOMAIN + "storage-idb-delete-blocked.html");
 
   info("test state before delete");
@@ -31,7 +31,7 @@ add_task(async function() {
   let eventWait = gUI.once("store-objects-updated");
 
   info("telling content to close the db");
-  await ContentTask.spawn(gBrowser.selectedBrowser, null, async function() {
+  await ContentTask.spawn(gBrowser.selectedBrowser, null, async function () {
     let win = content.wrappedJSObject;
     await win.closeDb();
   });

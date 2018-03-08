@@ -8,7 +8,7 @@
 
 // Test deleting all storage items from the tree.
 
-add_task(async function() {
+add_task(async function () {
   await openTabAndSetupStorage(MAIN_DOMAIN + "storage-listings.html");
 
   let contextMenu = gPanelWindow.document.getElementById("storage-tree-popup");

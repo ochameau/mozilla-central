@@ -626,7 +626,7 @@ StyleEditorUI.prototype = {
         let showEditor = data.editor;
         this.selectedEditor = showEditor;
 
-        (async function() {
+        (async function () {
           if (!showEditor.sourceEditor) {
             // only initialize source editor when we switch to this view
             let inputElement =
@@ -883,7 +883,7 @@ StyleEditorUI.prototype = {
    *         Editor to update @media sidebar of
    */
   _updateMediaList: function (editor) {
-    (async function() {
+    (async function () {
       let details = await this.getEditorDetails(editor);
       let list = details.querySelector(".stylesheet-media-list");
 

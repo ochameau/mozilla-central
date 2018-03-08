@@ -50,26 +50,26 @@ function StubbedMemoryFront() {
   this.dbg = initDebugger();
 }
 
-StubbedMemoryFront.prototype.attach = async function() {
+StubbedMemoryFront.prototype.attach = async function () {
   this.state = "attached";
 };
 
-StubbedMemoryFront.prototype.detach = async function() {
+StubbedMemoryFront.prototype.detach = async function () {
   this.state = "detached";
 };
 
 StubbedMemoryFront.prototype.saveHeapSnapshot = expectState("attached",
-  async function() {
+  async function () {
     return ChromeUtils.saveHeapSnapshot({ runtime: true });
   }, "saveHeapSnapshot");
 
 StubbedMemoryFront.prototype.startRecordingAllocations = expectState("attached",
-  async function() {
+  async function () {
     this.recordingAllocations = true;
   });
 
 StubbedMemoryFront.prototype.stopRecordingAllocations = expectState("attached",
-  async function() {
+  async function () {
     this.recordingAllocations = false;
   });
 

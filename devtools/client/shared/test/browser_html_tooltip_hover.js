@@ -14,7 +14,7 @@ const TEST_URI = CHROME_URL_ROOT + "doc_html_tooltip_hover.xul";
 const {HTMLTooltip} = require("devtools/client/shared/widgets/tooltip/HTMLTooltip");
 loadHelperScript("helper_html_tooltip.js");
 
-add_task(async function() {
+add_task(async function () {
   let [,, doc] = await createHost("bottom", TEST_URI);
   // Wait for full page load before synthesizing events on the page.
   await waitUntil(() => doc.readyState === "complete");

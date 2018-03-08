@@ -15,7 +15,7 @@ const {template} = require("devtools/shared/gcli/templater");
 
 const TEST_URI = TEST_URI_ROOT + "doc_templater_basic.html";
 
-var test = async function() {
+var test = async function () {
   await addTab("about:blank");
   let [host,, doc] = await createHost("bottom", TEST_URI);
 

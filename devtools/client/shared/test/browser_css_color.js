@@ -7,7 +7,7 @@ var {colorUtils} = require("devtools/shared/css/color");
 /* global getFixtureColorData */
 loadHelperScript("helper_color_data.js");
 
-add_task(async function() {
+add_task(async function () {
   await addTab("about:blank");
   let [host,, doc] = await createHost("bottom");
 

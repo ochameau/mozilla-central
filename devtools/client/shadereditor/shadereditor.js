@@ -405,7 +405,7 @@ var ShadersEditorsView = {
       editor.clearHistory();
     }
 
-    return (async function() {
+    return (async function () {
       await view._toggleListeners("off");
       await promise.all([
         view._getEditor("vs").then(e => setTextAndClearHistory(e, sources.vs)),
@@ -498,7 +498,7 @@ var ShadersEditorsView = {
    *        The corresponding shader type for the focused editor (e.g. "vs").
    */
   _doCompile: function (type) {
-    (async function() {
+    (async function () {
       let editor = await this._getEditor(type);
       let shaderActor = await ShadersListView.selectedAttachment[type];
 

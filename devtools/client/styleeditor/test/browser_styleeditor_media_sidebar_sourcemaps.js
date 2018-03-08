@@ -14,7 +14,7 @@ const LINE_NOS = [5, 8];
 
 waitForExplicitFinish();
 
-add_task(async function() {
+add_task(async function () {
   Services.prefs.setBoolPref(MAP_PREF, true);
 
   let { ui } = await openStyleEditorForURL(TESTCASE_URI);

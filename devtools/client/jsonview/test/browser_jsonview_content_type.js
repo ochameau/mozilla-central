@@ -26,7 +26,7 @@ let contentTypes = {
   ],
 };
 
-add_task(async function() {
+add_task(async function () {
   info("Test JSON content types started");
 
   // Prevent saving files to disk.

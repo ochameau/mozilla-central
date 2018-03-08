@@ -112,7 +112,7 @@ var WebAudioEditorController = {
   // Since node events (create, disconnect, connect) are all async,
   // we have to make sure to wait that the node has finished creating
   // before performing an operation on it.
-  getNode: async function(nodeActor) {
+  getNode: async function (nodeActor) {
     let id = nodeActor.actorID;
     let node = gAudioNodes.get(id);
 

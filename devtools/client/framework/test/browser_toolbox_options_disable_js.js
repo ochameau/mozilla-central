@@ -19,7 +19,7 @@ function testSelectTool(toolbox) {
   toolbox.selectTool("options");
 }
 
-let testToggleJS = async function(toolbox) {
+let testToggleJS = async function (toolbox) {
   ok(true, "Toolbox selected via selectTool method");
 
   await testJSEnabled();

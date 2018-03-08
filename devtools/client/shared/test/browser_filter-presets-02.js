@@ -10,7 +10,7 @@ const {getClientCssProperties} = require("devtools/shared/fronts/css-properties"
 
 const TEST_URI = CHROME_URL_ROOT + "doc_filter-editor-01.html";
 
-add_task(async function() {
+add_task(async function () {
   let [,, doc] = await createHost("bottom", TEST_URI);
   const cssIsValid = getClientCssProperties().getValidityChecker(doc);
 

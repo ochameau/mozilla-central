@@ -8,7 +8,7 @@
 const SERVICE_WORKER = URL_ROOT + "service-workers/empty-sw.js";
 const TAB_URL = URL_ROOT + "service-workers/empty-sw.html";
 
-add_task(async function() {
+add_task(async function () {
   await enableServiceWorkerDebugging();
 
   let { tab, document } = await openAboutDebugging("workers");
