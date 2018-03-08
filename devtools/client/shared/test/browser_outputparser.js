@@ -13,13 +13,13 @@ add_task(async function() {
   gBrowser.removeCurrentTab();
 });
 
-function* performTest() {
-  let [host, , doc] = yield createHost("bottom", "data:text/html," +
+async function performTest() {
+  let [host, , doc] = await createHost("bottom", "data:text/html," +
     "<h1>browser_outputParser.js</h1><div></div>");
 
   // Mock the toolbox that initCssProperties expect so we get the fallback css properties.
   let toolbox = {target: {client: {}, hasActor: () => false}};
-  yield initCssProperties(toolbox);
+  await initCssProperties(toolbox);
   let cssProperties = getCssProperties(toolbox);
 
   let parser = new OutputParser(doc, cssProperties);

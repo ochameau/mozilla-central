@@ -15,8 +15,8 @@ add_task(async function() {
   gBrowser.removeCurrentTab();
 });
 
-function* performTest() {
-  let [host,, doc] = yield createHost();
+async function performTest() {
+  let [host,, doc] = await createHost();
   doc.body.setAttribute("style",
                         "position: fixed; width: 100%; height: 100%; margin: 0;");
 
@@ -34,13 +34,13 @@ function* performTest() {
   CanvasGraphUtils.linkAnimation(graph1, graph2);
   CanvasGraphUtils.linkSelection(graph1, graph2);
 
-  yield graph1.ready();
-  yield graph2.ready();
+  await graph1.ready();
+  await graph2.ready();
 
   testGraphs(graph1, graph2);
 
-  yield graph1.destroy();
-  yield graph2.destroy();
+  await graph1.destroy();
+  await graph2.destroy();
   host.destroy();
 }
 

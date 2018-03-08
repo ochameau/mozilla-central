@@ -28,10 +28,10 @@ add_task(async function() {
   host.destroy();
 });
 
-function* previewDotReactsToChanges(widget, coords, expectedEasing) {
+async function previewDotReactsToChanges(widget, coords, expectedEasing) {
   let onUpdated = widget.once("updated");
   widget.coordinates = coords;
-  yield onUpdated;
+  await onUpdated;
 
   let animatedDot = widget.timingPreview.dot;
   let animations = animatedDot.getAnimations();

@@ -16,14 +16,14 @@ registerCleanupFunction(function() {
   Services.prefs.clearUserPref("devtools.debugger.new-debugger-frontend");
 });
 
-function* viewSource() {
-  let toolbox = yield openNewTabAndToolbox(URL);
-  let { panelWin: debuggerWin } = yield toolbox.selectTool("jsdebugger");
+async function viewSource() {
+  let toolbox = await openNewTabAndToolbox(URL);
+  let { panelWin: debuggerWin } = await toolbox.selectTool("jsdebugger");
   let debuggerEvents = debuggerWin.EVENTS;
   let { DebuggerView } = debuggerWin;
   let Sources = DebuggerView.Sources;
 
-  yield debuggerWin.once(debuggerEvents.SOURCE_SHOWN);
+  await debuggerWin.once(debuggerEvents.SOURCE_SHOWN);
   ok("A source was shown in the debugger.");
 
   is(Sources.selectedValue, getSourceActor(Sources, JS_URL),
@@ -31,7 +31,7 @@ function* viewSource() {
   is(DebuggerView.editor.getCursor().line, 0,
     "The correct line is initially highlighted in the debugger's source editor.");
 
-  yield toolbox.viewSourceInDebugger(JS_URL, 2);
+  await toolbox.viewSourceInDebugger(JS_URL, 2);
 
   let debuggerPanel = toolbox.getPanel("jsdebugger");
   ok(debuggerPanel, "The debugger panel was opened.");
@@ -42,7 +42,7 @@ function* viewSource() {
   is(DebuggerView.editor.getCursor().line + 1, 2,
     "The correct line is highlighted in the debugger's source editor.");
 
-  yield closeToolboxAndTab(toolbox);
+  await closeToolboxAndTab(toolbox);
   finish();
 }
 

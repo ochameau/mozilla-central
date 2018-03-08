@@ -38,19 +38,19 @@ add_task(async function() {
      "first stylesheet is now enabled again, UI does not have DISABLED class");
 });
 
-function* toggleEnabled(editor, enabledToggle, panelWindow) {
+async function toggleEnabled(editor, enabledToggle, panelWindow) {
   let changed = editor.once("property-change");
 
   info("Waiting for focus.");
-  yield SimpleTest.promiseFocus(panelWindow);
+  await SimpleTest.promiseFocus(panelWindow);
 
   info("Clicking on the toggle.");
   EventUtils.synthesizeMouseAtCenter(enabledToggle, {}, panelWindow);
 
   info("Waiting for stylesheet to be disabled.");
-  let property = yield changed;
+  let property = await changed;
   while (property !== "disabled") {
     info("Ignoring property-change for '" + property + "'.");
-    property = yield editor.once("property-change");
+    property = await editor.once("property-change");
   }
 }

@@ -17,10 +17,10 @@ registerCleanupFunction(function() {
   Services.prefs.clearUserPref("devtools.debugger.new-debugger-frontend");
 });
 
-function* viewSource() {
-  let toolbox = yield openNewTabAndToolbox(URL);
+async function viewSource() {
+  let toolbox = await openNewTabAndToolbox(URL);
 
-  yield toolbox.viewSourceInDebugger(JS_URL, 2);
+  await toolbox.viewSourceInDebugger(JS_URL, 2);
 
   let debuggerPanel = toolbox.getPanel("jsdebugger");
   ok(debuggerPanel, "The debugger panel was opened.");
@@ -34,7 +34,7 @@ function* viewSource() {
   is(DebuggerView.editor.getCursor().line + 1, 2,
     "The correct line is highlighted in the debugger's source editor.");
 
-  yield closeToolboxAndTab(toolbox);
+  await closeToolboxAndTab(toolbox);
   finish();
 }
 

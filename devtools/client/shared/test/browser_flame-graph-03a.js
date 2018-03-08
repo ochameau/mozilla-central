@@ -32,8 +32,8 @@ add_task(async function() {
   gBrowser.removeCurrentTab();
 });
 
-function* performTest() {
-  let [host,, doc] = yield createHost();
+async function performTest() {
+  let [host,, doc] = await createHost();
   doc.body.setAttribute("style",
                         "position: fixed; width: 100%; height: 100%; margin: 0;");
 
@@ -43,11 +43,11 @@ function* performTest() {
   graph.horizontalPanThreshold = 0;
   graph.verticalPanThreshold = 0;
 
-  yield graph.ready();
+  await graph.ready();
 
   testGraph(graph);
 
-  yield graph.destroy();
+  await graph.destroy();
   host.destroy();
 }
 

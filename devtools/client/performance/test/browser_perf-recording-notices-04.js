@@ -40,8 +40,8 @@ add_task(async function() {
   // Start a manual recording.
   await startRecording(panel);
 
-  await waitUntil(function* () {
-    [, gPercent] = yield once(PerformanceView,
+  await waitUntil(async function() {
+    [, gPercent] = await once(PerformanceView,
                               EVENTS.UI_RECORDING_PROFILER_STATUS_RENDERED,
                               { spreadArgs: true });
     return gPercent == 100;

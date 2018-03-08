@@ -15,18 +15,18 @@ add_task(async function() {
   gBrowser.removeCurrentTab();
 });
 
-function* performTest() {
-  let [host,, doc] = yield createHost();
+async function performTest() {
+  let [host,, doc] = await createHost();
   let graph = new LineGraphWidget(doc.body, "fps");
 
-  yield testGraph(graph);
+  await testGraph(graph);
 
-  yield graph.destroy();
+  await graph.destroy();
   host.destroy();
 }
 
-function* testGraph(graph) {
-  yield graph.setDataWhenReady(TEST_DATA);
+async function testGraph(graph) {
+  await graph.setDataWhenReady(TEST_DATA);
 
   is(graph._gutter.hidden, false,
     "The gutter should not be hidden.");

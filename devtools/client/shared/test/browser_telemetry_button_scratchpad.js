@@ -68,12 +68,12 @@ function trackScratchpadWindows() {
   });
 }
 
-function* testButton(toolbox, Telemetry) {
+async function testButton(toolbox, Telemetry) {
   info("Testing command-button-scratchpad");
   let button = toolbox.doc.querySelector("#command-button-scratchpad");
   ok(button, "Captain, we have the button");
 
-  yield delayedClicks(button, 4);
+  await delayedClicks(button, 4);
 }
 
 function delayedClicks(node, clicks) {

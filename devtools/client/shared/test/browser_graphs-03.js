@@ -14,19 +14,19 @@ add_task(async function() {
   gBrowser.removeCurrentTab();
 });
 
-function* performTest() {
-  let [host,, doc] = yield createHost();
+async function performTest() {
+  let [host,, doc] = await createHost();
   let graph = new LineGraphWidget(doc.body, "fps");
-  yield graph.once("ready");
+  await graph.once("ready");
 
-  yield testSelection(graph);
-  yield testCursor(graph);
+  await testSelection(graph);
+  await testCursor(graph);
 
-  yield graph.destroy();
+  await graph.destroy();
   host.destroy();
 }
 
-function* testSelection(graph) {
+async function testSelection(graph) {
   ok(graph.getSelection().start === null,
     "The graph's selection should initially have a null start value.");
   ok(graph.getSelection().end === null,
@@ -37,7 +37,7 @@ function* testSelection(graph) {
   let selected = graph.once("selecting");
   graph.setSelection({ start: 100, end: 200 });
 
-  yield selected;
+  await selected;
   ok(true, "A 'selecting' event has been fired.");
 
   ok(graph.hasSelection(),
@@ -61,7 +61,7 @@ function* testSelection(graph) {
   let deselected = graph.once("deselecting");
   graph.dropSelection();
 
-  yield deselected;
+  await deselected;
   ok(true, "A 'deselecting' event has been fired.");
 
   ok(!graph.hasSelection(),

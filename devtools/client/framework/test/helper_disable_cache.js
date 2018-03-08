@@ -29,19 +29,19 @@ var tabs = [
     startToolbox: false
   }];
 
-function* initTab(tabX, startToolbox) {
-  tabX.tab = yield addTab(TEST_URI);
+async function initTab(tabX, startToolbox) {
+  tabX.tab = await addTab(TEST_URI);
   tabX.target = TargetFactory.forTab(tabX.tab);
 
   if (startToolbox) {
-    tabX.toolbox = yield gDevTools.showToolbox(tabX.target, "options");
+    tabX.toolbox = await gDevTools.showToolbox(tabX.target, "options");
   }
 }
 
-function* checkCacheStateForAllTabs(states) {
+async function checkCacheStateForAllTabs(states) {
   for (let i = 0; i < tabs.length; i++) {
     let tab = tabs[i];
-    yield checkCacheEnabled(tab, states[i]);
+    await checkCacheEnabled(tab, states[i]);
   }
 }
 
@@ -103,7 +103,7 @@ function reloadTab(tabX) {
   return def.promise;
 }
 
-function* destroyTab(tabX) {
+async function destroyTab(tabX) {
   let toolbox = gDevTools.getToolbox(tabX.target);
 
   let onceDestroyed = promise.resolve();
@@ -116,12 +116,12 @@ function* destroyTab(tabX) {
   info("Removed tab " + tabX.title);
 
   info("Waiting for toolbox-destroyed");
-  yield onceDestroyed;
+  await onceDestroyed;
 }
 
-function* finishUp() {
+async function finishUp() {
   for (let tab of tabs) {
-    yield destroyTab(tab);
+    await destroyTab(tab);
   }
 
   tabs = null;

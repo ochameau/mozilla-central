@@ -138,9 +138,9 @@ registerCleanupFunction(() => {
   Services.prefs.clearUserPref("devtools.toolbox.splitconsoleHeight");
 });
 
-registerCleanupFunction(function* cleanup() {
+registerCleanupFunction(async function cleanup() {
   while (gBrowser.tabs.length > 1) {
-    yield closeTabAndToolbox(gBrowser.selectedTab);
+    await closeTabAndToolbox(gBrowser.selectedTab);
   }
 });
 

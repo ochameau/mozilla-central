@@ -15,10 +15,10 @@ function test() {
     .then(finish, console.error);
 }
 
-function* runTests([win, sp]) {
-  yield testMaximumFontSize(win, sp);
+async function runTests([win, sp]) {
+  await testMaximumFontSize(win, sp);
 
-  yield testMinimumFontSize(win, sp);
+  await testMinimumFontSize(win, sp);
 }
 
 const MAXIMUM_FONT_SIZE = 96;

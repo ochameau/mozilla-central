@@ -98,7 +98,7 @@ function getTitle() {
   return Services.wm.getMostRecentWindow("devtools:toolbox").document.title;
 }
 
-function* testShortcutToOpenFrames(btn, toolbox) {
+async function testShortcutToOpenFrames(btn, toolbox) {
   info("Tests if shortcut Alt+Down opens the frames");
   // focus the button so that keyPress can be performed
   btn.focus();
@@ -107,14 +107,14 @@ function* testShortcutToOpenFrames(btn, toolbox) {
   synthesizeKeyShortcut(shortcut, toolbox.win);
 
   // wait for 200 ms for UI to render
-  yield wait(200);
+  await wait(200);
 
   // btn should now have the checked class set
   ok(btn.classList.contains("checked"), "The checked class must be set");
 
   // pressing Esc should hide the menu again
   synthesizeKeyShortcut("Esc", toolbox.win);
-  yield wait(200);
+  await wait(200);
 
   // btn shouldn't have the checked class set
   ok(!btn.classList.contains("checked"), "The checked class must not be set");

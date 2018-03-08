@@ -69,7 +69,7 @@ async function testJSEnabledIframe() {
   });
 }
 
-function* toggleJS(toolbox) {
+async function toggleJS(toolbox) {
   let panel = toolbox.getCurrentPanel();
   let cbx = panel.panelDoc.getElementById("devtools-disable-javascript");
 
@@ -81,7 +81,7 @@ function* toggleJS(toolbox) {
 
   let browserLoaded = BrowserTestUtils.browserLoaded(gBrowser.selectedBrowser);
   cbx.click();
-  yield browserLoaded;
+  await browserLoaded;
 }
 
 async function testJSDisabled() {

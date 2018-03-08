@@ -31,12 +31,12 @@ function performChecks(target) {
 }
 
 function test() {
-  Task.spawn(function* () {
+  Task.spawn(async function() {
     toggleAllTools(true);
-    let tab = yield addTab("about:blank");
+    let tab = await addTab("about:blank");
     let target = TargetFactory.forTab(tab);
-    yield target.makeRemote();
-    yield performChecks(target);
+    await target.makeRemote();
+    await performChecks(target);
     gBrowser.removeCurrentTab();
     toggleAllTools(false);
     finish();

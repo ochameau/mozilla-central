@@ -42,8 +42,8 @@ function testBottomHost() {
   checkToolboxLoaded(iframe);
 }
 
-function* testSidebarHost() {
-  yield toolbox.switchHost(SIDE);
+async function testSidebarHost() {
+  await toolbox.switchHost(SIDE);
   checkHostType(toolbox, SIDE);
 
   // test UI presence
@@ -57,8 +57,8 @@ function* testSidebarHost() {
   checkToolboxLoaded(iframe);
 }
 
-function* testWindowHost() {
-  yield toolbox.switchHost(WINDOW);
+async function testWindowHost() {
+  await toolbox.switchHost(WINDOW);
   checkHostType(toolbox, WINDOW);
 
   let nbox = gBrowser.getNotificationBox();
@@ -72,15 +72,15 @@ function* testWindowHost() {
   checkToolboxLoaded(iframe);
 }
 
-function* testToolSelect() {
+async function testToolSelect() {
   // make sure we can load a tool after switching hosts
-  yield toolbox.selectTool("inspector");
+  await toolbox.selectTool("inspector");
 }
 
-function* testDestroy() {
-  yield toolbox.destroy();
+async function testDestroy() {
+  await toolbox.destroy();
   target = TargetFactory.forTab(gBrowser.selectedTab);
-  toolbox = yield gDevTools.showToolbox(target);
+  toolbox = await gDevTools.showToolbox(target);
 }
 
 function testRememberHost() {
@@ -91,45 +91,45 @@ function testRememberHost() {
   ok(win, "toolbox separate window exists");
 }
 
-function* testPreviousHost() {
+async function testPreviousHost() {
   // last host was the window - make sure it's the same when re-opening
   is(toolbox.hostType, WINDOW, "host remembered");
 
   info("Switching to side");
-  yield toolbox.switchHost(SIDE);
+  await toolbox.switchHost(SIDE);
   checkHostType(toolbox, SIDE, WINDOW);
 
   info("Switching to bottom");
-  yield toolbox.switchHost(BOTTOM);
+  await toolbox.switchHost(BOTTOM);
   checkHostType(toolbox, BOTTOM, SIDE);
 
   info("Switching from bottom to side");
-  yield toolbox.switchToPreviousHost();
+  await toolbox.switchToPreviousHost();
   checkHostType(toolbox, SIDE, BOTTOM);
 
   info("Switching from side to bottom");
-  yield toolbox.switchToPreviousHost();
+  await toolbox.switchToPreviousHost();
   checkHostType(toolbox, BOTTOM, SIDE);
 
   info("Switching to window");
-  yield toolbox.switchHost(WINDOW);
+  await toolbox.switchHost(WINDOW);
   checkHostType(toolbox, WINDOW, BOTTOM);
 
   info("Switching from window to bottom");
-  yield toolbox.switchToPreviousHost();
+  await toolbox.switchToPreviousHost();
   checkHostType(toolbox, BOTTOM, WINDOW);
 
   info("Forcing the previous host to match the current (bottom)");
   Services.prefs.setCharPref("devtools.toolbox.previousHost", BOTTOM);
 
   info("Switching from bottom to side (since previous=current=bottom");
-  yield toolbox.switchToPreviousHost();
+  await toolbox.switchToPreviousHost();
   checkHostType(toolbox, SIDE, BOTTOM);
 
   info("Forcing the previous host to match the current (side)");
   Services.prefs.setCharPref("devtools.toolbox.previousHost", SIDE);
   info("Switching from side to bottom (since previous=current=side");
-  yield toolbox.switchToPreviousHost();
+  await toolbox.switchToPreviousHost();
   checkHostType(toolbox, BOTTOM, SIDE);
 }
 

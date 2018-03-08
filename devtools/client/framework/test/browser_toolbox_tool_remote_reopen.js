@@ -88,13 +88,13 @@ function getTarget(client) {
 }
 
 function test() {
-  Task.spawn(function* () {
+  Task.spawn(async function() {
     toggleAllTools(true);
-    yield addTab("about:blank");
+    await addTab("about:blank");
 
-    let client = yield getClient();
-    let target = yield getTarget(client);
-    yield runTools(target);
+    let client = await getClient();
+    let target = await getTarget(client);
+    await runTools(target);
 
     // Actor fronts should be destroyed now that the toolbox has closed, but
     // look for any that remain.

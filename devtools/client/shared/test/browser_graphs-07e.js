@@ -36,10 +36,10 @@ add_task(async function() {
   gBrowser.removeCurrentTab();
 });
 
-function* performTest() {
-  let [host,, doc] = yield createHost();
+async function performTest() {
+  let [host,, doc] = await createHost();
   let graph = new LineGraphWidget(doc.body, "fps");
-  yield graph.once("ready");
+  await graph.once("ready");
   graph.setData(TEST_DATA);
 
   info("Testing with normal zoom.");
@@ -53,7 +53,7 @@ function* performTest() {
   setZoom(host.frame, 2);
   testGraph(graph);
 
-  yield graph.destroy();
+  await graph.destroy();
   host.destroy();
 }
 

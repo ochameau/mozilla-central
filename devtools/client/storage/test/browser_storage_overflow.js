@@ -46,7 +46,7 @@ function checkCellValues(order) {
   });
 }
 
-function* scroll() {
+async function scroll() {
   let $ = id => gPanelWindow.document.querySelector(id);
   let table = $("#storage-table .table-widget-body");
   let cell = $("#name .table-widget-cell");
@@ -54,5 +54,5 @@ function* scroll() {
 
   let onStoresUpdate = gUI.once("store-objects-updated");
   table.scrollTop += cellHeight * 50;
-  yield onStoresUpdate;
+  await onStoresUpdate;
 }

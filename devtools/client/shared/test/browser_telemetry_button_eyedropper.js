@@ -22,11 +22,11 @@ add_task(async function() {
   gBrowser.removeCurrentTab();
 });
 
-function* testButton(toolbox, Telemetry) {
+async function testButton(toolbox, Telemetry) {
   info("Calling the eyedropper button's callback");
   // We call the button callback directly because we don't need to test the UI here, we're
   // only concerned about testing the telemetry probe.
-  yield toolbox.getPanel("inspector").showEyeDropper();
+  await toolbox.getPanel("inspector").showEyeDropper();
 
   checkTelemetryResults(Telemetry);
 }

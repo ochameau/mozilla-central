@@ -55,7 +55,7 @@ function adjustingBezierUpdatesPreset(widget, win, doc, rect) {
      "There is no active preset");
 }
 
-function* selectingPresetUpdatesBezier(widget, win, doc, rect) {
+async function selectingPresetUpdatesBezier(widget, win, doc, rect) {
   info("Checking that selecting a preset updates bezier curve");
 
   info("Listening for the new coordinates event");
@@ -66,10 +66,10 @@ function* selectingPresetUpdatesBezier(widget, win, doc, rect) {
   let preset = doc.querySelector("#ease-in-sine");
   widget.presets._onPresetClick({currentTarget: preset});
 
-  yield onNewCoordinates;
+  await onNewCoordinates;
   ok(true, "The preset widget fired the new-coordinates event");
 
-  let bezier = yield onUpdated;
+  let bezier = await onUpdated;
   ok(true, "The bezier canvas fired the updated event");
 
   is(bezier.P1[0], preset.coordinates[0], "The new P1 time coordinate is correct");

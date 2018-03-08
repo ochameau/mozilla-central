@@ -29,7 +29,7 @@ add_task(async function() {
   await runTests(doc);
 });
 
-function* runTests(doc) {
+async function runTests(doc) {
   let tooltip = new HTMLTooltip(doc, {useXulWrapper});
   info("Create tooltip content width to 150px");
   let tooltipContent = doc.createElementNS(HTML_NS, "div");
@@ -39,12 +39,12 @@ function* runTests(doc) {
   tooltip.setContent(tooltipContent, {width: "auto", height: 50});
 
   info("Show the tooltip and check the tooltip panel width.");
-  yield showTooltip(tooltip, doc.getElementById("box1"));
+  await showTooltip(tooltip, doc.getElementById("box1"));
 
   let panelRect = tooltip.panel.getBoundingClientRect();
   is(panelRect.width, 150, "Tooltip panel has the expected width.");
 
-  yield hideTooltip(tooltip);
+  await hideTooltip(tooltip);
 
   tooltip.destroy();
 }

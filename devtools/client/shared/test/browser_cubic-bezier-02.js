@@ -38,7 +38,7 @@ add_task(async function() {
   host.destroy();
 });
 
-function* pointsCanBeDragged(widget, win, doc, offsets) {
+async function pointsCanBeDragged(widget, win, doc, offsets) {
   info("Checking that the control points can be dragged with the mouse");
 
   info("Listening for the update event");
@@ -49,7 +49,7 @@ function* pointsCanBeDragged(widget, win, doc, offsets) {
   doc.onmousemove({pageX: offsets.left, pageY: offsets.graphTop});
   doc.onmouseup();
 
-  let bezier = yield onUpdated;
+  let bezier = await onUpdated;
   ok(true, "The widget fired the updated event");
   ok(bezier, "The updated event contains a bezier argument");
   is(bezier.P1[0], 0, "The new P1 time coordinate is correct");
@@ -63,12 +63,12 @@ function* pointsCanBeDragged(widget, win, doc, offsets) {
   doc.onmousemove({pageX: offsets.right, pageY: offsets.graphBottom});
   doc.onmouseup();
 
-  bezier = yield onUpdated;
+  bezier = await onUpdated;
   is(bezier.P2[0], 1, "The new P2 time coordinate is correct");
   is(bezier.P2[1], 0, "The new P2 progress coordinate is correct");
 }
 
-function* curveCanBeClicked(widget, win, doc, offsets) {
+async function curveCanBeClicked(widget, win, doc, offsets) {
   info("Checking that clicking on the curve moves the closest control point");
 
   info("Listening for the update event");
@@ -79,7 +79,7 @@ function* curveCanBeClicked(widget, win, doc, offsets) {
   let y = offsets.graphTop + (offsets.graphHeight / 4.0);
   widget._onCurveClick({pageX: x, pageY: y});
 
-  let bezier = yield onUpdated;
+  let bezier = await onUpdated;
   ok(true, "The widget fired the updated event");
   is(bezier.P1[0], 0.25, "The new P1 time coordinate is correct");
   is(bezier.P1[1], 0.75, "The new P1 progress coordinate is correct");
@@ -94,14 +94,14 @@ function* curveCanBeClicked(widget, win, doc, offsets) {
   y = offsets.graphBottom - (offsets.graphHeight / 4);
   widget._onCurveClick({pageX: x, pageY: y});
 
-  bezier = yield onUpdated;
+  bezier = await onUpdated;
   is(bezier.P2[0], 0.75, "The new P2 time coordinate is correct");
   is(bezier.P2[1], 0.25, "The new P2 progress coordinate is correct");
   is(bezier.P1[0], 0.25, "P1 time coordinate remained unchanged");
   is(bezier.P1[1], 0.75, "P1 progress coordinate remained unchanged");
 }
 
-function* pointsCanBeMovedWithKeyboard(widget, win, doc, offsets) {
+async function pointsCanBeMovedWithKeyboard(widget, win, doc, offsets) {
   info("Checking that points respond to keyboard events");
 
   let singleStep = 3;
@@ -114,7 +114,7 @@ function* pointsCanBeMovedWithKeyboard(widget, win, doc, offsets) {
 
   let onUpdated = widget.once("updated");
   widget._onPointKeyDown(getKeyEvent(widget.p1, 37));
-  let bezier = yield onUpdated;
+  let bezier = await onUpdated;
 
   is(bezier.P1[0], x, "The new P1 time coordinate is correct");
   is(bezier.P1[1], 0.75, "The new P1 progress coordinate is correct");
@@ -126,7 +126,7 @@ function* pointsCanBeMovedWithKeyboard(widget, win, doc, offsets) {
 
   onUpdated = widget.once("updated");
   widget._onPointKeyDown(getKeyEvent(widget.p1, 37, true));
-  bezier = yield onUpdated;
+  bezier = await onUpdated;
   is(bezier.P1[0], x, "The new P1 time coordinate is correct");
   is(bezier.P1[1], 0.75, "The new P1 progress coordinate is correct");
 
@@ -137,7 +137,7 @@ function* pointsCanBeMovedWithKeyboard(widget, win, doc, offsets) {
 
   onUpdated = widget.once("updated");
   widget._onPointKeyDown(getKeyEvent(widget.p1, 39, true));
-  bezier = yield onUpdated;
+  bezier = await onUpdated;
   is(bezier.P1[0], x, "The new P1 time coordinate is correct");
   is(bezier.P1[1], 0.75, "The new P1 progress coordinate is correct");
 
@@ -148,7 +148,7 @@ function* pointsCanBeMovedWithKeyboard(widget, win, doc, offsets) {
 
   onUpdated = widget.once("updated");
   widget._onPointKeyDown(getKeyEvent(widget.p1, 40));
-  bezier = yield onUpdated;
+  bezier = await onUpdated;
   is(bezier.P1[0], x, "The new P1 time coordinate is correct");
   is(bezier.P1[1], y, "The new P1 progress coordinate is correct");
 
@@ -159,7 +159,7 @@ function* pointsCanBeMovedWithKeyboard(widget, win, doc, offsets) {
 
   onUpdated = widget.once("updated");
   widget._onPointKeyDown(getKeyEvent(widget.p1, 40, true));
-  bezier = yield onUpdated;
+  bezier = await onUpdated;
   is(bezier.P1[0], x, "The new P1 time coordinate is correct");
   is(bezier.P1[1], y, "The new P1 progress coordinate is correct");
 
@@ -170,7 +170,7 @@ function* pointsCanBeMovedWithKeyboard(widget, win, doc, offsets) {
 
   onUpdated = widget.once("updated");
   widget._onPointKeyDown(getKeyEvent(widget.p1, 38, true));
-  bezier = yield onUpdated;
+  bezier = await onUpdated;
   is(bezier.P1[0], x, "The new P1 time coordinate is correct");
   is(bezier.P1[1], y, "The new P1 progress coordinate is correct");
 
@@ -182,7 +182,7 @@ function* pointsCanBeMovedWithKeyboard(widget, win, doc, offsets) {
 
   onUpdated = widget.once("updated");
   widget._onPointKeyDown(getKeyEvent(widget.p2, 37));
-  bezier = yield onUpdated;
+  bezier = await onUpdated;
   is(bezier.P2[0], x, "The new P2 time coordinate is correct");
   is(bezier.P2[1], 0.25, "The new P2 progress coordinate is correct");
 }

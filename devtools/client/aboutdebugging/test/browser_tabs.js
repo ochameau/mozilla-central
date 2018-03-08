@@ -69,8 +69,8 @@ function getTabContainer(name, document) {
   return null;
 }
 
-function* waitUntilTabContainer(name, document) {
-  yield waitUntil(() => {
+async function waitUntilTabContainer(name, document) {
+  await waitUntil(() => {
     return getTabContainer(name, document);
   });
   return getTabContainer(name, document);

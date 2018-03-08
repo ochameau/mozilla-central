@@ -32,14 +32,14 @@ add_task(async function() {
   getHostHistogram().clear();
 });
 
-function* changeToolboxHost(toolbox) {
+async function changeToolboxHost(toolbox) {
   info("Switch toolbox host");
-  yield toolbox.switchHost(SIDE);
-  yield toolbox.switchHost(WINDOW);
-  yield toolbox.switchHost(BOTTOM);
-  yield toolbox.switchHost(SIDE);
-  yield toolbox.switchHost(WINDOW);
-  yield toolbox.switchHost(BOTTOM);
+  await toolbox.switchHost(SIDE);
+  await toolbox.switchHost(WINDOW);
+  await toolbox.switchHost(BOTTOM);
+  await toolbox.switchHost(SIDE);
+  await toolbox.switchHost(WINDOW);
+  await toolbox.switchHost(BOTTOM);
 }
 
 function checkResults() {

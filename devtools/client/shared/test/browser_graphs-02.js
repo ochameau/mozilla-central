@@ -36,15 +36,15 @@ add_task(async function() {
   gBrowser.removeCurrentTab();
 });
 
-function* performTest() {
-  let [host,, doc] = yield createHost();
+async function performTest() {
+  let [host,, doc] = await createHost();
   let graph = new LineGraphWidget(doc.body, "fps");
-  yield graph.once("ready");
+  await graph.once("ready");
 
   testDataAndRegions(graph);
   testHighlights(graph);
 
-  yield graph.destroy();
+  await graph.destroy();
   host.destroy();
 }
 

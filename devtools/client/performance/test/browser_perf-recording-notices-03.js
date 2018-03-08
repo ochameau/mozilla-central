@@ -51,8 +51,8 @@ add_task(async function() {
   // Start a manual recording.
   await startRecording(panel);
 
-  await waitUntil(function* () {
-    [, gPercent] = yield once(PerformanceView,
+  await waitUntil(async function() {
+    [, gPercent] = await once(PerformanceView,
                               EVENTS.UI_RECORDING_PROFILER_STATUS_RENDERED,
                               { spreadArgs: true });
     return gPercent > 0;
@@ -70,8 +70,8 @@ add_task(async function() {
   // Start a console profile.
   await console.profile("rust");
 
-  await waitUntil(function* () {
-    [, gPercent] = yield once(PerformanceView,
+  await waitUntil(async function() {
+    [, gPercent] = await once(PerformanceView,
                               EVENTS.UI_RECORDING_PROFILER_STATUS_RENDERED,
                               { spreadArgs: true });
     return gPercent > Math.floor(bufferUsage * 100);
@@ -91,8 +91,8 @@ add_task(async function() {
   setSelectedRecording(panel, 1);
   await selected;
 
-  await waitUntil(function* () {
-    [, gPercent] = yield once(PerformanceView,
+  await waitUntil(async function() {
+    [, gPercent] = await once(PerformanceView,
                               EVENTS.UI_RECORDING_PROFILER_STATUS_RENDERED,
                               { spreadArgs: true });
     return gPercent > 0;
@@ -112,8 +112,8 @@ add_task(async function() {
   setSelectedRecording(panel, 0);
   await selected;
 
-  await waitUntil(function* () {
-    [, gPercent] = yield once(PerformanceView,
+  await waitUntil(async function() {
+    [, gPercent] = await once(PerformanceView,
                               EVENTS.UI_RECORDING_PROFILER_STATUS_RENDERED,
                               { spreadArgs: true });
     return gPercent > Math.floor(bufferUsage * 100);

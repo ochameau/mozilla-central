@@ -6,22 +6,22 @@
  * target navigates.
  */
 
-function* ifWebGLSupported() {
-  let { target, front } = yield initBackend(SIMPLE_CANVAS_URL);
+async function ifWebGLSupported() {
+  let { target, front } = await initBackend(SIMPLE_CANVAS_URL);
 
   front.setup({ reload: true });
-  yield testHighlighting((yield once(front, "program-linked")));
+  await testHighlighting((await once(front, "program-linked")));
   ok(true, "Canvas was correctly instrumented on the first navigation.");
 
   reload(target);
-  yield testHighlighting((yield once(front, "program-linked")));
+  await testHighlighting((await once(front, "program-linked")));
   ok(true, "Canvas was correctly instrumented on the second navigation.");
 
   reload(target);
-  yield testHighlighting((yield once(front, "program-linked")));
+  await testHighlighting((await once(front, "program-linked")));
   ok(true, "Canvas was correctly instrumented on the third navigation.");
 
-  yield removeTab(target.tab);
+  await removeTab(target.tab);
   finish();
 
   function testHighlighting(programActor) {

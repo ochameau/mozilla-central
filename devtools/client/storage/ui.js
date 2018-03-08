@@ -913,7 +913,7 @@ StorageUI.prototype = {
    * @param {string} [subType]
    *        The sub type under the given type.
    */
-  resetColumns: function* (type, host, subtype) {
+  resetColumns: async function(type, host, subtype) {
     this.table.host = host;
     this.table.datatype = type;
 
@@ -922,7 +922,7 @@ StorageUI.prototype = {
     let editableFields = [];
     let hiddenFields = [];
     let privateFields = [];
-    let fields = yield this.getCurrentFront().getFields(subtype);
+    let fields = await this.getCurrentFront().getFields(subtype);
 
     fields.forEach(f => {
       if (!uniqueKey) {
@@ -962,7 +962,7 @@ StorageUI.prototype = {
     this.table.setColumns(columns, null, hiddenFields, privateFields);
     this.hideSidebar();
 
-    yield this.makeFieldsEditable(editableFields);
+    await this.makeFieldsEditable(editableFields);
   },
 
   /**

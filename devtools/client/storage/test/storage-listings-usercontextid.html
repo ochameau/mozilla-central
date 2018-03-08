@@ -108,20 +108,20 @@ let cacheGenerator = async function() {
   await fetchPut(cache, "browser_storage_basic.js");
 };
 
-window.setup = function*() {
-  yield idbGenerator();
+window.setup = async function() {
+  await idbGenerator();
 
   if (window.caches) {
-    yield cacheGenerator();
+    await cacheGenerator();
   }
 };
 
-window.clear = function*() {
-  yield deleteDB("idb1uc1");
-  yield deleteDB("idb2uc1");
+window.clear = async function() {
+  await deleteDB("idb1uc1");
+  await deleteDB("idb2uc1");
 
   if (window.caches) {
-    yield caches.delete("plopuc1");
+    await caches.delete("plopuc1");
   }
 
   dump("removed indexedDB and cache data from " + document.location + "\n");

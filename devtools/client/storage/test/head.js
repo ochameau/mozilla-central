@@ -120,12 +120,12 @@ async function openTab(url, options = {}) {
  *
  * @return {Promise} A promise that resolves after storage inspector is ready
  */
-function* openTabAndSetupStorage(url, options = {}) {
+async function openTabAndSetupStorage(url, options = {}) {
   // open tab
-  yield openTab(url, options);
+  await openTab(url, options);
 
   // open storage inspector
-  return yield openStoragePanel();
+  return await openStoragePanel();
 }
 
 /**
@@ -511,7 +511,7 @@ function matchVariablesViewProperty(prop, rule) {
  * @param {[String]} ids
  *        The array id of the item in the tree
  */
-function* selectTreeItem(ids) {
+async function selectTreeItem(ids) {
   /* If this item is already selected, return */
   if (gUI.tree.isSelected(ids)) {
     return;
@@ -519,7 +519,7 @@ function* selectTreeItem(ids) {
 
   let updated = gUI.once("store-objects-updated");
   gUI.tree.selectedItem = ids;
-  yield updated;
+  await updated;
 }
 
 /**
@@ -528,7 +528,7 @@ function* selectTreeItem(ids) {
  * @param {String} id
  *        The id of the row in the table widget
  */
-function* selectTableItem(id) {
+async function selectTableItem(id) {
   let table = gUI.table;
   let selector = ".table-widget-column#" + table.uniqueId +
                  " .table-widget-cell[value='" + id + "']";
@@ -542,8 +542,8 @@ function* selectTableItem(id) {
 
   let updated = gUI.once("sidebar-updated");
 
-  yield click(target);
-  yield updated;
+  await click(target);
+  await updated;
 }
 
 /**
@@ -703,13 +703,13 @@ function getCellValue(id, column) {
  * @yield {String}
  *        The uniqueId of the changed row.
  */
-function* editCell(id, column, newValue, validate = true) {
+async function editCell(id, column, newValue, validate = true) {
   let row = getRowCells(id, true);
   let editableFieldsEngine = gUI.table._editableFieldsEngine;
 
   editableFieldsEngine.edit(row[column]);
 
-  yield typeWithTerminator(newValue, "KEY_Enter", validate);
+  await typeWithTerminator(newValue, "KEY_Enter", validate);
 }
 
 /**
@@ -812,7 +812,7 @@ function showAllColumns(state) {
  * @param  {Boolean} validate
  *         Validate result? Default true.
  */
-function* typeWithTerminator(str, terminator, validate = true) {
+async function typeWithTerminator(str, terminator, validate = true) {
   let editableFieldsEngine = gUI.table._editableFieldsEngine;
   let textbox = editableFieldsEngine.textbox;
   let colName = textbox.closest(".table-widget-column").id;
@@ -831,13 +831,13 @@ function* typeWithTerminator(str, terminator, validate = true) {
 
   if (validate) {
     info("Validating results... waiting for ROW_EDIT event.");
-    let uniqueId = yield gUI.table.once(TableWidget.EVENTS.ROW_EDIT);
+    let uniqueId = await gUI.table.once(TableWidget.EVENTS.ROW_EDIT);
 
     checkCell(uniqueId, colName, str);
     return uniqueId;
   }
 
-  return yield gUI.table.once(TableWidget.EVENTS.ROW_EDIT);
+  return await gUI.table.once(TableWidget.EVENTS.ROW_EDIT);
 }
 
 function getCurrentEditorValue() {
@@ -872,11 +872,11 @@ function PressKeyXTimes(key, x, modifiers = {}) {
  *        "example.com" host in cookies and then verify there are "c1" and "c2"
  *        cookies (and no other ones).
  */
-function* checkState(state) {
+async function checkState(state) {
   for (let [store, names] of state) {
     let storeName = store.join(" > ");
     info(`Selecting tree item ${storeName}`);
-    yield selectTreeItem(store);
+    await selectTreeItem(store);
 
     let items = gUI.table.items;
 
@@ -962,12 +962,12 @@ function sidebarToggleVisible() {
  *         An array containing the path to the store to which we wish to add an
  *         item.
  */
-function* performAdd(store) {
+async function performAdd(store) {
   let storeName = store.join(" > ");
   let toolbar = gPanelWindow.document.getElementById("storage-toolbar");
   let type = store[0];
 
-  yield selectTreeItem(store);
+  await selectTreeItem(store);
 
   let menuAdd = toolbar.querySelector(
     "#add-button");
@@ -983,8 +983,8 @@ function* performAdd(store) {
 
   menuAdd.click();
 
-  let rowId = yield eventEdit;
-  yield eventWait;
+  let rowId = await eventEdit;
+  await eventWait;
 
   let key = type === "cookies" ? "uniqueKey" : "name";
   let value = getCellValue(rowId, key);

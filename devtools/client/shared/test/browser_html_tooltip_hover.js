@@ -29,12 +29,12 @@ add_task(async function() {
   tooltip.startTogglingOnHover(container, () => true);
 
   info("Hover on each of the 4 boxes, expect the tooltip to appear");
-  function* showAndCheck(boxId, position) {
+  async function showAndCheck(boxId, position) {
     info(`Show tooltip on ${boxId}`);
     let box = doc.getElementById(boxId);
     let shown = tooltip.once("shown");
     EventUtils.synthesizeMouseAtCenter(box, { type: "mousemove" }, doc.defaultView);
-    yield shown;
+    await shown;
     checkTooltipGeometry(tooltip, box, {position, width, height});
   }
 

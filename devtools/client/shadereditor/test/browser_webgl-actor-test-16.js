@@ -6,8 +6,8 @@
  * removed from the bfcache.
  */
 
-function* ifWebGLSupported() {
-  let { target, front } = yield initBackend(SIMPLE_CANVAS_URL);
+async function ifWebGLSupported() {
+  let { target, front } = await initBackend(SIMPLE_CANVAS_URL);
   front.setup({ reload: false });
 
   // Attach frame scripts if in e10s to perform
@@ -17,22 +17,22 @@ function* ifWebGLSupported() {
   // 0. Perform the initial reload.
 
   reload(target);
-  let firstProgram = yield once(front, "program-linked");
-  let programs = yield front.getPrograms();
+  let firstProgram = await once(front, "program-linked");
+  let programs = await front.getPrograms();
   is(programs.length, 1,
     "The first program should be returned by a call to getPrograms().");
   is(programs[0], firstProgram,
     "The first programs was correctly retrieved from the cache.");
 
-  let allPrograms = yield front._getAllPrograms();
+  let allPrograms = await front._getAllPrograms();
   is(allPrograms.length, 1,
     "Should be only one program in cache.");
 
   // 1. Perform a simple navigation.
 
   navigate(target, MULTIPLE_CONTEXTS_URL);
-  let [secondProgram, thirdProgram] = yield getPrograms(front, 2);
-  programs = yield front.getPrograms();
+  let [secondProgram, thirdProgram] = await getPrograms(front, 2);
+  programs = await front.getPrograms();
   is(programs.length, 2,
     "The second and third programs should be returned by a call to getPrograms().");
   is(programs[0], secondProgram,
@@ -40,33 +40,33 @@ function* ifWebGLSupported() {
   is(programs[1], thirdProgram,
     "The third programs was correctly retrieved from the cache.");
 
-  allPrograms = yield front._getAllPrograms();
+  allPrograms = await front._getAllPrograms();
   is(allPrograms.length, 3,
     "Should be three programs in cache.");
 
   // 2. Perform a bfcache navigation.
 
-  yield navigateInHistory(target, "back");
+  await navigateInHistory(target, "back");
   let globalDestroyed = once(front, "global-created");
   let globalCreated = once(front, "global-destroyed");
   let programsLinked = once(front, "program-linked");
   reload(target);
 
-  yield promise.all([programsLinked, globalDestroyed, globalCreated]);
-  allPrograms = yield front._getAllPrograms();
+  await promise.all([programsLinked, globalDestroyed, globalCreated]);
+  allPrograms = await front._getAllPrograms();
   is(allPrograms.length, 3,
     "Should be 3 programs total in cache.");
 
-  programs = yield front.getPrograms();
+  programs = await front.getPrograms();
   is(programs.length, 1,
     "There should be 1 cached program actor now.");
 
-  yield checkHighlightingInTheFirstPage(programs[0]);
+  await checkHighlightingInTheFirstPage(programs[0]);
   ok(true, "The cached programs behave correctly after navigating back and reloading.");
 
   // 3. Perform a bfcache navigation and a page reload.
 
-  yield navigateInHistory(target, "forward");
+  await navigateInHistory(target, "forward");
 
   globalDestroyed = once(front, "global-created");
   globalCreated = once(front, "global-destroyed");
@@ -74,19 +74,19 @@ function* ifWebGLSupported() {
 
   reload(target);
 
-  yield promise.all([programsLinked, globalDestroyed, globalCreated]);
-  allPrograms = yield front._getAllPrograms();
+  await promise.all([programsLinked, globalDestroyed, globalCreated]);
+  allPrograms = await front._getAllPrograms();
   is(allPrograms.length, 3,
     "Should be 3 programs total in cache.");
 
-  programs = yield front.getPrograms();
+  programs = await front.getPrograms();
   is(programs.length, 2,
     "There should be 2 cached program actors now.");
 
-  yield checkHighlightingInTheSecondPage(programs[0], programs[1]);
+  await checkHighlightingInTheSecondPage(programs[0], programs[1]);
   ok(true, "The cached programs behave correctly after navigating forward and reloading.");
 
-  yield removeTab(target.tab);
+  await removeTab(target.tab);
   finish();
 
   function checkHighlightingInTheFirstPage(programActor) {

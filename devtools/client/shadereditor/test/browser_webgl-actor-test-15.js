@@ -5,8 +5,8 @@
  * Tests if program actors are cached when navigating in the bfcache.
  */
 
-function* ifWebGLSupported() {
-  let { target, front } = yield initBackend(SIMPLE_CANVAS_URL);
+async function ifWebGLSupported() {
+  let { target, front } = await initBackend(SIMPLE_CANVAS_URL);
   front.setup({ reload: false });
 
   // Attach frame scripts if in e10s to perform
@@ -14,42 +14,42 @@ function* ifWebGLSupported() {
   loadFrameScripts();
 
   reload(target);
-  let firstProgram = yield once(front, "program-linked");
-  yield checkFirstCachedPrograms(firstProgram);
-  yield checkHighlightingInTheFirstPage(firstProgram);
+  let firstProgram = await once(front, "program-linked");
+  await checkFirstCachedPrograms(firstProgram);
+  await checkHighlightingInTheFirstPage(firstProgram);
   ok(true, "The cached programs behave correctly before the navigation.");
 
   navigate(target, MULTIPLE_CONTEXTS_URL);
-  let [secondProgram, thirdProgram] = yield getPrograms(front, 2);
-  yield checkSecondCachedPrograms(firstProgram, [secondProgram, thirdProgram]);
-  yield checkHighlightingInTheSecondPage(secondProgram, thirdProgram);
+  let [secondProgram, thirdProgram] = await getPrograms(front, 2);
+  await checkSecondCachedPrograms(firstProgram, [secondProgram, thirdProgram]);
+  await checkHighlightingInTheSecondPage(secondProgram, thirdProgram);
   ok(true, "The cached programs behave correctly after the navigation.");
 
   once(front, "program-linked").then(() => {
     ok(false, "Shouldn't have received any more program-linked notifications.");
   });
 
-  yield navigateInHistory(target, "back");
-  yield checkFirstCachedPrograms(firstProgram);
-  yield checkHighlightingInTheFirstPage(firstProgram);
+  await navigateInHistory(target, "back");
+  await checkFirstCachedPrograms(firstProgram);
+  await checkHighlightingInTheFirstPage(firstProgram);
   ok(true, "The cached programs behave correctly after navigating back.");
 
-  yield navigateInHistory(target, "forward");
-  yield checkSecondCachedPrograms(firstProgram, [secondProgram, thirdProgram]);
-  yield checkHighlightingInTheSecondPage(secondProgram, thirdProgram);
+  await navigateInHistory(target, "forward");
+  await checkSecondCachedPrograms(firstProgram, [secondProgram, thirdProgram]);
+  await checkHighlightingInTheSecondPage(secondProgram, thirdProgram);
   ok(true, "The cached programs behave correctly after navigating forward.");
 
-  yield navigateInHistory(target, "back");
-  yield checkFirstCachedPrograms(firstProgram);
-  yield checkHighlightingInTheFirstPage(firstProgram);
+  await navigateInHistory(target, "back");
+  await checkFirstCachedPrograms(firstProgram);
+  await checkHighlightingInTheFirstPage(firstProgram);
   ok(true, "The cached programs behave correctly after navigating back again.");
 
-  yield navigateInHistory(target, "forward");
-  yield checkSecondCachedPrograms(firstProgram, [secondProgram, thirdProgram]);
-  yield checkHighlightingInTheSecondPage(secondProgram, thirdProgram);
+  await navigateInHistory(target, "forward");
+  await checkSecondCachedPrograms(firstProgram, [secondProgram, thirdProgram]);
+  await checkHighlightingInTheSecondPage(secondProgram, thirdProgram);
   ok(true, "The cached programs behave correctly after navigating forward again.");
 
-  yield removeTab(target.tab);
+  await removeTab(target.tab);
   finish();
 
   function checkFirstCachedPrograms(programActor) {

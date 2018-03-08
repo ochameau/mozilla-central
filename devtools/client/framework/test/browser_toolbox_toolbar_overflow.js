@@ -73,7 +73,7 @@ add_task(async function() {
   hostWindow.resizeTo(originalWidth, originalHeight);
 });
 
-function* openAllToolsMenu(toolbox) {
+async function openAllToolsMenu(toolbox) {
   let allToolsButton = toolbox.doc.querySelector(".all-tools-menu");
   EventUtils.synthesizeMouseAtCenter(allToolsButton, {}, toolbox.win);
 
@@ -81,7 +81,7 @@ function* openAllToolsMenu(toolbox) {
   ok(menuPopup, "all-tools-menupopup is available");
 
   info("Waiting for the menu popup to be displayed");
-  yield waitUntil(() => menuPopup && menuPopup.state === "open");
+  await waitUntil(() => menuPopup && menuPopup.state === "open");
 
   return menuPopup;
 }

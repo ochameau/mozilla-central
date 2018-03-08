@@ -49,10 +49,10 @@ add_task(async function() {
    * Assert that selecting the given toolId raises a select event
    * @param {toolId} Id of the tool to test
    */
-  function* testSelectEvent(toolId) {
+  async function testSelectEvent(toolId) {
     let onSelect = toolbox.once("select");
     toolbox.selectTool(toolId);
-    let id = yield onSelect;
+    let id = await onSelect;
     is(id, toolId, toolId + " selected");
   }
 
@@ -61,18 +61,18 @@ add_task(async function() {
    * selected event
    * @param {toolId} Id of the tool to test
    */
-  function* testToolSelectEvent(toolId) {
+  async function testToolSelectEvent(toolId) {
     let onSelected = toolbox.once(toolId + "-selected");
     toolbox.selectTool(toolId);
-    yield onSelected;
+    await onSelected;
     is(toolbox.currentToolId, toolId, toolId + " tool selected");
   }
 
   /**
    * Assert that two calls to selectTool won't race
    */
-  function* testSelectToolRace() {
-    let toolbox = yield openToolboxForTab(tab, "webconsole");
+  async function testSelectToolRace() {
+    let toolbox = await openToolboxForTab(tab, "webconsole");
     let selected = false;
     let onSelect = (event, id) => {
       if (selected) {
@@ -92,10 +92,10 @@ add_task(async function() {
     };
     p1.then(checkSelectToolResolution);
     p2.then(checkSelectToolResolution);
-    yield p1;
-    yield p2;
+    await p1;
+    await p2;
 
-    yield toolbox.destroy();
+    await toolbox.destroy();
   }
 });
 

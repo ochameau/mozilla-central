@@ -19,10 +19,10 @@ const expectedText = `
   }
   `;
 
-function* closeAndReopenToolbox() {
+async function closeAndReopenToolbox() {
   let target = TargetFactory.forTab(gBrowser.selectedTab);
-  yield gDevTools.closeToolbox(target);
-  let { ui: newui } = yield openStyleEditor();
+  await gDevTools.closeToolbox(target);
+  let { ui: newui } = await openStyleEditor();
   return newui;
 }
 

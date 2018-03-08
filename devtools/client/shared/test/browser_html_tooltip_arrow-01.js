@@ -33,7 +33,7 @@ add_task(async function() {
   await runTests(doc);
 });
 
-function* runTests(doc) {
+async function runTests(doc) {
   info("Create HTML tooltip");
   let tooltip = new HTMLTooltip(doc, {type: "arrow", useXulWrapper});
   let div = doc.createElementNS(HTML_NS, "div");
@@ -45,7 +45,7 @@ function* runTests(doc) {
   let elements = [...doc.querySelectorAll(".anchor")];
   for (let el of elements) {
     info("Display the tooltip on an anchor.");
-    yield showTooltip(tooltip, el);
+    await showTooltip(tooltip, el);
 
     let arrow = tooltip.arrow;
     ok(arrow, "Tooltip has an arrow");
@@ -67,7 +67,7 @@ function* runTests(doc) {
     ok(isInPanel,
       "The tooltip arrow remains inside the tooltip panel horizontally");
 
-    yield hideTooltip(tooltip);
+    await hideTooltip(tooltip);
   }
 
   tooltip.destroy();

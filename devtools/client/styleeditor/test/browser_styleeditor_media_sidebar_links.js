@@ -51,7 +51,7 @@ function testNumberOfLinks(editor) {
        "There should be 2 responsive mode links in the media rule");
 }
 
-function* testMediaLink(editor, tab, ui, itemIndex, type, value) {
+async function testMediaLink(editor, tab, ui, itemIndex, type, value) {
   let sidebar = editor.details.querySelector(".stylesheet-sidebar");
   let conditions = sidebar.querySelectorAll(".media-rule-condition");
 
@@ -65,8 +65,8 @@ function* testMediaLink(editor, tab, ui, itemIndex, type, value) {
   rdmUI.transitionsEnabled = false;
 
   info("Waiting for the @media list to update");
-  yield onMediaChange;
-  yield onContentResize;
+  await onMediaChange;
+  await onContentResize;
 
   ok(ResponsiveUIManager.isActiveForTab(tab),
     "Responsive mode should be active.");
@@ -74,16 +74,16 @@ function* testMediaLink(editor, tab, ui, itemIndex, type, value) {
   ok(!conditions[itemIndex].classList.contains("media-condition-unmatched"),
      "media rule should now be matched after responsive mode is active");
 
-  let dimension = (yield getSizing(rdmUI))[type];
+  let dimension = (await getSizing(rdmUI))[type];
   is(dimension, value, `${type} should be properly set.`);
 }
 
-function* closeRDM(tab, ui) {
+async function closeRDM(tab, ui) {
   info("Closing responsive mode");
   ResponsiveUIManager.toggle(window, tab);
   let onMediaChange = waitForNEvents(ui, "media-list-changed", 2);
-  yield once(ResponsiveUIManager, "off");
-  yield onMediaChange;
+  await once(ResponsiveUIManager, "off");
+  await onMediaChange;
   ok(!ResponsiveUIManager.isActiveForTab(tab),
      "Responsive mode should no longer be active.");
 }

@@ -159,7 +159,7 @@ var testKeyboardInteraction = async function() {
   await testRow("id9", "UP", "last row");
 };
 
-function* testRow(id, key, destination) {
+async function testRow(id, key, destination) {
   let node = getNodeByValue(id);
   // node should not have selected class
   ok(!node.classList.contains("theme-selected"),
@@ -169,7 +169,7 @@ function* testRow(id, key, destination) {
   let event = table.once(TableWidget.EVENTS.ROW_SELECTED);
   EventUtils.sendKey(key, doc.defaultView);
 
-  let uniqueId = yield event;
+  let uniqueId = await event;
   is(id, uniqueId, `Correct row was selected after pressing ${key}`);
 
   ok(node.classList.contains("theme-selected"), "row has selected class");

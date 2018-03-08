@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html>
 <!--
 Storage inspector front end - tests
@@ -111,20 +111,20 @@ let cacheGenerator = async function() {
   await fetchPut(cache, "browser_storage_basic.js");
 };
 
-window.setup = function*() {
-  yield idbGenerator();
+window.setup = async function() {
+  await idbGenerator();
 
   if (window.caches) {
-    yield cacheGenerator();
+    await cacheGenerator();
   }
 };
 
-window.clear = function*() {
-  yield deleteDB("idb1");
-  yield deleteDB("idb2");
+window.clear = async function() {
+  await deleteDB("idb1");
+  await deleteDB("idb2");
 
   if (window.caches) {
-    yield caches.delete("plop");
+    await caches.delete("plop");
   }
 
   dump("removed indexedDB and cache data from " + document.location + "\n");

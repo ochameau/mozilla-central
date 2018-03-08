@@ -49,11 +49,11 @@ add_task(async function() {
   Services.prefs.clearUserPref(PREF);
 });
 
-function* testEditor(editor, expectedName, expectedText) {
+async function testEditor(editor, expectedName, expectedText) {
   let name = getStylesheetNameFor(editor);
   is(expectedName, name, name + " editor name is correct");
 
-  yield openEditor(editor);
+  await openEditor(editor);
   let text = editor.sourceEditor.getText();
   is(text, expectedText, name + " editor contains expected text");
 }

@@ -36,12 +36,12 @@ add_task(async function() {
  * @param {MouseEvent.button} button
  *        The button to click the link with.
  */
-function* clickOnStyleSheetLink(editor, button) {
+async function clickOnStyleSheetLink(editor, button) {
   let window = editor._window;
   let link = editor.summary.querySelector(".stylesheet-name");
 
   info("Waiting for focus.");
-  yield SimpleTest.promiseFocus(window);
+  await SimpleTest.promiseFocus(window);
 
   info("Pressing button " + button + " on style sheet name link.");
   EventUtils.synthesizeMouseAtCenter(link, { button }, window);

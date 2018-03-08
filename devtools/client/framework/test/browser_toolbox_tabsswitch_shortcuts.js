@@ -53,13 +53,13 @@ add_task(async function() {
   gBrowser.removeCurrentTab();
 });
 
-function* testShortcuts(toolbox, index, shortcut, toolIDs) {
+async function testShortcuts(toolbox, index, shortcut, toolIDs) {
   info("Testing shortcut to switch to tool " + index + ":" + toolIDs[index] +
        " using shortcut " + shortcut);
 
   let onToolSelected = toolbox.once("select");
   synthesizeKeyShortcut(shortcut);
-  let id = yield onToolSelected;
+  let id = await onToolSelected;
 
   info("toolbox-select event from " + id);
 

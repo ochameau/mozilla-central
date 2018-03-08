@@ -34,8 +34,8 @@ add_task(async function() {
   await cleanup();
 });
 
-function* testIsSplitConsoleFocused() {
-  yield gToolbox.openSplitConsole();
+async function testIsSplitConsoleFocused() {
+  await gToolbox.openSplitConsole();
   // The newly opened split console should have focus
   ok(gToolbox.isSplitConsoleFocused(), "Split console is focused");
   panelWin.focus();
@@ -76,8 +76,8 @@ function testUseKeyWithSplitConsoleWrongTool() {
   ok(!commandCalled, "Shortcut key shouldn't trigger the command");
 }
 
-function* cleanup() {
-  yield gToolbox.destroy();
+async function cleanup() {
+  await gToolbox.destroy();
   gBrowser.removeCurrentTab();
   gToolbox = panelWin = null;
 }

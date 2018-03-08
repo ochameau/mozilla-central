@@ -26,7 +26,7 @@ function runTests() {
 
   let tests = [{
     method: "run",
-    prepare: function* () {
+    prepare: async function() {
       sp.setContentContext();
 
       is(sp.executionContext, gScratchpadWindow.SCRATCHPAD_CONTEXT_CONTENT,
@@ -43,7 +43,7 @@ function runTests() {
 
       sp.editor.setText("window.foobarBug636725 = 'aloha';");
 
-      let pageResult = yield inContent(function() {
+      let pageResult = await inContent(function() {
         return content.wrappedJSObject.foobarBug636725;
       });
       ok(!pageResult, "no content.foobarBug636725");

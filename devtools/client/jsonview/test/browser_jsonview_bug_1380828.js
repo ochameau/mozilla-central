@@ -21,12 +21,12 @@ add_task(async function() {
   is(count, 1, "There must be pretty-print button for valid json");
 });
 
-function* testPrettyPrintButton(url) {
-  yield addJsonViewTab(url);
+async function testPrettyPrintButton(url) {
+  await addJsonViewTab(url);
 
-  yield selectJsonViewContentTab("rawdata");
+  await selectJsonViewContentTab("rawdata");
   info("Switched to Raw Data tab.");
 
-  let count = yield getElementCount(prettyPrintButtonClass);
+  let count = await getElementCount(prettyPrintButtonClass);
   return count;
 }

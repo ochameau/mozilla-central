@@ -48,13 +48,13 @@ add_task(async function() {
   gBrowser.removeCurrentTab();
 });
 
-function* testButton(toolbox, Telemetry) {
+async function testButton(toolbox, Telemetry) {
   info("Testing command-button-responsive");
 
   let button = toolbox.doc.querySelector("#command-button-responsive");
   ok(button, "Captain, we have the button");
 
-  yield delayedClicks(button, 4);
+  await delayedClicks(button, 4);
 
   checkResults("_RESPONSIVE_", Telemetry);
 }

@@ -60,10 +60,10 @@ add_task(async function() {
   await cleanup(toolbox);
 });
 
-function* cleanup(toolbox) {
+async function cleanup(toolbox) {
   Services.prefs.clearUserPref("devtools.toolbox.host");
   Services.prefs.clearUserPref("devtools.toolbox.footer.height");
   Services.prefs.clearUserPref("devtools.toolbox.sidebar.width");
-  yield toolbox.destroy();
+  await toolbox.destroy();
   gBrowser.removeCurrentTab();
 }

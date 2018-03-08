@@ -15,15 +15,15 @@ function test() {
     .then(finish, console.error);
 }
 
-function* runTests([win, sp]) {
+async function runTests([win, sp]) {
   // Inspect a number.
-  yield checkResults(sp, 7);
+  await checkResults(sp, 7);
 
   // Inspect a string.
-  yield checkResults(sp, "foobar", true);
+  await checkResults(sp, "foobar", true);
 
   // Inspect a boolean.
-  yield checkResults(sp, true);
+  await checkResults(sp, true);
 }
 
 // Helper function that does the actual testing.

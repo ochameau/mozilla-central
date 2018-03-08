@@ -90,7 +90,7 @@ async function spawnTest() {
   await teardown(panel);
   finish();
 
-  function* injectAndRenderProfilerData() {
+  async function injectAndRenderProfilerData() {
     // Get current recording and inject our mock data
     info("Injecting mock profile data");
     let recording = PerformanceController.getCurrentRecording();
@@ -99,15 +99,15 @@ async function spawnTest() {
     // Force a rerender
     let rendered = once(JsCallTreeView, EVENTS.UI_JS_CALL_TREE_RENDERED);
     JsCallTreeView.render(OverviewView.getTimeInterval());
-    yield rendered;
+    await rendered;
   }
 
-  function* checkFrame(frameIndex, hasOpts) {
+  async function checkFrame(frameIndex, hasOpts) {
     info(`Checking frame ${frameIndex}`);
     // Click the frame
     let rendered = once(JsCallTreeView, "focus");
     mousedown(window, $$(".call-tree-item")[frameIndex]);
-    yield rendered;
+    await rendered;
 
     let isHidden = $("#jit-optimizations-view").classList.contains("hidden");
     if (hasOpts) {

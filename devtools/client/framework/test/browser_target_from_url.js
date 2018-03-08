@@ -75,7 +75,7 @@ add_task(async function() {
   gBrowser.removeCurrentTab();
 });
 
-function* setupDebuggerServer(websocket) {
+async function setupDebuggerServer(websocket) {
   info("Create a separate loader instance for the DebuggerServer.");
   let loader = new DevToolsLoader();
   let { DebuggerServer } = loader.require("devtools/server/main");
@@ -89,7 +89,7 @@ function* setupDebuggerServer(websocket) {
   // Pass -1 to automatically choose an available port
   listener.portOrPath = -1;
   listener.webSocket = websocket;
-  yield listener.open();
+  await listener.open();
   is(DebuggerServer.listeningSockets, 1, "1 listening socket");
 
   return { DebuggerServer, listener };
@@ -104,13 +104,13 @@ function teardownDebuggerServer({ DebuggerServer, listener }) {
   DebuggerServer.destroy();
 }
 
-function* testRemoteTCP() {
+async function testRemoteTCP() {
   info("Test remote process via TCP Connection");
 
-  let server = yield setupDebuggerServer(false);
+  let server = await setupDebuggerServer(false);
 
   let { port } = server.listener;
-  let target = yield targetFromURL(new URL("http://foo?type=process&host=127.0.0.1&port=" + port));
+  let target = await targetFromURL(new URL("http://foo?type=process&host=127.0.0.1&port=" + port));
   let topWindow = Services.wm.getMostRecentWindow("navigator:browser");
   assertIsTabTarget(target, topWindow.location.href, true);
 
@@ -119,18 +119,18 @@ function* testRemoteTCP() {
   is(settings.port, port);
   is(settings.webSocket, false);
 
-  yield target.client.close();
+  await target.client.close();
 
   teardownDebuggerServer(server);
 }
 
-function* testRemoteWebSocket() {
+async function testRemoteWebSocket() {
   info("Test remote process via WebSocket Connection");
 
-  let server = yield setupDebuggerServer(true);
+  let server = await setupDebuggerServer(true);
 
   let { port } = server.listener;
-  let target = yield targetFromURL(new URL("http://foo?type=process&host=127.0.0.1&port=" + port + "&ws=true"));
+  let target = await targetFromURL(new URL("http://foo?type=process&host=127.0.0.1&port=" + port + "&ws=true"));
   let topWindow = Services.wm.getMostRecentWindow("navigator:browser");
   assertIsTabTarget(target, topWindow.location.href, true);
 
@@ -138,7 +138,7 @@ function* testRemoteWebSocket() {
   is(settings.host, "127.0.0.1");
   is(settings.port, port);
   is(settings.webSocket, true);
-  yield target.client.close();
+  await target.client.close();
 
   teardownDebuggerServer(server);
 }

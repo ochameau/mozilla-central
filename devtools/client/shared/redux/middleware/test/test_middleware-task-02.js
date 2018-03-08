@@ -37,10 +37,10 @@ add_task(async function() {
 });
 
 function comboAction() {
-  return function* (dispatch, getState) {
+  return async function(dispatch, getState) {
     let data = {};
-    data.async = yield dispatch(fetchAsync("async"));
-    data.sync = yield dispatch(fetchSync("sync"));
+    data.async = await dispatch(fetchAsync("async"));
+    data.sync = await dispatch(fetchSync("sync"));
     dispatch({ type: "fetch-done", data });
   };
 }

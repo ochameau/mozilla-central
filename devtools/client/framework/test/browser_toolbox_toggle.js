@@ -32,17 +32,17 @@ add_task(async function() {
   await testToggle("VK_F12", {});
 });
 
-function* testToggle(key, modifiers) {
-  let tab = yield addTab(URL + " ; key : '" + key + "'");
-  yield gDevTools.showToolbox(TargetFactory.forTab(tab));
+async function testToggle(key, modifiers) {
+  let tab = await addTab(URL + " ; key : '" + key + "'");
+  await gDevTools.showToolbox(TargetFactory.forTab(tab));
 
-  yield testToggleDockedToolbox(tab, key, modifiers);
-  yield testToggleDetachedToolbox(tab, key, modifiers);
+  await testToggleDockedToolbox(tab, key, modifiers);
+  await testToggleDetachedToolbox(tab, key, modifiers);
 
-  yield cleanup();
+  await cleanup();
 }
 
-function* testToggleDockedToolbox(tab, key, modifiers) {
+async function testToggleDockedToolbox(tab, key, modifiers) {
   let toolbox = getToolboxForTab(tab);
 
   isnot(toolbox.hostType, Toolbox.HostType.WINDOW,
@@ -51,13 +51,13 @@ function* testToggleDockedToolbox(tab, key, modifiers) {
   info("verify docked toolbox is destroyed when using toggle key");
   let onToolboxDestroyed = once(gDevTools, "toolbox-destroyed");
   EventUtils.synthesizeKey(key, modifiers);
-  yield onToolboxDestroyed;
+  await onToolboxDestroyed;
   ok(true, "Docked toolbox is destroyed when using a toggle key");
 
   info("verify new toolbox is created when using toggle key");
   let onToolboxReady = once(gDevTools, "toolbox-ready");
   EventUtils.synthesizeKey(key, modifiers);
-  yield onToolboxReady;
+  await onToolboxReady;
   ok(true, "Toolbox is created by using when toggle key");
 }
 

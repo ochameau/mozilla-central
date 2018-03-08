@@ -28,13 +28,13 @@ add_task(async function() {
   gBrowser.removeCurrentTab();
 });
 
-function* testButton(toolbox, Telemetry) {
+async function testButton(toolbox, Telemetry) {
   info("Testing command-button-paintflashing");
 
   let button = toolbox.doc.querySelector("#command-button-paintflashing");
   ok(button, "Captain, we have the button");
 
-  yield* delayedClicks(toolbox, button, 4);
+  await delayedClicks(toolbox, button, 4);
   checkResults("_PAINTFLASHING_", Telemetry);
 }
 

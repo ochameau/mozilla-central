@@ -57,7 +57,7 @@ function onPropertyChange(editor) {
   });
 }
 
-function* testInitialState(editor) {
+async function testInitialState(editor) {
   info("Testing the initial state of the new editor");
 
   let summary = editor.summary;
@@ -71,7 +71,7 @@ function* testInitialState(editor) {
   let ruleCount = summary.querySelector(".stylesheet-rule-count").textContent;
   is(parseInt(ruleCount, 10), 0, "new editor initially shows 0 rules");
 
-  let color = yield getComputedStyleProperty({
+  let color = await getComputedStyleProperty({
     selector: "body",
     name: "background-color"
   });

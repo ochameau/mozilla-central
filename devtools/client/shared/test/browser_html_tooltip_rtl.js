@@ -40,7 +40,7 @@ add_task(async function() {
   tooltip.destroy();
 });
 
-function* testRtlAnchors(doc, tooltip) {
+async function testRtlAnchors(doc, tooltip) {
   /*
    * The layout of the test page is as follows:
    *   _______________________________
@@ -60,7 +60,7 @@ function* testRtlAnchors(doc, tooltip) {
   let box2 = doc.getElementById("box2");
 
   info("Display the tooltip on box1.");
-  yield showTooltip(tooltip, box1, {position: "bottom"});
+  await showTooltip(tooltip, box1, {position: "bottom"});
 
   let panelRect = tooltip.container.getBoundingClientRect();
   let anchorRect = box1.getBoundingClientRect();
@@ -72,7 +72,7 @@ function* testRtlAnchors(doc, tooltip) {
   is(panelRect.height, TOOLTIP_HEIGHT, "Tooltip height is at 100px as expected");
 
   info("Display the tooltip on box2.");
-  yield showTooltip(tooltip, box2, {position: "bottom"});
+  await showTooltip(tooltip, box2, {position: "bottom"});
 
   panelRect = tooltip.container.getBoundingClientRect();
   anchorRect = box2.getBoundingClientRect();
@@ -83,7 +83,7 @@ function* testRtlAnchors(doc, tooltip) {
   is(panelRect.height, TOOLTIP_HEIGHT, "Tooltip height is at 100px as expected");
 }
 
-function* testLtrAnchors(doc, tooltip) {
+async function testLtrAnchors(doc, tooltip) {
     /*
    * The layout of the test page is as follows:
    *   _______________________________
@@ -103,7 +103,7 @@ function* testLtrAnchors(doc, tooltip) {
   let box4 = doc.getElementById("box4");
 
   info("Display the tooltip on box3.");
-  yield showTooltip(tooltip, box3, {position: "bottom"});
+  await showTooltip(tooltip, box3, {position: "bottom"});
 
   let panelRect = tooltip.container.getBoundingClientRect();
   let anchorRect = box3.getBoundingClientRect();
@@ -114,7 +114,7 @@ function* testLtrAnchors(doc, tooltip) {
   is(panelRect.height, TOOLTIP_HEIGHT, "Tooltip height is at 100px as expected");
 
   info("Display the tooltip on box4.");
-  yield showTooltip(tooltip, box4, {position: "bottom"});
+  await showTooltip(tooltip, box4, {position: "bottom"});
 
   panelRect = tooltip.container.getBoundingClientRect();
   anchorRect = box4.getBoundingClientRect();

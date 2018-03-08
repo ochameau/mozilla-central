@@ -73,34 +73,34 @@ add_task(async function() {
   gBrowser.removeCurrentTab();
 });
 
-function* minimize(toolbox) {
+async function minimize(toolbox) {
   let button = toolbox.doc.querySelector("#toolbox-dock-bottom-minimize");
   let onMinimized = toolbox._host.once("minimized");
   EventUtils.synthesizeMouseAtCenter(button, {}, toolbox.win);
-  yield onMinimized;
+  await onMinimized;
 }
 
-function* minimizeWithShortcut(toolbox) {
+async function minimizeWithShortcut(toolbox) {
   let key = toolbox.doc.getElementById("toolbox-minimize-key")
                        .getAttribute("key");
   let onMinimized = toolbox._host.once("minimized");
   EventUtils.synthesizeKey(key, {accelKey: true, shiftKey: true},
                            toolbox.win);
-  yield onMinimized;
+  await onMinimized;
 }
 
-function* maximize(toolbox) {
+async function maximize(toolbox) {
   let button = toolbox.doc.querySelector("#toolbox-dock-bottom-minimize");
   let onMaximized = toolbox._host.once("maximized");
   EventUtils.synthesizeMouseAtCenter(button, {}, toolbox.win);
-  yield onMaximized;
+  await onMaximized;
 }
 
-function* maximizeWithShortcut(toolbox) {
+async function maximizeWithShortcut(toolbox) {
   let key = toolbox.doc.getElementById("toolbox-minimize-key")
                        .getAttribute("key");
   let onMaximized = toolbox._host.once("maximized");
   EventUtils.synthesizeKey(key, {accelKey: true, shiftKey: true},
                            toolbox.win);
-  yield onMaximized;
+  await onMaximized;
 }

@@ -29,68 +29,68 @@ add_task(async function() {
   await runTests(doc);
 });
 
-function* runTests(doc) {
-  yield testNoAutoFocus(doc);
-  yield testAutoFocus(doc);
-  yield testAutoFocusPreservesFocusChange(doc);
+async function runTests(doc) {
+  await testNoAutoFocus(doc);
+  await testAutoFocus(doc);
+  await testAutoFocusPreservesFocusChange(doc);
 }
 
-function* testNoAutoFocus(doc) {
-  yield focusNode(doc, "#box4-input");
+async function testNoAutoFocus(doc) {
+  await focusNode(doc, "#box4-input");
   ok(doc.activeElement.closest("#box4-input"), "Focus is in the #box4-input");
 
   info("Test a tooltip without autofocus will not take focus");
-  let tooltip = yield createTooltip(doc, false);
+  let tooltip = await createTooltip(doc, false);
 
-  yield showTooltip(tooltip, doc.getElementById("box1"));
+  await showTooltip(tooltip, doc.getElementById("box1"));
   ok(doc.activeElement.closest("#box4-input"), "Focus is still in the #box4-input");
 
-  yield hideTooltip(tooltip);
-  yield blurNode(doc, "#box4-input");
+  await hideTooltip(tooltip);
+  await blurNode(doc, "#box4-input");
 
   tooltip.destroy();
 }
 
-function* testAutoFocus(doc) {
-  yield focusNode(doc, "#box4-input");
+async function testAutoFocus(doc) {
+  await focusNode(doc, "#box4-input");
   ok(doc.activeElement.closest("#box4-input"), "Focus is in the #box4-input");
 
   info("Test autofocus tooltip takes focus when displayed, " +
     "and restores the focus when hidden");
-  let tooltip = yield createTooltip(doc, true);
+  let tooltip = await createTooltip(doc, true);
 
-  yield showTooltip(tooltip, doc.getElementById("box1"));
+  await showTooltip(tooltip, doc.getElementById("box1"));
   ok(doc.activeElement.closest(".tooltip-content"), "Focus is in the tooltip");
 
-  yield hideTooltip(tooltip);
+  await hideTooltip(tooltip);
   ok(doc.activeElement.closest("#box4-input"), "Focus is in the #box4-input");
 
   info("Blur the textbox before moving to the next test to reset the state.");
-  yield blurNode(doc, "#box4-input");
+  await blurNode(doc, "#box4-input");
 
   tooltip.destroy();
 }
 
-function* testAutoFocusPreservesFocusChange(doc) {
-  yield focusNode(doc, "#box4-input");
+async function testAutoFocusPreservesFocusChange(doc) {
+  await focusNode(doc, "#box4-input");
   ok(doc.activeElement.closest("#box4-input"), "Focus is still in the #box3-input");
 
   info("Test autofocus tooltip takes focus when displayed, " +
     "but does not try to restore the active element if it is not focused when hidden");
-  let tooltip = yield createTooltip(doc, true);
+  let tooltip = await createTooltip(doc, true);
 
-  yield showTooltip(tooltip, doc.getElementById("box1"));
+  await showTooltip(tooltip, doc.getElementById("box1"));
   ok(doc.activeElement.closest(".tooltip-content"), "Focus is in the tooltip");
 
   info("Move the focus to #box3-input while the tooltip is displayed");
-  yield focusNode(doc, "#box3-input");
+  await focusNode(doc, "#box3-input");
   ok(doc.activeElement.closest("#box3-input"), "Focus moved to the #box3-input");
 
-  yield hideTooltip(tooltip);
+  await hideTooltip(tooltip);
   ok(doc.activeElement.closest("#box3-input"), "Focus is still in the #box3-input");
 
   info("Blur the textbox before moving to the next test to reset the state.");
-  yield blurNode(doc, "#box3-input");
+  await blurNode(doc, "#box3-input");
 
   tooltip.destroy();
 }

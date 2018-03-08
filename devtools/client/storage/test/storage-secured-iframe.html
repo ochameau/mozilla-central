@@ -79,13 +79,13 @@ function deleteDB(dbName) {
   });
 }
 
-window.setup = function*() {
-  yield idbGenerator();
+window.setup = async function() {
+  await idbGenerator();
 };
 
-window.clear = function*() {
-  yield deleteDB("idb-s1");
-  yield deleteDB("idb-s2");
+window.clear = async function() {
+  await deleteDB("idb-s1");
+  await deleteDB("idb-s2");
 
   dump("removed indexedDB data from " + document.location + "\n");
 };

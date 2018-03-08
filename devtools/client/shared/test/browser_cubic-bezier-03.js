@@ -25,14 +25,14 @@ add_task(async function() {
   host.destroy();
 });
 
-function* coordinatesCanBeChangedByProvidingAnArray(widget) {
+async function coordinatesCanBeChangedByProvidingAnArray(widget) {
   info("Listening for the update event");
   let onUpdated = widget.once("updated");
 
   info("Setting new coordinates");
   widget.coordinates = [0, 1, 1, 0];
 
-  let bezier = yield onUpdated;
+  let bezier = await onUpdated;
   ok(true, "The updated event was fired as a result of setting coordinates");
 
   is(bezier.P1[0], 0, "The new P1 time coordinate is correct");
@@ -41,13 +41,13 @@ function* coordinatesCanBeChangedByProvidingAnArray(widget) {
   is(bezier.P2[1], 0, "The new P2 progress coordinate is correct");
 }
 
-function* coordinatesCanBeChangedByProvidingAValue(widget) {
+async function coordinatesCanBeChangedByProvidingAValue(widget) {
   info("Listening for the update event");
   let onUpdated = widget.once("updated");
 
   info("Setting linear css value");
   widget.cssCubicBezierValue = "linear";
-  let bezier = yield onUpdated;
+  let bezier = await onUpdated;
   ok(true, "The updated event was fired as a result of setting cssValue");
 
   is(bezier.P1[0], 0, "The new P1 time coordinate is correct");
@@ -58,7 +58,7 @@ function* coordinatesCanBeChangedByProvidingAValue(widget) {
   info("Setting a custom cubic-bezier css value");
   onUpdated = widget.once("updated");
   widget.cssCubicBezierValue = "cubic-bezier(.25,-0.5, 1, 1.25)";
-  bezier = yield onUpdated;
+  bezier = await onUpdated;
   ok(true, "The updated event was fired as a result of setting cssValue");
 
   is(bezier.P1[0], .25, "The new P1 time coordinate is correct");

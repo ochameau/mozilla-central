@@ -35,20 +35,20 @@ add_task(async function() {
   gBrowser.removeCurrentTab();
 });
 
-function* performTest() {
-  let [host,, doc] = yield createHost();
+async function performTest() {
+  let [host,, doc] = await createHost();
   let graph = new LineGraphWidget(doc.body, { metric: "fps" });
 
-  yield testGraph(graph);
+  await testGraph(graph);
 
-  yield graph.destroy();
+  await graph.destroy();
   host.destroy();
 }
 
-function* testGraph(graph) {
+async function testGraph(graph) {
   info("Should be able to set the graph data before waiting for the ready event.");
 
-  yield graph.setDataWhenReady(TEST_DATA);
+  await graph.setDataWhenReady(TEST_DATA);
   ok(graph.hasData(), "Data was set successfully.");
 
   is(graph._gutter.hidden, false,

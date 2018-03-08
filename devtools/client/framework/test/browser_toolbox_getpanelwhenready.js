@@ -29,8 +29,8 @@ add_task(async function() {
   await cleanup();
 });
 
-function* cleanup() {
-  yield toolbox.destroy();
+async function cleanup() {
+  await toolbox.destroy();
   gBrowser.removeCurrentTab();
   toolbox = null;
 }

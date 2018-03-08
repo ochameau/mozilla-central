@@ -31,19 +31,19 @@ add_task(async function() {
   gBrowser.removeCurrentTab();
 });
 
-function* performTest() {
-  let [host,, doc] = yield createHost();
+async function performTest() {
+  let [host,, doc] = await createHost();
   let graph = new LineGraphWidget(doc.body, "fps");
 
-  yield testGraph(graph);
+  await testGraph(graph);
 
-  yield graph.destroy();
+  await graph.destroy();
   host.destroy();
 }
 
-function* testGraph(graph) {
+async function testGraph(graph) {
   console.log("test data", TEST_DATA);
-  yield graph.setDataFromTimestamps(TEST_DATA, INTERVAL, DURATION);
+  await graph.setDataFromTimestamps(TEST_DATA, INTERVAL, DURATION);
   is(graph._avgTooltip.querySelector("[text=value]").textContent, "50",
     "The average tooltip displays the correct value.");
 }
