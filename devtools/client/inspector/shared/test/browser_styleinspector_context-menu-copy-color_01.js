@@ -20,16 +20,16 @@ add_task(async function() {
   await testView("computedview", inspector);
 });
 
-function* testView(viewId, inspector) {
+async function testView(viewId, inspector) {
   info("Testing " + viewId);
 
-  yield inspector.sidebar.select(viewId);
+  await inspector.sidebar.select(viewId);
   let view = inspector.getPanel(viewId).view || inspector.getPanel(viewId).computedView;
-  yield selectNode("div", inspector);
+  await selectNode("div", inspector);
 
   testIsColorValueNode(view);
   testIsColorPopupOnAllNodes(view);
-  yield clearCurrentNodeSelection(inspector);
+  await clearCurrentNodeSelection(inspector);
 }
 
 /**

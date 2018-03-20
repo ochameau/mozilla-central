@@ -81,7 +81,7 @@ add_task(async function() {
   Services.prefs.clearUserPref(PREF_UA_STYLES);
 });
 
-function* setUserAgentStylesPref(val) {
+async function setUserAgentStylesPref(val) {
   info("Setting the pref " + PREF_UA_STYLES + " to: " + val);
 
   // Reset the pref and wait for PrefObserver to callback so UI
@@ -96,18 +96,18 @@ function* setUserAgentStylesPref(val) {
     }
   });
   Services.prefs.setBoolPref(PREF_UA_STYLES, val);
-  yield oncePrefChanged;
+  await oncePrefChanged;
 }
 
-function* userAgentStylesVisible(inspector, view) {
+async function userAgentStylesVisible(inspector, view) {
   info("Making sure that user agent styles are currently visible");
 
   let userRules;
   let uaRules;
 
   for (let data of TEST_DATA) {
-    yield selectNode(data.selector, inspector);
-    yield compareAppliedStylesWithUI(inspector, view, "ua");
+    await selectNode(data.selector, inspector);
+    await compareAppliedStylesWithUI(inspector, view, "ua");
 
     userRules = view._elementStyle.rules.filter(rule=>rule.editor.isEditable);
     uaRules = view._elementStyle.rules.filter(rule=>!rule.editor.isEditable);
@@ -131,15 +131,15 @@ function* userAgentStylesVisible(inspector, view) {
   }), "Inline styles for ua styles");
 }
 
-function* userAgentStylesNotVisible(inspector, view) {
+async function userAgentStylesNotVisible(inspector, view) {
   info("Making sure that user agent styles are not currently visible");
 
   let userRules;
   let uaRules;
 
   for (let data of TEST_DATA) {
-    yield selectNode(data.selector, inspector);
-    yield compareAppliedStylesWithUI(inspector, view);
+    await selectNode(data.selector, inspector);
+    await compareAppliedStylesWithUI(inspector, view);
 
     userRules = view._elementStyle.rules.filter(rule=>rule.editor.isEditable);
     uaRules = view._elementStyle.rules.filter(rule=>!rule.editor.isEditable);
@@ -148,10 +148,10 @@ function* userAgentStylesNotVisible(inspector, view) {
   }
 }
 
-function* compareAppliedStylesWithUI(inspector, view, filter) {
+async function compareAppliedStylesWithUI(inspector, view, filter) {
   info("Making sure that UI is consistent with pageStyle.getApplied");
 
-  let entries = yield inspector.pageStyle.getApplied(
+  let entries = await inspector.pageStyle.getApplied(
     inspector.selection.nodeFront,
     {
       inherited: true,

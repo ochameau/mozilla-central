@@ -29,8 +29,8 @@ add_task(async function() {
   await testRemoveTextInFilter(inspector, view);
 });
 
-function* testAddTextInFilter(inspector, view) {
-  yield setSearchFilter(view, SEARCH);
+async function testAddTextInFilter(inspector, view) {
+  await setSearchFilter(view, SEARCH);
 
   info("Check that the correct rules are visible");
   is(view.element.children.length, 2, "Should have 2 rules.");
@@ -57,7 +57,7 @@ function* testAddTextInFilter(inspector, view) {
     "margin-left computed property is correctly highlighted.");
 }
 
-function* testRemoveTextInFilter(inspector, view) {
+async function testRemoveTextInFilter(inspector, view) {
   info("Press backspace and set filter text to \"margin\"");
 
   let win = view.styleWindow;
@@ -65,7 +65,7 @@ function* testRemoveTextInFilter(inspector, view) {
 
   searchField.focus();
   EventUtils.synthesizeKey("VK_BACK_SPACE", {}, win);
-  yield inspector.once("ruleview-filtered");
+  await inspector.once("ruleview-filtered");
 
   info("Check that the correct rules are visible");
   is(view.element.children.length, 2, "Should have 2 rules.");

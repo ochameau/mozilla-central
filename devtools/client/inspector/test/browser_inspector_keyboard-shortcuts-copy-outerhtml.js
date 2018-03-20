@@ -26,10 +26,10 @@ add_task(async function() {
   await checkClipboard("<div><p>Test copy OuterHTML</p></div>", root);
 });
 
-function* setSelectionNodeFront(node, inspector) {
+async function setSelectionNodeFront(node, inspector) {
   let updated = inspector.once("inspector-updated");
   inspector.selection.setNodeFront(node);
-  yield updated;
+  await updated;
 }
 
 async function checkClipboard(expectedText, node) {

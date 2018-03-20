@@ -72,10 +72,10 @@ add_task(async function() {
        selectedNode + " is selected after navigation.");
   }
 
-  function* navigateToAndWaitForNewRoot(url) {
+  async function navigateToAndWaitForNewRoot(url) {
     info("Navigating and waiting for new-root event after navigation.");
 
-    let current = yield testActor.eval("location.href");
+    let current = await testActor.eval("location.href");
     if (url == current) {
       info("Reloading page.");
       let markuploaded = inspector.once("markuploaded");
@@ -83,13 +83,13 @@ add_task(async function() {
       let onUpdated = inspector.once("inspector-updated");
 
       let activeTab = toolbox.target.activeTab;
-      yield activeTab.reload();
+      await activeTab.reload();
       info("Waiting for inspector to be ready.");
-      yield markuploaded;
-      yield onNewRoot;
-      yield onUpdated;
+      await markuploaded;
+      await onNewRoot;
+      await onUpdated;
     } else {
-      yield navigateTo(inspector, url);
+      await navigateTo(inspector, url);
     }
   }
 });

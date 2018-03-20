@@ -23,10 +23,10 @@ registerCleanupFunction(() => {
  * updating. We also need to wait for the fontinspector-updated event.
  */
 var _selectNode = selectNode;
-selectNode = function* (node, inspector, reason) {
+selectNode = async function(node, inspector, reason) {
   let onUpdated = inspector.once("fontinspector-updated");
-  yield _selectNode(node, inspector, reason);
-  yield onUpdated;
+  await _selectNode(node, inspector, reason);
+  await onUpdated;
 };
 
 /**
@@ -57,7 +57,7 @@ var openFontInspectorForURL = async function(url) {
  * @param {FontInspector} view - The FontInspector instance.
  * @param {String} text - The text to preview.
  */
-function* updatePreviewText(view, text) {
+async function updatePreviewText(view, text) {
   info(`Changing the preview text to '${text}'`);
 
   let doc = view.document;
@@ -66,7 +66,7 @@ function* updatePreviewText(view, text) {
   info("Clicking the font preview element to turn it to edit mode");
   let onClick = once(doc, "click");
   previewImg.click();
-  yield onClick;
+  await onClick;
 
   let input = previewImg.parentNode.querySelector("input");
   is(doc.activeElement, input, "The input was focused.");
@@ -75,14 +75,14 @@ function* updatePreviewText(view, text) {
   while (input.value.length) {
     let update = view.inspector.once("fontinspector-updated");
     EventUtils.sendKey("BACK_SPACE", doc.defaultView);
-    yield update;
+    await update;
   }
 
   if (text) {
     info("Typing the specified text to the input field.");
     let update = waitForNEvents(view.inspector, "fontinspector-updated", text.length);
     EventUtils.sendString(text, doc.defaultView);
-    yield update;
+    await update;
   }
 
   is(input.value, text, "The input now contains the correct text.");

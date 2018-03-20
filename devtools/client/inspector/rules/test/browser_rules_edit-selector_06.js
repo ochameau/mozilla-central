@@ -26,14 +26,14 @@ add_task(async function() {
   await testEditDivSelector(view);
 });
 
-function* testEditClassSelector(view) {
+async function testEditClassSelector(view) {
   let ruleEditor = getRuleViewRuleEditor(view, 1);
-  let editor = yield focusEditableField(view, ruleEditor.selectorText);
+  let editor = await focusEditableField(view, ruleEditor.selectorText);
 
   editor.input.value = "body";
   let onRuleViewChanged = once(view, "ruleview-changed");
   EventUtils.synthesizeKey("KEY_Enter");
-  yield onRuleViewChanged;
+  await onRuleViewChanged;
 
   // Get the new rule editor that replaced the original
   ruleEditor = getRuleViewRuleEditor(view, 1);
@@ -51,14 +51,14 @@ function* testEditClassSelector(view) {
      "Focus should have moved to the property name.");
 }
 
-function* testEditDivSelector(view) {
+async function testEditDivSelector(view) {
   let ruleEditor = getRuleViewRuleEditor(view, 2);
-  let editor = yield focusEditableField(view, ruleEditor.selectorText);
+  let editor = await focusEditableField(view, ruleEditor.selectorText);
 
   editor.input.value = "asdf";
   let onRuleViewChanged = once(view, "ruleview-changed");
   EventUtils.synthesizeKey("KEY_Enter");
-  yield onRuleViewChanged;
+  await onRuleViewChanged;
 
   // Get the new rule editor that replaced the original
   ruleEditor = getRuleViewRuleEditor(view, 2);

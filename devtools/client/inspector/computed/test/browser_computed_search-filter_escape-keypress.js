@@ -27,7 +27,7 @@ add_task(async function() {
   await testEscapeKeypress(inspector, view);
 });
 
-function* testAddTextInFilter(inspector, computedView) {
+async function testAddTextInFilter(inspector, computedView) {
   info("Setting filter text to \"background-color\"");
 
   let win = computedView.styleWindow;
@@ -37,11 +37,11 @@ function* testAddTextInFilter(inspector, computedView) {
 
   info("Include browser styles");
   checkbox.click();
-  yield inspector.once("computed-view-refreshed");
+  await inspector.once("computed-view-refreshed");
 
   searchField.focus();
   synthesizeKeys("background-color", win);
-  yield inspector.once("computed-view-refreshed");
+  await inspector.once("computed-view-refreshed");
 
   info("Check that the correct properties are visible");
 
@@ -52,7 +52,7 @@ function* testAddTextInFilter(inspector, computedView) {
   });
 }
 
-function* testEscapeKeypress(inspector, computedView) {
+async function testEscapeKeypress(inspector, computedView) {
   info("Pressing the escape key on search filter");
 
   let win = computedView.styleWindow;
@@ -62,7 +62,7 @@ function* testEscapeKeypress(inspector, computedView) {
 
   searchField.focus();
   EventUtils.synthesizeKey("VK_ESCAPE", {}, win);
-  yield onRefreshed;
+  await onRefreshed;
 
   info("Check that the correct properties are visible");
 

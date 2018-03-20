@@ -29,7 +29,7 @@ add_task(async function() {
   await testClearSearchFilter(inspector, view);
 });
 
-function* testOpenExpanderAndAddTextInFilter(inspector, view) {
+async function testOpenExpanderAndAddTextInFilter(inspector, view) {
   let rule = getRuleViewRuleEditor(view, 1).rule;
   let ruleEditor = rule.textProps[0].editor;
   let computed = ruleEditor.computed;
@@ -37,7 +37,7 @@ function* testOpenExpanderAndAddTextInFilter(inspector, view) {
   info("Opening the computed list of margin property");
   ruleEditor.expander.click();
 
-  yield setSearchFilter(view, SEARCH);
+  await setSearchFilter(view, SEARCH);
 
   info("Check that the correct rules are visible");
   is(view.element.children.length, 2, "Should have 2 rules.");
@@ -63,7 +63,7 @@ function* testOpenExpanderAndAddTextInFilter(inspector, view) {
     "margin-left computed property is correctly highlighted.");
 }
 
-function* testClearSearchFilter(inspector, view) {
+async function testClearSearchFilter(inspector, view) {
   info("Clearing the search filter");
 
   let searchField = view.searchField;
@@ -73,7 +73,7 @@ function* testClearSearchFilter(inspector, view) {
   EventUtils.synthesizeMouseAtCenter(searchClearButton, {},
     view.styleWindow);
 
-  yield onRuleViewFiltered;
+  await onRuleViewFiltered;
 
   info("Check the search filter is cleared and no rules are highlighted");
   is(view.element.children.length, 3, "Should have 3 rules.");

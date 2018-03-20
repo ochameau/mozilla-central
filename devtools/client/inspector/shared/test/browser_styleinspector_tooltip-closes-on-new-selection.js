@@ -22,12 +22,12 @@ add_task(async function() {
   await testComputedView(view, inspector);
 });
 
-function* testRuleView(ruleView, inspector) {
+async function testRuleView(ruleView, inspector) {
   info("Showing the tooltip");
 
   let tooltip = ruleView.tooltips.getTooltip("previewTooltip");
   let tooltipContent = ruleView.styleDocument.createElementNS(XHTML_NS, "div");
-  yield tooltip.setContent(tooltipContent, {width: 100, height: 30});
+  await tooltip.setContent(tooltipContent, {width: 100, height: 30});
 
   // Stop listening for mouse movements because it's not needed for this test,
   // and causes intermittent failures on Linux. When this test runs in the suite
@@ -37,22 +37,22 @@ function* testRuleView(ruleView, inspector) {
 
   let onShown = tooltip.once("shown");
   tooltip.show(ruleView.styleDocument.firstElementChild);
-  yield onShown;
+  await onShown;
 
   info("Selecting a new node");
   let onHidden = tooltip.once("hidden");
-  yield selectNode(".two", inspector);
-  yield onHidden;
+  await selectNode(".two", inspector);
+  await onHidden;
 
   ok(true, "Rule view tooltip closed after a new node got selected");
 }
 
-function* testComputedView(computedView, inspector) {
+async function testComputedView(computedView, inspector) {
   info("Showing the tooltip");
 
   let tooltip = computedView.tooltips.getTooltip("previewTooltip");
   let tooltipContent = computedView.styleDocument.createElementNS(XHTML_NS, "div");
-  yield tooltip.setContent(tooltipContent, {width: 100, height: 30});
+  await tooltip.setContent(tooltipContent, {width: 100, height: 30});
 
   // Stop listening for mouse movements because it's not needed for this test,
   // and causes intermittent failures on Linux. When this test runs in the suite
@@ -62,12 +62,12 @@ function* testComputedView(computedView, inspector) {
 
   let onShown = tooltip.once("shown");
   tooltip.show(computedView.styleDocument.firstElementChild);
-  yield onShown;
+  await onShown;
 
   info("Selecting a new node");
   let onHidden = tooltip.once("hidden");
-  yield selectNode(".one", inspector);
-  yield onHidden;
+  await selectNode(".one", inspector);
+  await onHidden;
 
   ok(true, "Computed view tooltip closed after a new node got selected");
 }

@@ -80,12 +80,12 @@ add_task(async function() {
   await testAddTextInFilter(inspector, view);
 });
 
-function* testAddTextInFilter(inspector, view) {
+async function testAddTextInFilter(inspector, view) {
   for (let data of TEST_DATA) {
     info(data.desc);
-    yield setSearchFilter(view, data.search);
-    yield checkRules(view, data);
-    yield clearSearchAndCheckRules(view);
+    await setSearchFilter(view, data.search);
+    await checkRules(view, data);
+    await clearSearchAndCheckRules(view);
   }
 }
 
@@ -112,7 +112,7 @@ function checkRules(view, data) {
   }
 }
 
-function* clearSearchAndCheckRules(view) {
+async function clearSearchAndCheckRules(view) {
   let doc = view.styleDocument;
   let win = view.styleWindow;
   let searchField = view.searchField;
@@ -120,7 +120,7 @@ function* clearSearchAndCheckRules(view) {
 
   info("Clearing the search filter");
   EventUtils.synthesizeMouseAtCenter(searchClearButton, {}, win);
-  yield view.inspector.once("ruleview-filtered");
+  await view.inspector.once("ruleview-filtered");
 
   info("Check the search filter is cleared and no rules are highlighted");
   is(view.element.children.length, 3, "Should have 3 rules.");

@@ -25,7 +25,7 @@ add_task(async function() {
   await testClearSearchFilter(inspector, view);
 });
 
-function* testAddTextInFilter(inspector, computedView) {
+async function testAddTextInFilter(inspector, computedView) {
   info("Setting filter text to \"background-color\"");
 
   let win = computedView.styleWindow;
@@ -34,7 +34,7 @@ function* testAddTextInFilter(inspector, computedView) {
 
   searchField.focus();
   synthesizeKeys("background-color", win);
-  yield inspector.once("computed-view-refreshed");
+  await inspector.once("computed-view-refreshed");
 
   info("Check that the correct properties are visible");
 
@@ -45,7 +45,7 @@ function* testAddTextInFilter(inspector, computedView) {
   });
 }
 
-function* testClearSearchFilter(inspector, computedView) {
+async function testClearSearchFilter(inspector, computedView) {
   info("Clearing the search filter");
 
   let win = computedView.styleWindow;
@@ -55,7 +55,7 @@ function* testClearSearchFilter(inspector, computedView) {
   let onRefreshed = inspector.once("computed-view-refreshed");
 
   EventUtils.synthesizeMouseAtCenter(searchClearButton, {}, win);
-  yield onRefreshed;
+  await onRefreshed;
 
   info("Check that the correct properties are visible");
 

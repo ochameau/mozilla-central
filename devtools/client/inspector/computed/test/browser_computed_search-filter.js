@@ -23,15 +23,15 @@ add_task(async function() {
   await testAddTextInFilter(inspector, view);
 });
 
-function* testToggleDefaultStyles(inspector, computedView) {
+async function testToggleDefaultStyles(inspector, computedView) {
   info("checking \"Browser styles\" checkbox");
   let checkbox = computedView.includeBrowserStylesCheckbox;
   let onRefreshed = inspector.once("computed-view-refreshed");
   checkbox.click();
-  yield onRefreshed;
+  await onRefreshed;
 }
 
-function* testAddTextInFilter(inspector, computedView) {
+async function testAddTextInFilter(inspector, computedView) {
   info("setting filter text to \"color\"");
   let searchField = computedView.searchField;
   let onRefreshed = inspector.once("computed-view-refreshed");
@@ -49,7 +49,7 @@ function* testAddTextInFilter(inspector, computedView) {
   is(inspector.panelDoc.activeElement, searchField, "Search field is focused");
 
   synthesizeKeys("color", win);
-  yield onRefreshed;
+  await onRefreshed;
 
   info("check that the correct properties are visible");
 

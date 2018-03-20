@@ -110,11 +110,11 @@ function selectAndHighlightNode(selector, inspector) {
  * @param {InspectorPanel} inspector The current inspector-panel instance.
  * @return {MarkupContainer}
  */
-function* focusNode(selector, inspector) {
+async function focusNode(selector, inspector) {
   getContainerForNodeFront(inspector.walker.rootNode, inspector).elt.focus();
-  let nodeFront = yield getNodeFront(selector, inspector);
+  let nodeFront = await getNodeFront(selector, inspector);
   let container = getContainerForNodeFront(nodeFront, inspector);
-  yield selectNode(nodeFront, inspector);
+  await selectNode(nodeFront, inspector);
   EventUtils.sendKey("return", inspector.panelWin);
   return container;
 }
@@ -367,14 +367,14 @@ function redoChange(inspector) {
  * A helper that fetches a front for a node that matches the given selector or
  * doctype node if the selector is falsy.
  */
-function* getNodeFrontForSelector(selector, inspector) {
+async function getNodeFrontForSelector(selector, inspector) {
   if (selector) {
     info("Retrieving front for selector " + selector);
     return getNodeFront(selector, inspector);
   }
 
   info("Retrieving front for doctype node");
-  let {nodes} = yield inspector.walker.children(inspector.walker.rootNode);
+  let {nodes} = await inspector.walker.children(inspector.walker.rootNode);
   return nodes[0];
 }
 
@@ -434,8 +434,8 @@ const getHighlighterHelperFor = (type) => async function({inspector, testActor})
         }
 
         return {
-          getComputedStyle: function* (options = {}) {
-            return yield inspector.pageStyle.getComputed(
+          getComputedStyle: async function(options = {}) {
+            return await inspector.pageStyle.getComputed(
               highlightedNode, options);
           }
         };
@@ -449,53 +449,53 @@ const getHighlighterHelperFor = (type) => async function({inspector, testActor})
         return highlighter.actorID;
       },
 
-      show: function* (selector = ":root", options, frameSelector = null) {
+      show: async function(selector = ":root", options, frameSelector = null) {
         if (frameSelector) {
-          highlightedNode = yield getNodeFrontInFrame(selector, frameSelector, inspector);
+          highlightedNode = await getNodeFrontInFrame(selector, frameSelector, inspector);
         } else {
-          highlightedNode = yield getNodeFront(selector, inspector);
+          highlightedNode = await getNodeFront(selector, inspector);
         }
-        return yield highlighter.show(highlightedNode, options);
+        return await highlighter.show(highlightedNode, options);
       },
 
-      hide: function* () {
-        yield highlighter.hide();
+      hide: async function() {
+        await highlighter.hide();
       },
 
-      isElementHidden: function* (id) {
-        return (yield testActor.getHighlighterNodeAttribute(
+      isElementHidden: async function(id) {
+        return (await testActor.getHighlighterNodeAttribute(
           prefix + id, "hidden", highlighter)) === "true";
       },
 
-      getElementTextContent: function* (id) {
-        return yield testActor.getHighlighterNodeTextContent(
+      getElementTextContent: async function(id) {
+        return await testActor.getHighlighterNodeTextContent(
           prefix + id, highlighter);
       },
 
-      getElementAttribute: function* (id, name) {
-        return yield testActor.getHighlighterNodeAttribute(
+      getElementAttribute: async function(id, name) {
+        return await testActor.getHighlighterNodeAttribute(
           prefix + id, name, highlighter);
       },
 
-      waitForElementAttributeSet: function* (id, name) {
-        yield poll(function* () {
-          let value = yield testActor.getHighlighterNodeAttribute(
+      waitForElementAttributeSet: async function(id, name) {
+        await poll(async function() {
+          let value = await testActor.getHighlighterNodeAttribute(
             prefix + id, name, highlighter);
           return !!value;
         }, `Waiting for element ${id} to have attribute ${name} set`);
       },
 
-      waitForElementAttributeRemoved: function* (id, name) {
-        yield poll(function* () {
-          let value = yield testActor.getHighlighterNodeAttribute(
+      waitForElementAttributeRemoved: async function(id, name) {
+        await poll(async function() {
+          let value = await testActor.getHighlighterNodeAttribute(
             prefix + id, name, highlighter);
           return !value;
         }, `Waiting for element ${id} to have attribute ${name} removed`);
       },
 
-      synthesizeMouse: function* (options) {
+      synthesizeMouse: async function(options) {
         options = Object.assign({selector: ":root"}, options);
-        yield testActor.synthesizeMouse(options);
+        await testActor.synthesizeMouse(options);
       },
 
       // This object will synthesize any "mouse" prefixed event to the
@@ -509,21 +509,21 @@ const getHighlighterHelperFor = (type) => async function({inspector, testActor})
       //   mouse.up();         // synthesize "mouseup" at 20,30
       mouse: new Proxy({}, {
         get: (target, name) =>
-          function* (x = prevX, y = prevY, selector = ":root") {
+          async function(x = prevX, y = prevY, selector = ":root") {
             prevX = x;
             prevY = y;
-            yield testActor.synthesizeMouse({
+            await testActor.synthesizeMouse({
               selector, x, y, options: {type: "mouse" + name}});
           }
       }),
 
-      reflow: function* () {
-        yield testActor.reflow();
+      reflow: async function() {
+        await testActor.reflow();
       },
 
-      finalize: function* () {
+      finalize: async function() {
         highlightedNode = null;
-        yield highlighter.finalize();
+        await highlighter.finalize();
       }
     };
   };
@@ -537,7 +537,7 @@ async function waitForMultipleChildrenUpdates(inspector) {
   if (inspector.markup._queuedChildUpdates &&
         inspector.markup._queuedChildUpdates.size) {
     await waitForChildrenUpdated(inspector);
-    return waitForMultipleChildrenUpdates(inspector);
+    return await waitForMultipleChildrenUpdates(inspector);
   }
   return null;
 }
@@ -679,7 +679,7 @@ function focusAndSendKey(win, key) {
  *
  * @return a promise that resolves with the tooltip object
  */
-function* assertTooltipShownOnHover(tooltip, target) {
+async function assertTooltipShownOnHover(tooltip, target) {
   let mouseEvent = new target.ownerDocument.defaultView.MouseEvent("mousemove", {
     bubbles: true,
   });
@@ -687,7 +687,7 @@ function* assertTooltipShownOnHover(tooltip, target) {
 
   if (!tooltip.isVisible()) {
     info("Waiting for tooltip to be shown");
-    yield tooltip.once("shown");
+    await tooltip.once("shown");
   }
 
   ok(tooltip.isVisible(), `The tooltip is visible`);
@@ -706,7 +706,7 @@ function* assertTooltipShownOnHover(tooltip, target) {
  *
  * @return a promise that resolves with the tooltip object
  */
-function* assertShowPreviewTooltip(view, target) {
+async function assertShowPreviewTooltip(view, target) {
   let mouseEvent = new target.ownerDocument.defaultView.MouseEvent("mousemove", {
     bubbles: true,
   });
@@ -719,7 +719,7 @@ function* assertShowPreviewTooltip(view, target) {
 
   if (!tooltip.isVisible()) {
     info("Waiting for tooltip to be shown");
-    yield tooltip.once("shown");
+    await tooltip.once("shown");
   }
 
   ok(tooltip.isVisible(), `The tooltip '${name}' is visible`);
@@ -736,7 +736,7 @@ function* assertShowPreviewTooltip(view, target) {
  * @param {DOMElement} target
  *        The DOM Element on which a tooltip should appear
  */
-function* assertTooltipHiddenOnMouseOut(tooltip, target) {
+async function assertTooltipHiddenOnMouseOut(tooltip, target) {
   // The tooltip actually relies on mousemove events to check if it sould be hidden.
   let mouseEvent = new target.ownerDocument.defaultView.MouseEvent("mousemove", {
     bubbles: true,
@@ -744,7 +744,7 @@ function* assertTooltipHiddenOnMouseOut(tooltip, target) {
   });
   target.parentNode.dispatchEvent(mouseEvent);
 
-  yield tooltip.once("hidden");
+  await tooltip.once("hidden");
 
   ok(!tooltip.isVisible(), "The tooltip is hidden on mouseout");
 }
@@ -824,17 +824,17 @@ async function getDisplayedNodeTextContent(selector, inspector) {
  * @param {Boolean} show
  *        If true, the shapes highlighter is being shown. If false, it is being hidden
  */
-function* toggleShapesHighlighter(view, highlighters, selector, property, show) {
+async function toggleShapesHighlighter(view, highlighters, selector, property, show) {
   info("Toggle shapes highlighter");
   let container = getRuleViewProperty(view, selector, property).valueSpan;
   let shapesToggle = container.querySelector(".ruleview-shapeswatch");
   if (show) {
     let onHighlighterShown = highlighters.once("shapes-highlighter-shown");
     shapesToggle.click();
-    yield onHighlighterShown;
+    await onHighlighterShown;
   } else {
     let onHighlighterHidden = highlighters.once("shapes-highlighter-hidden");
     shapesToggle.click();
-    yield onHighlighterHidden;
+    await onHighlighterHidden;
   }
 }

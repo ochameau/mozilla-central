@@ -35,18 +35,18 @@ add_task(async function() {
   checkPickerMode(toolbox, false);
 });
 
-function* clickElement(selector, testActor, inspector, isShift) {
+async function clickElement(selector, testActor, inspector, isShift) {
   let onSelectionChanged = inspector.once("inspector-updated");
-  yield testActor.synthesizeMouse({
+  await testActor.synthesizeMouse({
     selector: selector,
     center: true,
     options: { shiftKey: isShift }
   });
-  yield onSelectionChanged;
+  await onSelectionChanged;
 }
 
-function* checkElementSelected(selector, inspector) {
-  let el = yield getNodeFront(selector, inspector);
+async function checkElementSelected(selector, inspector) {
+  let el = await getNodeFront(selector, inspector);
   is(inspector.selection.nodeFront, el, `The element ${selector} is now selected`);
 }
 

@@ -22,18 +22,18 @@ const TEST_DATA = [
   { node: "input", draggable: true },
   { node: "div", draggable: true },
   {
-    node: function* (inspector) {
-      let parentFront = yield getNodeFront("#before", inspector);
-      let {nodes} = yield inspector.walker.children(parentFront);
+    node: async function(inspector) {
+      let parentFront = await getNodeFront("#before", inspector);
+      let {nodes} = await inspector.walker.children(parentFront);
       // Getting the comment node.
       return getContainerForNodeFront(nodes[1], inspector);
     },
     draggable: true
   },
   {
-    node: function* (inspector) {
-      let parentFront = yield getNodeFront("#test", inspector);
-      let {nodes} = yield inspector.walker.children(parentFront);
+    node: async function(inspector) {
+      let parentFront = await getNodeFront("#test", inspector);
+      let {nodes} = await inspector.walker.children(parentFront);
       // Getting the ::before pseudo element.
       return getContainerForNodeFront(nodes[0], inspector);
     },

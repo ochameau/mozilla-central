@@ -34,7 +34,7 @@ async function testPressingEscapeRevertsChanges(view) {
     "Got expected property value.");
 }
 
-function* clickOnFilterSwatch(swatch, view) {
+async function clickOnFilterSwatch(swatch, view) {
   info("Clicking on a css filter swatch to open the tooltip");
 
   // Clicking on a cssfilter swatch sets the current filter value in the tooltip
@@ -42,23 +42,23 @@ function* clickOnFilterSwatch(swatch, view) {
   // the rule-view to refresh. So we must wait for the ruleview-changed event.
   let onRuleViewChanged = view.once("ruleview-changed");
   swatch.click();
-  yield onRuleViewChanged;
+  await onRuleViewChanged;
 }
 
-function* setValueInFilterWidget(value, view) {
+async function setValueInFilterWidget(value, view) {
   info("Setting the CSS filter value in the tooltip");
 
   let filterTooltip = view.tooltips.getTooltip("filterEditor");
   let onRuleViewChanged = view.once("ruleview-changed");
   filterTooltip.widget.setCssValue(value);
-  yield onRuleViewChanged;
+  await onRuleViewChanged;
 }
 
-function* pressEscapeToCloseTooltip(view) {
+async function pressEscapeToCloseTooltip(view) {
   info("Pressing ESCAPE to close the tooltip");
 
   let filterTooltip = view.tooltips.getTooltip("filterEditor");
   let onRuleViewChanged = view.once("ruleview-changed");
   EventUtils.sendKey("ESCAPE", filterTooltip.widget.styleWindow);
-  yield onRuleViewChanged;
+  await onRuleViewChanged;
 }

@@ -23,29 +23,29 @@ add_task(async function() {
   await testDisabledButton(inspector, view);
 });
 
-function* testDisabledButton(inspector, view) {
+async function testDisabledButton(inspector, view) {
   let node = "#testid";
 
   info("Selecting a real element");
-  yield selectNode(node, inspector);
+  await selectNode(node, inspector);
   ok(!view.addRuleButton.disabled, "Add rule button should be enabled");
 
   info("Select a null element");
-  yield view.selectElement(null);
+  await view.selectElement(null);
   ok(view.addRuleButton.disabled, "Add rule button should be disabled");
 
   info("Selecting a real element");
-  yield selectNode(node, inspector);
+  await selectNode(node, inspector);
   ok(!view.addRuleButton.disabled, "Add rule button should be enabled");
 
   info("Selecting a pseudo element");
-  let pseudo = yield getNodeFront("#pseudo", inspector);
-  let children = yield inspector.walker.children(pseudo);
+  let pseudo = await getNodeFront("#pseudo", inspector);
+  let children = await inspector.walker.children(pseudo);
   let before = children.nodes[0];
-  yield selectNode(before, inspector);
+  await selectNode(before, inspector);
   ok(view.addRuleButton.disabled, "Add rule button should be disabled");
 
   info("Selecting a real element");
-  yield selectNode(node, inspector);
+  await selectNode(node, inspector);
   ok(!view.addRuleButton.disabled, "Add rule button should be enabled");
 }

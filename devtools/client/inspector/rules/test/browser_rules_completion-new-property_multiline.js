@@ -124,8 +124,8 @@ add_task(async function() {
  * @param {Window} win
  *        Window in which the key event will be dispatched.
  */
-function* synthesizeKeyForAutocomplete(key, editor, win) {
+async function synthesizeKeyForAutocomplete(key, editor, win) {
   let onSuggest = editor.once("after-suggest");
   EventUtils.synthesizeKey(key, {}, win);
-  yield onSuggest;
+  await onSuggest;
 }

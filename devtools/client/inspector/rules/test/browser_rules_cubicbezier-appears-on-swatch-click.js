@@ -50,7 +50,7 @@ add_task(async function() {
   }
 });
 
-function* testAppears(view, swatch) {
+async function testAppears(view, swatch) {
   ok(swatch, "The cubic-swatch exists");
 
   let bezier = view.tooltips.getTooltip("cubicBezier");
@@ -61,10 +61,10 @@ function* testAppears(view, swatch) {
 
   let onBezierWidgetReady = bezier.once("ready");
   swatch.click();
-  yield onBezierWidgetReady;
+  await onBezierWidgetReady;
 
   ok(true, "The cubic-bezier tooltip was shown on click of the cibuc swatch");
   ok(!inplaceEditor(swatch.parentNode),
     "The inplace editor wasn't shown as a result of the cibuc swatch click");
-  yield hideTooltipAndWaitForRuleViewChanged(bezier, view);
+  await hideTooltipAndWaitForRuleViewChanged(bezier, view);
 }

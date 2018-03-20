@@ -43,7 +43,7 @@ add_task(async function() {
     boxmodel.document);
 });
 
-function* checkValueInBoxModel(selector, expectedValue, doc) {
+async function checkValueInBoxModel(selector, expectedValue, doc) {
   let span = doc.querySelector(selector + " > span");
   is(span.textContent, expectedValue, "Should have the right value in the box model.");
 
@@ -54,5 +54,5 @@ function* checkValueInBoxModel(selector, expectedValue, doc) {
 
   let onBlur = once(editor, "blur");
   EventUtils.synthesizeKey("VK_RETURN", {}, doc.defaultView);
-  yield onBlur;
+  await onBlur;
 }

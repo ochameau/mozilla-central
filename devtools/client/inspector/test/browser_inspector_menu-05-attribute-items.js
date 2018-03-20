@@ -17,7 +17,7 @@ add_task(async function() {
   await testEditAttribute();
   await testRemoveAttribute();
 
-  function* testAddAttribute() {
+  async function testAddAttribute() {
     info("Triggering 'Add Attribute' and waiting for mutation to occur");
     let addAttribute = getMenuItem("node-menu-add-attribute");
     addAttribute.click();
@@ -25,7 +25,7 @@ add_task(async function() {
     EventUtils.sendString('class="u-hidden"');
     let onMutation = inspector.once("markupmutation");
     EventUtils.synthesizeKey("KEY_Enter");
-    yield onMutation;
+    await onMutation;
 
     let hasAttribute = testActor.hasNode("#attributes.u-hidden");
     ok(hasAttribute, "attribute was successfully added");
@@ -62,7 +62,7 @@ add_task(async function() {
     await waitForClipboardPromise(() => copyAttributeValue.click(), longAttribute);
   }
 
-  function* testEditAttribute() {
+  async function testEditAttribute() {
     info("Testing 'Edit Attribute' menu item");
     let editAttribute = getMenuItem("node-menu-edit-attribute");
 
@@ -75,14 +75,14 @@ add_task(async function() {
     EventUtils.sendString("data-edit='edited'");
     let onMutation = inspector.once("markupmutation");
     EventUtils.synthesizeKey("KEY_Enter");
-    yield onMutation;
+    await onMutation;
 
     let isAttributeChanged =
-      yield testActor.hasNode("#attributes[data-edit='edited']");
+      await testActor.hasNode("#attributes[data-edit='edited']");
     ok(isAttributeChanged, "attribute was successfully edited");
   }
 
-  function* testRemoveAttribute() {
+  async function testRemoveAttribute() {
     info("Testing 'Remove Attribute' menu item");
     let removeAttribute = getMenuItem("node-menu-remove-attribute");
 
@@ -93,9 +93,9 @@ add_task(async function() {
     };
     let onMutation = inspector.once("markupmutation");
     removeAttribute.click();
-    yield onMutation;
+    await onMutation;
 
-    let hasAttribute = yield testActor.hasNode("#attributes[data-remove]");
+    let hasAttribute = await testActor.hasNode("#attributes[data-remove]");
     ok(!hasAttribute, "attribute was successfully removed");
   }
 

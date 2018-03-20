@@ -40,14 +40,14 @@ async function testPressingEscapeRevertsChanges(view) {
     "Got expected property value.");
 }
 
-function* escapeTooltip(view) {
+async function escapeTooltip(view) {
   info("Pressing ESCAPE to close the tooltip");
 
   let bezierTooltip = view.tooltips.getTooltip("cubicBezier");
-  let widget = yield bezierTooltip.widget;
+  let widget = await bezierTooltip.widget;
   let onHidden = bezierTooltip.tooltip.once("hidden");
   let onModifications = view.once("ruleview-changed");
   focusAndSendKey(widget.parent.ownerDocument.defaultView, "ESCAPE");
-  yield onHidden;
-  yield onModifications;
+  await onHidden;
+  await onModifications;
 }

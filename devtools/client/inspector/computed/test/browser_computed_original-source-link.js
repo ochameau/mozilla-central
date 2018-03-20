@@ -48,7 +48,7 @@ add_task(async function() {
   Services.prefs.clearUserPref(PREF);
 });
 
-function* testClickingLink(toolbox, view) {
+async function testClickingLink(toolbox, view) {
   let onEditor = waitForStyleEditor(toolbox, "doc_sourcemaps.scss");
 
   info("Clicking the computedview stylesheet link");
@@ -56,7 +56,7 @@ function* testClickingLink(toolbox, view) {
   link.scrollIntoView();
   link.click();
 
-  let editor = yield onEditor;
+  let editor = await onEditor;
 
   let {line} = editor.sourceEditor.getCursor();
   is(line, 3, "cursor is at correct line number in original source");

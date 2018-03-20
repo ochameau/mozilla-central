@@ -45,21 +45,21 @@ async function testCopyToClipboard(inspector, view) {
   EventUtils.synthesizeKey("KEY_Escape");
 }
 
-function* testManualEdit(inspector, view) {
+async function testManualEdit(inspector, view) {
   info("Testing manually edited colors");
-  yield selectNode("div", inspector);
+  await selectNode("div", inspector);
 
   let {valueSpan} = getRuleViewProperty(view, "div", "color");
 
   let newColor = "#C9184E";
-  let editor = yield focusEditableField(view, valueSpan);
+  let editor = await focusEditableField(view, valueSpan);
 
   info("Typing new value");
   let input = editor.input;
   let onBlur = once(input, "blur");
   EventUtils.sendString(newColor + ";", view.styleWindow);
-  yield onBlur;
-  yield wait(1);
+  await onBlur;
+  await wait(1);
 
   let colorValueElement = getRuleViewProperty(view, "div", "color")
     .valueSpan.firstChild;
@@ -72,9 +72,9 @@ function* testManualEdit(inspector, view) {
   is(contextMenu._colorToCopy, newColor, "_colorToCopy has the new value");
 }
 
-function* testColorPickerEdit(inspector, view) {
+async function testColorPickerEdit(inspector, view) {
   info("Testing colors edited via color picker");
-  yield selectNode("div", inspector);
+  await selectNode("div", inspector);
 
   let swatchElement = getRuleViewProperty(view, "div", "color").valueSpan
     .querySelector(".ruleview-colorswatch");
@@ -83,11 +83,11 @@ function* testColorPickerEdit(inspector, view) {
   let picker = view.tooltips.getTooltip("colorPicker");
   let onColorPickerReady = picker.once("ready");
   swatchElement.click();
-  yield onColorPickerReady;
+  await onColorPickerReady;
 
   let rgbaColor = [83, 183, 89, 1];
   let rgbaColorText = "rgba(83, 183, 89, 1)";
-  yield simulateColorPickerChange(view, picker, rgbaColor);
+  await simulateColorPickerChange(view, picker, rgbaColor);
 
   is(swatchElement.parentNode.dataset.color, rgbaColorText,
     "data-color was updated");

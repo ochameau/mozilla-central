@@ -25,7 +25,7 @@ add_task(async function() {
   await testPickerDimension(view);
 });
 
-function* testImageDimension(ruleView) {
+async function testImageDimension(ruleView) {
   info("Testing background-image tooltip dimensions");
 
   let tooltip = ruleView.tooltips.getTooltip("previewTooltip");
@@ -35,7 +35,7 @@ function* testImageDimension(ruleView) {
 
   // Make sure there is a hover tooltip for this property, this also will fill
   // the tooltip with its content
-  let previewTooltip = yield assertShowPreviewTooltip(ruleView, uriSpan);
+  let previewTooltip = await assertShowPreviewTooltip(ruleView, uriSpan);
 
   // Let's not test for a specific size, but instead let's make sure it's at
   // least as big as the image
@@ -47,10 +47,10 @@ function* testImageDimension(ruleView) {
   ok(panelRect.height >= imageRect.height,
     "The panel is high enough to show the image");
 
-  yield assertTooltipHiddenOnMouseOut(previewTooltip, uriSpan);
+  await assertTooltipHiddenOnMouseOut(previewTooltip, uriSpan);
 }
 
-function* testPickerDimension(ruleView) {
+async function testPickerDimension(ruleView) {
   info("Testing color-picker tooltip dimensions");
 
   let {valueSpan} = getRuleViewProperty(ruleView, "div", "background");
@@ -59,7 +59,7 @@ function* testPickerDimension(ruleView) {
 
   let onReady = cPicker.once("ready");
   swatch.click();
-  yield onReady;
+  await onReady;
 
   // The colorpicker spectrum's iframe has a fixed width height, so let's
   // make sure the tooltip is at least as big as that
@@ -74,6 +74,6 @@ function* testPickerDimension(ruleView) {
   let onHidden = cPicker.tooltip.once("hidden");
   let onRuleViewChanged = ruleView.once("ruleview-changed");
   cPicker.hide();
-  yield onHidden;
-  yield onRuleViewChanged;
+  await onHidden;
+  await onRuleViewChanged;
 }

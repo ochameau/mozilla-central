@@ -25,14 +25,14 @@ add_task(async function() {
   await testPressingEnterCommitsChanges(swatch, view);
 });
 
-function* testPressingEnterCommitsChanges(swatch, ruleView) {
+async function testPressingEnterCommitsChanges(swatch, ruleView) {
   let cPicker = ruleView.tooltips.getTooltip("colorPicker");
 
   let onColorPickerReady = cPicker.once("ready");
   swatch.click();
-  yield onColorPickerReady;
+  await onColorPickerReady;
 
-  yield simulateColorPickerChange(ruleView, cPicker, [0, 255, 0, .5], {
+  await simulateColorPickerChange(ruleView, cPicker, [0, 255, 0, .5], {
     selector: "body",
     name: "border-left-color",
     value: "rgba(0, 255, 0, 0.5)"
@@ -48,10 +48,10 @@ function* testPressingEnterCommitsChanges(swatch, ruleView) {
   let spectrum = cPicker.spectrum;
   let onHidden = cPicker.tooltip.once("hidden");
   focusAndSendKey(spectrum.element.ownerDocument.defaultView, "RETURN");
-  yield onHidden;
-  yield onModified;
+  await onHidden;
+  await onModified;
 
-  is((yield getComputedStyleProperty("body", null, "border-left-color")),
+  is((await getComputedStyleProperty("body", null, "border-left-color")),
     "rgba(0, 255, 0, 0.5)", "The element's border was kept after RETURN");
   is(swatch.style.backgroundColor, "rgba(0, 255, 0, 0.5)",
     "The color swatch's background was kept after RETURN");

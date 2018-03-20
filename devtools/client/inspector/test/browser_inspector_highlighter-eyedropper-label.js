@@ -102,14 +102,14 @@ add_task(async function() {
   finalize();
 });
 
-function* checkLabelPositionAttributes(helper, positions) {
+async function checkLabelPositionAttributes(helper, positions) {
   for (let position in positions) {
-    is((yield hasAttribute(helper, position)), positions[position],
+    is((await hasAttribute(helper, position)), positions[position],
        `The label was ${positions[position] ? "" : "not "}moved to the ${position}`);
   }
 }
 
-function* hasAttribute({getElementAttribute}, name) {
-  let value = yield getElementAttribute("root", name);
+async function hasAttribute({getElementAttribute}, name) {
+  let value = await getElementAttribute("root", name);
   return value !== null;
 }

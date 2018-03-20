@@ -49,21 +49,21 @@ add_task(async function() {
   await runAutocompletionTest(toolbox, inspector, view);
 });
 
-function* runAutocompletionTest(toolbox, inspector, view) {
+async function runAutocompletionTest(toolbox, inspector, view) {
   info("Selecting the test node");
-  yield selectNode("h1", inspector);
+  await selectNode("h1", inspector);
 
   info("Focusing the css property editable field");
   let ruleEditor = getRuleViewRuleEditor(view, 0);
-  let editor = yield focusNewRuleViewProperty(ruleEditor);
+  let editor = await focusNewRuleViewProperty(ruleEditor);
 
   info("Starting to test for css property completion");
   for (let i = 0; i < testData.length; i++) {
-    yield testCompletion(testData[i], editor, view);
+    await testCompletion(testData[i], editor, view);
   }
 }
 
-function* testCompletion([key, completion, open, isSelected], editor, view) {
+async function testCompletion([key, completion, open, isSelected], editor, view) {
   info("Pressing key " + key);
   info("Expecting " + completion);
   info("Is popup opened: " + open);
@@ -86,8 +86,8 @@ function* testCompletion([key, completion, open, isSelected], editor, view) {
   info("Synthesizing key " + key);
   EventUtils.synthesizeKey(key, {}, view.styleWindow);
 
-  yield onSuggest;
-  yield onPopupEvent;
+  await onSuggest;
+  await onPopupEvent;
 
   info("Checking the state");
   if (completion !== null) {

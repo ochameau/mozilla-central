@@ -16,14 +16,14 @@ add_task(async function() {
   await testCreateNewMultiUnfinished(inspector, view);
 });
 
-function* testCreateNewMultiUnfinished(inspector, view) {
+async function testCreateNewMultiUnfinished(inspector, view) {
   let ruleEditor = getRuleViewRuleEditor(view, 0);
   let onMutation = inspector.once("markupmutation");
   let onRuleViewChanged = view.once("ruleview-changed");
-  yield createNewRuleViewProperty(ruleEditor,
+  await createNewRuleViewProperty(ruleEditor,
     "color:blue;background : orange   ; text-align:center; border-color: ");
-  yield onMutation;
-  yield onRuleViewChanged;
+  await onMutation;
+  await onRuleViewChanged;
 
   is(ruleEditor.rule.textProps.length, 4,
     "Should have created new text properties.");
@@ -33,7 +33,7 @@ function* testCreateNewMultiUnfinished(inspector, view) {
   EventUtils.sendString("red", view.styleWindow);
   onRuleViewChanged = view.once("ruleview-changed");
   EventUtils.synthesizeKey("VK_RETURN", {}, view.styleWindow);
-  yield onRuleViewChanged;
+  await onRuleViewChanged;
 
   is(ruleEditor.rule.textProps.length, 4,
     "Should have the same number of text properties.");

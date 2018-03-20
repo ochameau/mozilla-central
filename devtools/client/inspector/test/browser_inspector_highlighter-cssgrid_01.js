@@ -50,28 +50,28 @@ add_task(async function() {
   await highlighter.finalize();
 });
 
-function* isHiddenByDefault(testActor, highlighterFront) {
+async function isHiddenByDefault(testActor, highlighterFront) {
   info("Checking that the highlighter is hidden by default");
 
-  let hidden = yield testActor.getHighlighterNodeAttribute(
+  let hidden = await testActor.getHighlighterNodeAttribute(
     "css-grid-canvas", "hidden", highlighterFront);
   ok(hidden, "The highlighter is hidden by default");
 }
 
-function* isVisibleWhenShown(testActor, inspector, highlighterFront) {
+async function isVisibleWhenShown(testActor, inspector, highlighterFront) {
   info("Asking to show the highlighter on the test node");
 
-  let node = yield getNodeFront("#grid", inspector);
-  yield highlighterFront.show(node);
+  let node = await getNodeFront("#grid", inspector);
+  await highlighterFront.show(node);
 
-  let hidden = yield testActor.getHighlighterNodeAttribute(
+  let hidden = await testActor.getHighlighterNodeAttribute(
     "css-grid-canvas", "hidden", highlighterFront);
   ok(!hidden, "The highlighter is visible");
 
   info("Hiding the highlighter");
-  yield highlighterFront.hide();
+  await highlighterFront.hide();
 
-  hidden = yield testActor.getHighlighterNodeAttribute(
+  hidden = await testActor.getHighlighterNodeAttribute(
     "css-grid-canvas", "hidden", highlighterFront);
   ok(hidden, "The highlighter is hidden");
 }

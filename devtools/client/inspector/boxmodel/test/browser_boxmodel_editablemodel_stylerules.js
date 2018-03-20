@@ -90,12 +90,12 @@ async function testValueComesFromStyleRule(inspector, boxmodel, testActor) {
   is(span.textContent, 0, "Should have the right value in the box model.");
 }
 
-function* testShorthandsAreParsed(inspector, boxmodel, testActor) {
+async function testShorthandsAreParsed(inspector, boxmodel, testActor) {
   info("Test that shorthand properties are parsed correctly");
 
-  is((yield getStyle(testActor, "#div3", "padding-right")), "",
+  is((await getStyle(testActor, "#div3", "padding-right")), "",
      "Should have the right padding");
-  yield selectNode("#div3", inspector);
+  await selectNode("#div3", inspector);
 
   let span = boxmodel.document.querySelector(".boxmodel-padding.boxmodel-right > span");
   is(span.textContent, 32, "Should have the right value in the box model.");
@@ -107,7 +107,7 @@ function* testShorthandsAreParsed(inspector, boxmodel, testActor) {
 
   EventUtils.synthesizeKey("VK_RETURN", {}, boxmodel.document.defaultView);
 
-  is((yield getStyle(testActor, "#div3", "padding-right")), "",
+  is((await getStyle(testActor, "#div3", "padding-right")), "",
      "Should be the right padding.");
   is(span.textContent, 32, "Should have the right value in the box model.");
 }

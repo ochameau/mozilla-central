@@ -50,7 +50,7 @@ add_task(async function() {
   }, spectrum.dragger.ownerDocument.defaultView);
 });
 
-function* openColorPickerForSwatch(swatch, view) {
+async function openColorPickerForSwatch(swatch, view) {
   let cPicker = view.tooltips.getTooltip("colorPicker");
   ok(cPicker, "The rule-view has the expected colorPicker property");
 
@@ -59,7 +59,7 @@ function* openColorPickerForSwatch(swatch, view) {
 
   let onColorPickerReady = cPicker.once("ready");
   swatch.click();
-  yield onColorPickerReady;
+  await onColorPickerReady;
 
   ok(true, "The color picker was shown on click of the color swatch");
 

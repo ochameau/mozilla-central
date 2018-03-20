@@ -74,8 +74,8 @@ add_task(async function() {
  *        current test actor
  * @return {Promise} promise
  */
-function* checkElementIsInViewport(selector, expected, testActor) {
-  let isInViewport = yield testActor.eval(`
+async function checkElementIsInViewport(selector, expected, testActor) {
+  let isInViewport = await testActor.eval(`
     let node = document.querySelector("${selector}");
     let rect = node.getBoundingClientRect();
     rect.bottom >= 0 && rect.right >= 0 &&

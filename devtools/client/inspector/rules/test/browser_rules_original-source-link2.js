@@ -38,7 +38,7 @@ add_task(async function() {
   Services.prefs.clearUserPref(PREF);
 });
 
-function* testClickingLink(toolbox, view) {
+async function testClickingLink(toolbox, view) {
   info("Listening for switch to the style editor");
   let onStyleEditorReady = toolbox.once("styleeditor-ready");
 
@@ -46,7 +46,7 @@ function* testClickingLink(toolbox, view) {
   let link = getRuleViewLinkByIndex(view, 1);
   link.scrollIntoView();
   link.click();
-  yield onStyleEditorReady;
+  await onStyleEditorReady;
 }
 
 function checkDisplayedStylesheet(toolbox) {

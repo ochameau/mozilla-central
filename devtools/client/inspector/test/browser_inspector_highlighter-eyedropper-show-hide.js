@@ -19,24 +19,24 @@ add_task(async function() {
   helper.finalize();
 });
 
-function* isInitiallyHidden({isElementHidden}) {
+async function isInitiallyHidden({isElementHidden}) {
   info("Checking that the eyedropper is hidden by default");
 
-  let hidden = yield isElementHidden("root");
+  let hidden = await isElementHidden("root");
   ok(hidden, "The eyedropper is hidden by default");
 }
 
-function* canBeShownAndHidden({show, hide, isElementHidden, getElementAttribute}) {
+async function canBeShownAndHidden({show, hide, isElementHidden, getElementAttribute}) {
   info("Asking to show and hide the highlighter actually works");
 
-  yield show("html");
-  let hidden = yield isElementHidden("root");
+  await show("html");
+  let hidden = await isElementHidden("root");
   ok(!hidden, "The eyedropper is now shown");
 
-  let style = yield getElementAttribute("root", "style");
+  let style = await getElementAttribute("root", "style");
   is(style, "top:100px;left:100px;", "The eyedropper is correctly positioned");
 
-  yield hide();
-  hidden = yield isElementHidden("root");
+  await hide();
+  hidden = await isElementHidden("root");
   ok(hidden, "The eyedropper is now hidden again");
 }

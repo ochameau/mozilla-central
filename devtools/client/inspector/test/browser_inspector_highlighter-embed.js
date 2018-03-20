@@ -21,10 +21,10 @@ add_task(async function() {
      "The selected node is the <body> node inside the <embed> element");
 });
 
-function* getEmbeddedBody({walker}) {
-  let embed = yield walker.querySelector(walker.rootNode, "embed");
-  let {nodes} = yield walker.children(embed);
+async function getEmbeddedBody({walker}) {
+  let embed = await walker.querySelector(walker.rootNode, "embed");
+  let {nodes} = await walker.children(embed);
   let contentDoc = nodes[0];
-  let body = yield walker.querySelector(contentDoc, "body");
+  let body = await walker.querySelector(contentDoc, "body");
   return body;
 }

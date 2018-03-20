@@ -20,20 +20,20 @@ add_task(async function() {
   await testPositionAndStyle(testData, inspector, testActor);
 });
 
-function* testPositionAndStyle(test, inspector, testActor) {
+async function testPositionAndStyle(test, inspector, testActor) {
   info("Testing " + test.selector);
 
-  yield selectAndHighlightNode(test.selector, inspector);
+  await selectAndHighlightNode(test.selector, inspector);
 
-  let style = yield testActor.getHighlighterNodeAttribute(
+  let style = await testActor.getHighlighterNodeAttribute(
     "box-model-infobar-container", "style");
 
   is(style.split(";")[0].trim(), test.style,
     "Infobar shows on top of the page when page isn't scrolled");
 
-  yield testActor.scrollWindow(0, 500);
+  await testActor.scrollWindow(0, 500);
 
-  style = yield testActor.getHighlighterNodeAttribute(
+  style = await testActor.getHighlighterNodeAttribute(
     "box-model-infobar-container", "style");
 
   is(style.split(";")[0].trim(), test.style,

@@ -31,16 +31,16 @@ add_task(async function() {
   await finalize();
 });
 
-function* checkArrowsLabelsAndHandlers(selector, expectedProperties,
+async function checkArrowsLabelsAndHandlers(selector, expectedProperties,
   {show, hide, isElementHidden}
 ) {
   info("Getting node " + selector + " from the page");
 
-  yield show(selector);
+  await show(selector);
 
   for (let name of expectedProperties) {
-    let hidden = (yield isElementHidden("arrow-" + name)) &&
-                 (yield isElementHidden("handler-" + name));
+    let hidden = (await isElementHidden("arrow-" + name)) &&
+                 (await isElementHidden("handler-" + name));
     ok(!hidden,
       "The " + name + " label/arrow & handler is visible for node " + selector);
   }
@@ -50,12 +50,12 @@ function* checkArrowsLabelsAndHandlers(selector, expectedProperties,
     if (expectedProperties.includes(name)) {
       continue;
     }
-    let hidden = (yield isElementHidden("arrow-" + name)) &&
-                 (yield isElementHidden("handler-" + name));
+    let hidden = (await isElementHidden("arrow-" + name)) &&
+                 (await isElementHidden("handler-" + name));
     ok(hidden,
       "The " + name + " arrow & handler is hidden for node " + selector);
   }
 
   info("Hiding the highlighter");
-  yield hide();
+  await hide();
 }

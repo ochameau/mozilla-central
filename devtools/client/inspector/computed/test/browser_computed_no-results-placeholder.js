@@ -27,7 +27,7 @@ add_task(async function() {
   checkNoResultsPlaceholderHidden(view);
 });
 
-function* enterInvalidFilter(inspector, computedView) {
+async function enterInvalidFilter(inspector, computedView) {
   let searchbar = computedView.searchField;
   let searchTerm = "xxxxx";
 
@@ -36,7 +36,7 @@ function* enterInvalidFilter(inspector, computedView) {
   let onRefreshed = inspector.once("computed-view-refreshed");
   searchbar.focus();
   synthesizeKeys(searchTerm, computedView.styleWindow);
-  yield onRefreshed;
+  await onRefreshed;
 }
 
 function checkNoResultsPlaceholderShown(computedView) {
@@ -48,7 +48,7 @@ function checkNoResultsPlaceholderShown(computedView) {
   is(display, "block", "placeholder is visible");
 }
 
-function* clearFilterText(inspector, computedView) {
+async function clearFilterText(inspector, computedView) {
   info("Clearing the filter text");
 
   let searchbar = computedView.searchField;
@@ -57,7 +57,7 @@ function* clearFilterText(inspector, computedView) {
   searchbar.focus();
   searchbar.value = "";
   EventUtils.synthesizeKey("c", {}, computedView.styleWindow);
-  yield onRefreshed;
+  await onRefreshed;
 }
 
 function checkNoResultsPlaceholderHidden(computedView) {

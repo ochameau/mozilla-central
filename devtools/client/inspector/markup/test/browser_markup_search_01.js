@@ -41,11 +41,11 @@ add_task(async function() {
   }
 });
 
-function* searchFor(selector, inspector) {
+async function searchFor(selector, inspector) {
   let onNewNodeFront = inspector.selection.once("new-node-front");
 
   searchUsingSelectorSearch(selector, inspector);
 
-  yield onNewNodeFront;
-  yield inspector.once("inspector-updated");
+  await onNewNodeFront;
+  await inspector.once("inspector-updated");
 }

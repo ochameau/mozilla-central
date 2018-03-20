@@ -36,18 +36,18 @@ add_task(async function() {
   await checkGridHighlighter();
 });
 
-function* checkGridHighlighter() {
-  let {inspector, view} = yield openRuleView();
+async function checkGridHighlighter() {
+  let {inspector, view} = await openRuleView();
   let {highlighters} = view;
 
-  yield selectNode("#grid", inspector);
+  await selectNode("#grid", inspector);
   let container = getRuleViewProperty(view, "#grid", "display").valueSpan;
   let gridToggle = container.querySelector(".ruleview-grid");
 
   info("Toggling ON the CSS grid highlighter from the rule-view.");
   let onHighlighterShown = highlighters.once("grid-highlighter-shown");
   gridToggle.click();
-  yield onHighlighterShown;
+  await onHighlighterShown;
 
   ok(highlighters.gridHighlighterShown, "CSS grid highlighter is shown.");
 }

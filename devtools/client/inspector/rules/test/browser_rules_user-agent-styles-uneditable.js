@@ -30,10 +30,10 @@ add_task(async function() {
   Services.prefs.clearUserPref(PREF_UA_STYLES);
 });
 
-function* userAgentStylesUneditable(inspector, view) {
+async function userAgentStylesUneditable(inspector, view) {
   info("Making sure that UI is not editable for user agent styles");
 
-  yield selectNode("a", inspector);
+  await selectNode("a", inspector);
   let uaRules = view._elementStyle.rules.filter(rule=>!rule.editor.isEditable);
 
   for (let rule of uaRules) {

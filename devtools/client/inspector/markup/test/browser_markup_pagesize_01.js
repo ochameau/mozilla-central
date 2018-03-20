@@ -60,8 +60,8 @@ add_task(async function() {
   await assertChildren("abcdefghijklmnopqrstuvwxyz", inspector);
 });
 
-function* assertChildren(expected, inspector) {
-  let container = yield getContainerForSelector("body", inspector);
+async function assertChildren(expected, inspector) {
+  let container = await getContainerForSelector("body", inspector);
   let found = "";
   for (let child of container.children.children) {
     if (child.classList.contains("more-nodes")) {
@@ -73,13 +73,13 @@ function* assertChildren(expected, inspector) {
   is(found, expected, "Got the expected children.");
 }
 
-function* forceReload(inspector) {
-  let container = yield getContainerForSelector("body", inspector);
+async function forceReload(inspector) {
+  let container = await getContainerForSelector("body", inspector);
   container.childrenDirty = true;
 }
 
-function* clickShowMoreNodes(inspector) {
-  let container = yield getContainerForSelector("body", inspector);
+async function clickShowMoreNodes(inspector) {
+  let container = await getContainerForSelector("body", inspector);
   let button = container.elt.querySelector("button");
   let win = button.ownerDocument.defaultView;
   EventUtils.sendMouseEvent({type: "click"}, button, win);

@@ -270,14 +270,14 @@ add_task(async function() {
  * A helper that fetches a front for a node that matches the given selector or
  * doctype node if the selector is falsy.
  */
-function* getNodeFrontForSelector(selector, inspector) {
+async function getNodeFrontForSelector(selector, inspector) {
   if (selector) {
     info("Retrieving front for selector " + selector);
     return getNodeFront(selector, inspector);
   }
 
   info("Retrieving front for doctype node");
-  let {nodes} = yield inspector.walker.children(inspector.walker.rootNode);
+  let {nodes} = await inspector.walker.children(inspector.walker.rootNode);
   return nodes[0];
 }
 

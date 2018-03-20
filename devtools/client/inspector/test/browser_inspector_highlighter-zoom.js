@@ -49,7 +49,7 @@ add_task(async function() {
   }
 });
 
-function* getElementsNodeStyle(testActor) {
-  let value = yield testActor.getHighlighterNodeAttribute("box-model-elements", "style");
+async function getElementsNodeStyle(testActor) {
+  let value = await testActor.getHighlighterNodeAttribute("box-model-elements", "style");
   return value;
 }

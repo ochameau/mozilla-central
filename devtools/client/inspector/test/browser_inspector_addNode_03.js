@@ -36,7 +36,7 @@ add_task(async function() {
   await testAddNode(parentNode, inspector);
 });
 
-function* testAddNode(parentNode, inspector) {
+async function testAddNode(parentNode, inspector) {
   let btn = inspector.panelDoc.querySelector("#inspector-element-add-button");
   let parentContainer = inspector.markup.getContainer(parentNode);
 
@@ -47,8 +47,8 @@ function* testAddNode(parentNode, inspector) {
   let onMutation = inspector.once("markupmutation");
   let onNewContainer = inspector.once("container-created");
   btn.click();
-  let mutations = yield onMutation;
-  yield onNewContainer;
+  let mutations = await onMutation;
+  await onNewContainer;
 
   is(mutations.length, 1, "There is one mutation only");
   is(mutations[0].added.length, 1, "There is one new node only");

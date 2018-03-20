@@ -58,9 +58,9 @@ add_task(async function() {
     return promise;
   }
 
-  function* hoverElement(selector) {
+  async function hoverElement(selector) {
     info(`Hovering node ${selector} in the markup view`);
-    let container = yield getContainerForSelector(selector, inspector);
+    let container = await getContainerForSelector(selector, inspector);
     return hoverContainer(container);
   }
 
@@ -83,18 +83,18 @@ add_task(async function() {
     return hoverContainer(container);
   }
 
-  function* assertHighlighterShownOn(selector) {
-    ok((yield testActor.assertHighlightedNode(selector)),
+  async function assertHighlighterShownOn(selector) {
+    ok((await testActor.assertHighlightedNode(selector)),
        "Highlighter is shown on the right node: " + selector);
   }
 
-  function* assertHighlighterShownOnTextNode(parentSelector, childNodeIndex) {
-    ok((yield testActor.assertHighlightedTextNode(parentSelector, childNodeIndex)),
+  async function assertHighlighterShownOnTextNode(parentSelector, childNodeIndex) {
+    ok((await testActor.assertHighlightedTextNode(parentSelector, childNodeIndex)),
        "Highlighter is shown on the right text node");
   }
 
-  function* assertHighlighterHidden() {
-    let isVisible = yield testActor.isHighlighting();
+  async function assertHighlighterHidden() {
+    let isVisible = await testActor.isHighlighting();
     ok(!isVisible, "Highlighter is hidden");
   }
 });

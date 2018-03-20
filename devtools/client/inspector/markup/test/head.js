@@ -110,8 +110,8 @@ async function(selector, inspector, expectFailure = false) {
  * @param {TestActorFront} testActor The current TestActorFront instance.
  * @return {String} the nodeValue of the first
  */
-function* getFirstChildNodeValue(selector, testActor) {
-  let nodeValue = yield testActor.eval(`
+async function getFirstChildNodeValue(selector, testActor) {
+  let nodeValue = await testActor.eval(`
     document.querySelector("${selector}").firstChild.nodeValue;
   `);
   return nodeValue;
@@ -482,9 +482,9 @@ function unregisterActor(registrar, front) {
  * @param {Number} xOffset Optional x offset to drag by.
  * @param {Number} yOffset Optional y offset to drag by.
  */
-function* simulateNodeDrag(inspector, selector, xOffset = 10, yOffset = 10) {
+async function simulateNodeDrag(inspector, selector, xOffset = 10, yOffset = 10) {
   let container = typeof selector === "string"
-                  ? yield getContainerForSelector(selector, inspector)
+                  ? await getContainerForSelector(selector, inspector)
                   : selector;
   let rect = container.tagLine.getBoundingClientRect();
   let scrollX = inspector.markup.doc.documentElement.scrollLeft;
@@ -503,7 +503,7 @@ function* simulateNodeDrag(inspector, selector, xOffset = 10, yOffset = 10) {
   // _onMouseDown selects the node, so make sure to wait for the
   // inspector-updated event if the current selection was different.
   if (inspector.selection.nodeFront !== container.node) {
-    yield inspector.once("inspector-updated");
+    await inspector.once("inspector-updated");
   }
 
   info("Simulate mouseMove on element " + selector);
@@ -520,10 +520,10 @@ function* simulateNodeDrag(inspector, selector, xOffset = 10, yOffset = 10) {
  * @param {String|MarkupContainer} selector The selector to identify the node or
  * the MarkupContainer for this node.
  */
-function* simulateNodeDrop(inspector, selector) {
+async function simulateNodeDrop(inspector, selector) {
   info("Simulate mouseUp on element " + selector);
   let container = typeof selector === "string"
-                  ? yield getContainerForSelector(selector, inspector)
+                  ? await getContainerForSelector(selector, inspector)
                   : selector;
   container.onMouseUp();
   inspector.markup._onMouseUp();
@@ -538,9 +538,9 @@ function* simulateNodeDrop(inspector, selector) {
  * @param {Number} xOffset Optional x offset to drag by.
  * @param {Number} yOffset Optional y offset to drag by.
  */
-function* simulateNodeDragAndDrop(inspector, selector, xOffset, yOffset) {
-  yield simulateNodeDrag(inspector, selector, xOffset, yOffset);
-  yield simulateNodeDrop(inspector, selector);
+async function simulateNodeDragAndDrop(inspector, selector, xOffset, yOffset) {
+  await simulateNodeDrag(inspector, selector, xOffset, yOffset);
+  await simulateNodeDrop(inspector, selector);
 }
 
 /**

@@ -65,41 +65,41 @@ add_task(async function() {
      "#firstChild is now #test's nextElementSibling");
 });
 
-function* dragElementToOriginalLocation(selector, inspector) {
+async function dragElementToOriginalLocation(selector, inspector) {
   info("Picking up and putting back down " + selector);
 
   function onMutation() {
     ok(false, "Mutation received from dragging a node back to its location");
   }
   inspector.on("markupmutation", onMutation);
-  yield simulateNodeDragAndDrop(inspector, selector, 0, 0);
+  await simulateNodeDragAndDrop(inspector, selector, 0, 0);
 
   // Wait a bit to make sure the event never fires.
   // This doesn't need to catch *all* cases, since the mutation
   // will cause failure later in the test when it checks element ordering.
-  yield wait(500);
+  await wait(500);
   inspector.off("markupmutation", onMutation);
 }
 
-function* moveElementDown(selector, next, inspector) {
+async function moveElementDown(selector, next, inspector) {
   info("Switching " + selector + " with " + next);
 
-  let container = yield getContainerForSelector(next, inspector);
+  let container = await getContainerForSelector(next, inspector);
   let height = container.tagLine.getBoundingClientRect().height;
 
   let onMutated = inspector.once("markupmutation");
   let uiUpdate = inspector.once("inspector-updated");
 
-  yield simulateNodeDragAndDrop(inspector, selector, 0, Math.round(height) + 2);
+  await simulateNodeDragAndDrop(inspector, selector, 0, Math.round(height) + 2);
 
-  let mutations = yield onMutated;
-  yield uiUpdate;
+  let mutations = await onMutated;
+  await uiUpdate;
 
   is(mutations.length, 2, "2 mutations were received");
 }
 
-function* getChildrenIDsOf(parentFront, {walker}) {
-  let {nodes} = yield walker.children(parentFront);
+async function getChildrenIDsOf(parentFront, {walker}) {
+  let {nodes} = await walker.children(parentFront);
   // Filter out non-element nodes since children also returns pseudo-elements.
   return nodes.filter(node => {
     return !node.isPseudoElement;

@@ -25,12 +25,12 @@ function openToolbox(tab) {
   return gDevTools.showToolbox(target, "webconsole");
 }
 
-function* startPickerAndAssertSwitchToInspector(toolbox) {
+async function startPickerAndAssertSwitchToInspector(toolbox) {
   info("Clicking element picker button.");
   let pickButton = toolbox.doc.querySelector("#command-button-pick");
   pickButton.click();
 
   info("Waiting for inspector to be selected.");
-  yield toolbox.once("inspector-selected");
+  await toolbox.once("inspector-selected");
   is(toolbox.currentToolId, "inspector", "Switched to the inspector");
 }

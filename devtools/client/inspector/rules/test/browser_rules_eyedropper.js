@@ -89,19 +89,19 @@ async function runTest(testActor, inspector, view) {
   await waitForTick();
 }
 
-function* testESC(swatch, inspector, testActor) {
+async function testESC(swatch, inspector, testActor) {
   info("Press escape");
   let onCanceled = new Promise(resolve => {
     inspector.inspector.once("color-pick-canceled", resolve);
   });
-  yield testActor.synthesizeKey({key: "VK_ESCAPE", options: {}});
-  yield onCanceled;
+  await testActor.synthesizeKey({key: "VK_ESCAPE", options: {}});
+  await onCanceled;
 
   let color = swatch.style.backgroundColor;
   is(color, ORIGINAL_COLOR, "swatch didn't change after pressing ESC");
 }
 
-function* testSelect(view, swatch, inspector, testActor) {
+async function testSelect(view, swatch, inspector, testActor) {
   info("Click at x:10px y:10px");
   let onPicked = new Promise(resolve => {
     inspector.inspector.once("color-picked", resolve);
@@ -109,15 +109,15 @@ function* testSelect(view, swatch, inspector, testActor) {
   // The change to the content is done async after rule view change
   let onRuleViewChanged = view.once("ruleview-changed");
 
-  yield testActor.synthesizeMouse({selector: "html", x: 10, y: 10,
+  await testActor.synthesizeMouse({selector: "html", x: 10, y: 10,
                                    options: {type: "mousemove"}});
-  yield testActor.synthesizeMouse({selector: "html", x: 10, y: 10,
+  await testActor.synthesizeMouse({selector: "html", x: 10, y: 10,
                                    options: {type: "mousedown"}});
-  yield testActor.synthesizeMouse({selector: "html", x: 10, y: 10,
+  await testActor.synthesizeMouse({selector: "html", x: 10, y: 10,
                                    options: {type: "mouseup"}});
 
-  yield onPicked;
-  yield onRuleViewChanged;
+  await onPicked;
+  await onRuleViewChanged;
 
   let color = swatch.style.backgroundColor;
   is(color, EXPECTED_COLOR, "swatch changed colors");
@@ -125,7 +125,7 @@ function* testSelect(view, swatch, inspector, testActor) {
   ok(!swatch.eyedropperOpen, "swatch eye dropper is closed");
   ok(!swatch.activeSwatch, "no active swatch");
 
-  is((yield getComputedStyleProperty("div", null, "background-color")),
+  is((await getComputedStyleProperty("div", null, "background-color")),
      EXPECTED_COLOR,
      "div's color set to body color after dropper");
 }

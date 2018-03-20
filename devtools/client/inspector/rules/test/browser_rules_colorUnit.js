@@ -38,15 +38,15 @@ add_task(async function() {
   }
 });
 
-function* basicTest(view, name, result) {
+async function basicTest(view, name, result) {
   let cPicker = view.tooltips.getTooltip("colorPicker");
   let swatch = getRuleViewProperty(view, "#testid", "color").valueSpan
       .querySelector(".ruleview-colorswatch");
   let onColorPickerReady = cPicker.once("ready");
   swatch.click();
-  yield onColorPickerReady;
+  await onColorPickerReady;
 
-  yield simulateColorPickerChange(view, cPicker, [0, 255, 0, 1], {
+  await simulateColorPickerChange(view, cPicker, [0, 255, 0, 1], {
     selector: "#testid",
     name: "color",
     value: "rgb(0, 255, 0)"
@@ -57,8 +57,8 @@ function* basicTest(view, name, result) {
   // Validating the color change ends up updating the rule view twice
   let onRuleViewChanged = waitForNEvents(view, "ruleview-changed", 2);
   focusAndSendKey(spectrum.element.ownerDocument.defaultView, "RETURN");
-  yield onHidden;
-  yield onRuleViewChanged;
+  await onHidden;
+  await onRuleViewChanged;
 
   is(getRuleViewPropertyValue(view, "#testid", "color"), result,
      "changing the color used the " + name + " unit");

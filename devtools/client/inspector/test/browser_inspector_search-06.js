@@ -59,7 +59,7 @@ add_task(async function() {
   await inspector.once("inspector-updated");
 });
 
-function* synthesizeKeys(keys, inspector) {
+async function synthesizeKeys(keys, inspector) {
   if (typeof keys === "string") {
     keys = [keys];
   }
@@ -68,9 +68,9 @@ function* synthesizeKeys(keys, inspector) {
     info("Synthesizing key " + key + " in the search box");
     let eventHandled = once(inspector.searchBox, "keypress", true);
     EventUtils.synthesizeKey(key, {}, inspector.panelWin);
-    yield eventHandled;
+    await eventHandled;
     info("Waiting for the search query to complete");
-    yield inspector.searchSuggestions._lastQuery;
+    await inspector.searchSuggestions._lastQuery;
   }
 }
 
@@ -80,8 +80,8 @@ function assertHasResult(inspector, expectResult) {
      "There are" + (expectResult ? "" : " no") + " search results");
 }
 
-function* mutatePage(inspector, testActor, expression) {
+async function mutatePage(inspector, testActor, expression) {
   let onMutation = inspector.once("markupmutation");
-  yield testActor.eval(expression);
-  yield onMutation;
+  await testActor.eval(expression);
+  await onMutation;
 }

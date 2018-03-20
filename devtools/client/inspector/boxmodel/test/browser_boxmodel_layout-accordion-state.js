@@ -65,15 +65,15 @@ function testAccordionStateAfterSwitchingSidebars(inspector, doc) {
     `${BOXMODEL_OPENED_PREF} is pref off.`);
 }
 
-function* testAccordionStateAfterReopeningLayoutView(toolbox) {
+async function testAccordionStateAfterReopeningLayoutView(toolbox) {
   info("Checking the box model accordion state is persistent after closing and "
   + "re-opening the layout view.");
 
   info("Closing the toolbox.");
-  yield toolbox.destroy();
+  await toolbox.destroy();
 
   info("Re-opening the layout view.");
-  let { boxmodel } = yield openLayoutView();
+  let { boxmodel } = await openLayoutView();
   let { document: doc } = boxmodel;
   let bContent = doc.querySelector("#layout-container .box-model-pane ._content");
 

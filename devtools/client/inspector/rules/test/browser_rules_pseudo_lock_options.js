@@ -77,11 +77,11 @@ add_task(async function() {
   await assertPseudoPanelClosed(view);
 });
 
-function* togglePseudoClass(inspector, pseudoClassOption) {
+async function togglePseudoClass(inspector, pseudoClassOption) {
   info("Toggle the pseudoclass, wait for it to be applied");
   let onRefresh = inspector.once("rule-view-refreshed");
   pseudoClassOption.click();
-  yield onRefresh;
+  await onRefresh;
 }
 
 function assertPseudoAdded(inspector, view, pseudoClass, numRules,

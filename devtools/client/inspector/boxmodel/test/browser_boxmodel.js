@@ -175,14 +175,14 @@ function testInitialValues(inspector, boxmodel) {
   }
 }
 
-function* testChangingValues(inspector, boxmodel, testActor) {
+async function testChangingValues(inspector, boxmodel, testActor) {
   info("Test that changing the document updates the box model");
   let doc = boxmodel.document;
 
   let onUpdated = waitForUpdate(inspector);
-  yield testActor.setAttribute("div", "style",
+  await testActor.setAttribute("div", "style",
                                "height:150px;padding-right:50px;top:50px");
-  yield onUpdated;
+  await onUpdated;
 
   for (let i = 0; i < res2.length; i++) {
     let elt = doc.querySelector(res2[i].selector);

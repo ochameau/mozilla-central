@@ -24,14 +24,14 @@ add_task(async function() {
   await testContextMenuWithinIframe(testActor);
 });
 
-function* testContextMenuWithinIframe(testActor) {
+async function testContextMenuWithinIframe(testActor) {
   info("Opening inspector via 'Inspect Element' context menu item within an iframe");
   let selector = ["iframe", "#in-frame"];
-  yield clickOnInspectMenuItem(testActor, selector);
+  await clickOnInspectMenuItem(testActor, selector);
 
   info("Checking inspector state.");
   let inspector = getActiveInspector();
-  let nodeFront = yield getNodeFrontInFrame("#in-frame", "iframe", inspector);
+  let nodeFront = await getNodeFrontInFrame("#in-frame", "iframe", inspector);
 
   is(inspector.selection.nodeFront, nodeFront,
      "Right node is selected in the markup view");

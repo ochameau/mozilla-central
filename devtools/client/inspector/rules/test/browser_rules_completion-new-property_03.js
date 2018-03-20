@@ -17,19 +17,19 @@ add_task(async function() {
   await runAutocompletionTest(toolbox, inspector, view);
 });
 
-function* runAutocompletionTest(toolbox, inspector, view) {
+async function runAutocompletionTest(toolbox, inspector, view) {
   info("Selecting the test node");
-  yield selectNode("h1", inspector);
+  await selectNode("h1", inspector);
 
   info("Focusing the new property editable field");
   let ruleEditor = getRuleViewRuleEditor(view, 0);
-  let editor = yield focusNewRuleViewProperty(ruleEditor);
+  let editor = await focusNewRuleViewProperty(ruleEditor);
 
   info("Sending \"background\" to the editable field");
   for (let key of "background") {
     let onSuggest = editor.once("after-suggest");
     EventUtils.synthesizeKey(key, {}, view.styleWindow);
-    yield onSuggest;
+    await onSuggest;
   }
 
   const itemIndex = 4;

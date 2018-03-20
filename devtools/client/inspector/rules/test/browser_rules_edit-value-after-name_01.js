@@ -30,12 +30,12 @@ add_task(async function() {
   await testColorValueSpanClickAfterNameChange(propEditor, view);
 });
 
-function* testColorValueSpanClickWithoutNameChange(propEditor, view) {
+async function testColorValueSpanClickWithoutNameChange(propEditor, view) {
   info("Test click on color span while focusing property name editor");
   let colorSpan = propEditor.valueSpan.querySelector(".ruleview-color");
 
   info("Focus the color name span");
-  yield focusEditableField(view, propEditor.nameSpan);
+  await focusEditableField(view, propEditor.nameSpan);
   let editor = inplaceEditor(propEditor.doc.activeElement);
 
   // We add a click event to make sure the color span won't be cleared
@@ -53,7 +53,7 @@ function* testColorValueSpanClickWithoutNameChange(propEditor, view) {
   EventUtils.synthesizeMouse(colorSpan, 1, 1, {}, propEditor.doc.defaultView);
 
   info("wait for the click event on the color span");
-  yield onColorSpanClick;
+  await onColorSpanClick;
   ok(true, "Expected click event was emitted");
 
   editor = inplaceEditor(propEditor.doc.activeElement);
@@ -67,15 +67,15 @@ function* testColorValueSpanClickWithoutNameChange(propEditor, view) {
     "having pending request");
   let onRuleViewChanged = view.once("ruleview-changed");
   editor.input.blur();
-  yield onRuleViewChanged;
+  await onRuleViewChanged;
 }
 
-function* testColorValueSpanClickAfterNameChange(propEditor, view) {
+async function testColorValueSpanClickAfterNameChange(propEditor, view) {
   info("Test click on color span after property name change");
   let colorSpan = propEditor.valueSpan.querySelector(".ruleview-color");
 
   info("Focus the color name span");
-  yield focusEditableField(view, propEditor.nameSpan);
+  await focusEditableField(view, propEditor.nameSpan);
   let editor = inplaceEditor(propEditor.doc.activeElement);
 
   info("Modify the property to border-color to trigger the " +
@@ -89,10 +89,10 @@ function* testColorValueSpanClickAfterNameChange(propEditor, view) {
   EventUtils.synthesizeMouse(colorSpan, 1, 1, {}, propEditor.doc.defaultView);
 
   info("wait for ruleview-changed event to be triggered to prevent pending requests");
-  yield onRuleViewChanged;
+  await onRuleViewChanged;
 
   info("wait for the property value to be updated");
-  yield onPropertyValueUpdate;
+  await onPropertyValueUpdate;
   ok(true, "Expected \"property-value-updated\" event was emitted");
 
   editor = inplaceEditor(propEditor.doc.activeElement);
@@ -103,5 +103,5 @@ function* testColorValueSpanClickAfterNameChange(propEditor, view) {
     "having pending request");
   onRuleViewChanged = view.once("ruleview-changed");
   editor.input.blur();
-  yield onRuleViewChanged;
+  await onRuleViewChanged;
 }

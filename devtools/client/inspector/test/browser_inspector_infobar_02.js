@@ -39,12 +39,12 @@ add_task(async function() {
   }
 });
 
-function* testNode(test, inspector, testActor) {
+async function testNode(test, inspector, testActor) {
   info("Testing " + test.selector);
 
-  yield selectAndHighlightNode(test.selector, inspector);
+  await selectAndHighlightNode(test.selector, inspector);
 
-  let tag = yield testActor.getHighlighterNodeTextContent(
+  let tag = await testActor.getHighlighterNodeTextContent(
     "box-model-infobar-tagname");
   is(tag, test.tag, "node " + test.selector + ": tagName matches.");
 }

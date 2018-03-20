@@ -80,21 +80,21 @@ add_task(async function() {
   EventUtils.synthesizeMouseAtCenter(tag, {}, inspector.panelWin);
 });
 
-function* checkTextBox(textBox, {textBoxContextMenuPopup}) {
+async function checkTextBox(textBox, {textBoxContextMenuPopup}) {
   is(textBoxContextMenuPopup.state, "closed", "The menu is closed");
 
   info("Simulating context click on the textbox and expecting the menu to open");
   let onContextMenu = once(textBoxContextMenuPopup, "popupshown");
   EventUtils.synthesizeMouse(textBox, 2, 2, {type: "contextmenu", button: 2},
                              textBox.ownerDocument.defaultView);
-  yield onContextMenu;
+  await onContextMenu;
 
   is(textBoxContextMenuPopup.state, "open", "The menu is now visible");
 
   info("Closing the menu");
   let onContextMenuHidden = once(textBoxContextMenuPopup, "popuphidden");
   textBoxContextMenuPopup.hidePopup();
-  yield onContextMenuHidden;
+  await onContextMenuHidden;
 
   is(textBoxContextMenuPopup.state, "closed", "The menu is closed again");
 }

@@ -39,8 +39,8 @@ async function testPressingEnterCommitsChanges(swatch, ruleView) {
   widget.coordinates = [0.1, 2, 0.9, -1];
   let expected = "cubic-bezier(0.1, 2, 0.9, -1)";
 
-  await waitForSuccess(function* () {
-    let func = yield getComputedStyleProperty("body", null,
+  await waitForSuccess(async function() {
+    let func = await getComputedStyleProperty("body", null,
                                               "transition-timing-function");
     return func === expected;
   }, "Waiting for the change to be previewed on the element");

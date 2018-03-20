@@ -50,7 +50,7 @@ function getFirstVisiblePropertyView(view) {
   return propView;
 }
 
-function* checkToggleKeyBinding(win, key, rulesTable, inspector) {
+async function checkToggleKeyBinding(win, key, rulesTable, inspector) {
   info("Pressing " + key + " key a couple of times to check that the " +
     "property gets expanded/collapsed");
 
@@ -59,12 +59,12 @@ function* checkToggleKeyBinding(win, key, rulesTable, inspector) {
 
   info("Expanding the property");
   EventUtils.synthesizeKey(key, {}, win);
-  yield onExpand;
+  await onExpand;
   isnot(rulesTable.innerHTML, "", "The property has been expanded");
 
   info("Collapsing the property");
   EventUtils.synthesizeKey(key, {}, win);
-  yield onCollapse;
+  await onCollapse;
   is(rulesTable.innerHTML, "", "The property has been collapsed");
 }
 

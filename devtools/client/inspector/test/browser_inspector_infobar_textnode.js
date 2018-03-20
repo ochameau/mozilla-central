@@ -35,11 +35,11 @@ add_task(async function() {
   await checkTextNodeInfoBar(testActor);
 });
 
-function* checkTextNodeInfoBar(testActor) {
-  let tag = yield testActor.getHighlighterNodeTextContent(
+async function checkTextNodeInfoBar(testActor) {
+  let tag = await testActor.getHighlighterNodeTextContent(
     "box-model-infobar-tagname");
   is(tag, "#text", "node display name is #text");
-  let dims = yield testActor.getHighlighterNodeTextContent(
+  let dims = await testActor.getHighlighterNodeTextContent(
       "box-model-infobar-dimensions");
   // Do not assert dimensions as they might be platform specific.
   ok(!!dims, "node has dims");

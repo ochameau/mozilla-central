@@ -44,12 +44,12 @@ add_task(async function() {
  * @param {String} theme - the new theme
  * @param {Object} inspector - the inspector panel
  */
-function* setThemeAndWaitForUpdate(theme, inspector) {
+async function setThemeAndWaitForUpdate(theme, inspector) {
   let onUpdated = inspector.once("fontinspector-updated");
 
   info(`Setting theme to '${theme}'.`);
   setTheme(theme);
 
   info("Waiting for font-inspector to update.");
-  yield onUpdated;
+  await onUpdated;
 }

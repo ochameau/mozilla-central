@@ -71,24 +71,24 @@ add_task(async function() {
   await testComments(inspector, container);
 });
 
-function* testPseudoElements(inspector, container) {
+async function testPseudoElements(inspector, container) {
   info("Checking for pseudo elements");
 
-  let pseudoParent = yield getNodeFront("#pseudo-container", inspector);
-  let children = yield inspector.walker.children(pseudoParent);
+  let pseudoParent = await getNodeFront("#pseudo-container", inspector);
+  let children = await inspector.walker.children(pseudoParent);
   is(children.nodes.length, 2, "Pseudo children returned from walker");
 
   let beforeElement = children.nodes[0];
   let breadcrumbsUpdated = inspector.once("breadcrumbs-updated");
-  yield selectNode(beforeElement, inspector);
-  yield breadcrumbsUpdated;
+  await selectNode(beforeElement, inspector);
+  await breadcrumbsUpdated;
   is(container.childNodes[3].textContent, "::before",
      "::before shows up in breadcrumb");
 
   let afterElement = children.nodes[1];
   breadcrumbsUpdated = inspector.once("breadcrumbs-updated");
-  yield selectNode(afterElement, inspector);
-  yield breadcrumbsUpdated;
+  await selectNode(afterElement, inspector);
+  await breadcrumbsUpdated;
   is(container.childNodes[3].textContent, "::after",
      "::before shows up in breadcrumb");
 }

@@ -24,14 +24,14 @@ add_task(async function() {
   await testMarkOverridden(inspector, view);
 });
 
-function* testMarkOverridden(inspector, view) {
+async function testMarkOverridden(inspector, view) {
   let elementStyle = view._elementStyle;
   let rule = elementStyle.rules[1];
   checkProperties(rule);
 
   let ruleEditor = getRuleViewRuleEditor(view, 1);
   info("Focusing an existing selector name in the rule-view");
-  let editor = yield focusEditableField(view, ruleEditor.selectorText);
+  let editor = await focusEditableField(view, ruleEditor.selectorText);
 
   info("Entering a new selector name and committing");
   editor.input.value = "div[class]";
@@ -39,7 +39,7 @@ function* testMarkOverridden(inspector, view) {
   let onRuleViewChanged = once(view, "ruleview-changed");
   info("Entering the commit key");
   EventUtils.synthesizeKey("KEY_Enter");
-  yield onRuleViewChanged;
+  await onRuleViewChanged;
 
   view.searchField.focus();
   checkProperties(rule);

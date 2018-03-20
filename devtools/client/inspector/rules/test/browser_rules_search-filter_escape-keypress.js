@@ -29,8 +29,8 @@ add_task(async function() {
   await testEscapeKeypress(inspector, view);
 });
 
-function* testAddTextInFilter(inspector, view) {
-  yield setSearchFilter(view, SEARCH);
+async function testAddTextInFilter(inspector, view) {
+  await setSearchFilter(view, SEARCH);
 
   info("Check that the correct rules are visible");
   is(view.element.children.length, 2, "Should have 2 rules.");
@@ -45,7 +45,7 @@ function* testAddTextInFilter(inspector, view) {
     "background-color text property is correctly highlighted.");
 }
 
-function* testEscapeKeypress(inspector, view) {
+async function testEscapeKeypress(inspector, view) {
   info("Pressing the escape key on search filter");
 
   let doc = view.styleDocument;
@@ -55,7 +55,7 @@ function* testEscapeKeypress(inspector, view) {
 
   searchField.focus();
   EventUtils.synthesizeKey("VK_ESCAPE", {}, win);
-  yield onRuleViewFiltered;
+  await onRuleViewFiltered;
 
   info("Check the search filter is cleared and no rules are highlighted");
   is(view.element.children.length, 3, "Should have 3 rules.");

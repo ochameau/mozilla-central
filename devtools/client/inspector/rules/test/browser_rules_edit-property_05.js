@@ -67,8 +67,8 @@ add_task(async function() {
     "border-color is not overridden");
 });
 
-function* getRulePropertyValue(name) {
-  let propValue = yield executeInContent("Test:GetRulePropertyValue", {
+async function getRulePropertyValue(name) {
+  let propValue = await executeInContent("Test:GetRulePropertyValue", {
     styleSheetIndex: 0,
     ruleIndex: 0,
     name: name

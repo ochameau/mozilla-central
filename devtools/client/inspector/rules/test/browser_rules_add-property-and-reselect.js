@@ -24,14 +24,14 @@ add_task(async function() {
   checkPropertyOnAllRules(view);
 });
 
-function* setPropertyOnAllRules(view) {
+async function setPropertyOnAllRules(view) {
   // Wait for the properties to be properly created on the backend and for the
   // view to be updated.
   let onRefreshed = view.once("ruleview-refreshed");
   for (let rule of view._elementStyle.rules) {
     rule.editor.addProperty("font-weight", "bold", "", true);
   }
-  yield onRefreshed;
+  await onRefreshed;
 }
 
 function checkPropertyOnAllRules(view) {

@@ -45,7 +45,7 @@ add_task(async function() {
   ok(highlighters.gridHighlighterShown, "There's a highlighter shown");
 });
 
-function* enableTheFirstGrid(doc, { highlighters, store }) {
+async function enableTheFirstGrid(doc, { highlighters, store }) {
   const checkbox = doc.querySelector("#grid-list input");
 
   const onHighlighterShown = highlighters.once("grid-highlighter-shown");
@@ -54,6 +54,6 @@ function* enableTheFirstGrid(doc, { highlighters, store }) {
 
   checkbox.click();
 
-  yield onHighlighterShown;
-  yield onCheckboxChange;
+  await onHighlighterShown;
+  await onCheckboxChange;
 }

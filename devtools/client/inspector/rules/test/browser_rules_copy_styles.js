@@ -141,8 +141,8 @@ add_task(async function() {
       }
     },
     {
-      setup: function* () {
-        yield disableProperty(view, 0);
+      setup: async function() {
+        await disableProperty(view, 0);
       },
       desc: "Test Copy Rule with Disabled Property",
       node: ruleEditor.rule.textProps[2].editor.nameSpan,
@@ -164,8 +164,8 @@ add_task(async function() {
       }
     },
     {
-      setup: function* () {
-        yield disableProperty(view, 4);
+      setup: async function() {
+        await disableProperty(view, 4);
       },
       desc: "Test Copy Rule with Disabled Property with Comment",
       node: ruleEditor.rule.textProps[2].editor.nameSpan,
@@ -274,10 +274,10 @@ async function checkCopyStyle(view, node, menuItemLabel, expectedPattern, visibl
   }
 }
 
-function* disableProperty(view, index) {
+async function disableProperty(view, index) {
   let ruleEditor = getRuleViewRuleEditor(view, 1);
   let textProp = ruleEditor.rule.textProps[index];
-  yield togglePropStatus(view, textProp);
+  await togglePropStatus(view, textProp);
 }
 
 function checkClipboardData(expectedPattern) {

@@ -59,10 +59,10 @@ add_task(async function deleteNodeAfterWhitespace() {
   is(nextSibling, afterWhitespace, "Order has been preserved after restoring the node");
 });
 
-function* selectAndFocusNode(selector, inspector) {
+async function selectAndFocusNode(selector, inspector) {
   info(`Select node ${selector} and make sure it is focused`);
-  yield selectNode(selector, inspector);
-  yield clickContainer(selector, inspector);
+  await selectNode(selector, inspector);
+  await clickContainer(selector, inspector);
 }
 
 async function deleteCurrentSelection(inspector) {

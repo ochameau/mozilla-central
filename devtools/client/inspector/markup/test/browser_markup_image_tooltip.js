@@ -29,8 +29,8 @@ add_task(async function() {
   }
 });
 
-function* getImageTooltipTarget({selector}, inspector) {
-  let nodeFront = yield getNodeFront(selector, inspector);
+async function getImageTooltipTarget({selector}, inspector) {
+  let nodeFront = await getNodeFront(selector, inspector);
   let isImg = nodeFront.tagName.toLowerCase() === "img";
 
   let container = getContainerForNodeFront(nodeFront, inspector);

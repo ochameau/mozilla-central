@@ -75,14 +75,14 @@ add_task(async function() {
   ok(getRuleViewRule(view, newValue), "Rule with '" + newValue + " 'exists.");
 });
 
-function* clickOnRuleviewScrollbar(view) {
+async function clickOnRuleviewScrollbar(view) {
   let container = view.element.parentNode;
   let onScroll = once(container, "scroll");
   let rect = container.getBoundingClientRect();
   // click 5 pixels before the bottom-right corner should hit the scrollbar
   EventUtils.synthesizeMouse(container, rect.width - 5, rect.height - 5,
     {}, view.styleWindow);
-  yield onScroll;
+  await onScroll;
 
   ok(true, "The rule view container scrolled after clicking on the scrollbar.");
 }

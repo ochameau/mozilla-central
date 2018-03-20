@@ -33,19 +33,19 @@ add_task(async function() {
   await testEditSelector(view);
 });
 
-function* testEditSelector(view) {
+async function testEditSelector(view) {
   let ruleEditor = getRuleViewRuleEditor(view, 1);
-  let editor = yield focusEditableField(view, ruleEditor.selectorText);
+  let editor = await focusEditableField(view, ruleEditor.selectorText);
 
   editor.input.value = ".pickme";
   let onRuleViewChanged = once(view, "ruleview-changed");
   EventUtils.synthesizeKey("KEY_Enter");
-  yield onRuleViewChanged;
+  await onRuleViewChanged;
 
   // Escape the new property editor after editing the selector
   let onBlur = once(view.styleDocument.activeElement, "blur");
   EventUtils.synthesizeKey("KEY_Escape", {}, view.styleWindow);
-  yield onBlur;
+  await onBlur;
 
   // Get the new rule editor that replaced the original
   ruleEditor = getRuleViewRuleEditor(view, 1);

@@ -29,8 +29,8 @@ add_task(async function() {
     return promise.resolve();
   };
 
-  function* isHighlighting(selector, desc) {
-    let nodeFront = yield getNodeFront(selector, inspector);
+  async function isHighlighting(selector, desc) {
+    let nodeFront = await getNodeFront(selector, inspector);
     is(highlightedNode, nodeFront, desc);
   }
 

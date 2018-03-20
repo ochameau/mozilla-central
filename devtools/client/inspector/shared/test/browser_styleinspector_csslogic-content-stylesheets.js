@@ -58,8 +58,8 @@ function disallowXUL() {
     Ci.nsIPermissionManager.DENY_ACTION);
 }
 
-function* checkSheets(targetSelector, testActor) {
-  let sheets = yield testActor.getStyleSheetsInfoForNode(targetSelector);
+async function checkSheets(targetSelector, testActor) {
+  let sheets = await testActor.getStyleSheetsInfoForNode(targetSelector);
 
   for (let sheet of sheets) {
     if (!sheet.href ||

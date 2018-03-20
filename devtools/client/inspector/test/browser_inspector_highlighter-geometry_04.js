@@ -50,25 +50,25 @@ add_task(async function() {
   await finalize();
 });
 
-function* checkArrowsAndHandlers(helper, selector, arrows) {
+async function checkArrowsAndHandlers(helper, selector, arrows) {
   info("Highlighting the test node " + selector);
 
-  yield helper.show(selector);
+  await helper.show(selector);
 
   for (let side in arrows) {
-    yield checkArrowAndHandler(helper, side, arrows[side]);
+    await checkArrowAndHandler(helper, side, arrows[side]);
   }
 }
 
-function* checkArrowAndHandler({getElementAttribute}, name, expectedCoords) {
+async function checkArrowAndHandler({getElementAttribute}, name, expectedCoords) {
   info("Checking " + name + "arrow and handler coordinates are correct");
 
-  let handlerX = yield getElementAttribute("handler-" + name, "cx");
-  let handlerY = yield getElementAttribute("handler-" + name, "cy");
+  let handlerX = await getElementAttribute("handler-" + name, "cx");
+  let handlerY = await getElementAttribute("handler-" + name, "cy");
 
-  let expectedHandlerX = yield getElementAttribute("arrow-" + name,
+  let expectedHandlerX = await getElementAttribute("arrow-" + name,
                                 handlerMap[name].cx);
-  let expectedHandlerY = yield getElementAttribute("arrow-" + name,
+  let expectedHandlerY = await getElementAttribute("arrow-" + name,
                                 handlerMap[name].cy);
 
   is(handlerX, expectedHandlerX,
@@ -77,7 +77,7 @@ function* checkArrowAndHandler({getElementAttribute}, name, expectedCoords) {
     "coordinate Y for handler " + name + " is correct.");
 
   for (let coordinate in expectedCoords) {
-    let value = yield getElementAttribute("arrow-" + name, coordinate);
+    let value = await getElementAttribute("arrow-" + name, coordinate);
 
     is(Math.floor(value), expectedCoords[coordinate],
       coordinate + " coordinate for arrow " + name + " is correct");

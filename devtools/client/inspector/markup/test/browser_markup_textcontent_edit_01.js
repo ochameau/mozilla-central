@@ -45,14 +45,14 @@ add_task(async function() {
   });
 });
 
-function* editContainer(inspector, testActor,
+async function editContainer(inspector, testActor,
                         {selector, newValue, oldValue}) {
-  let nodeValue = yield getFirstChildNodeValue(selector, testActor);
+  let nodeValue = await getFirstChildNodeValue(selector, testActor);
   is(nodeValue, oldValue, "The test node's text content is correct");
 
   info("Changing the text content");
   let onMutated = inspector.once("markupmutation");
-  let container = yield focusNode(selector, inspector);
+  let container = await focusNode(selector, inspector);
 
   let isOldValueInline = oldValue.length <= DEFAULT_VALUE_SUMMARY_LENGTH;
   is(!!container.inlineTextChild, isOldValueInline, "inlineTextChild is as expected");
@@ -64,9 +64,9 @@ function* editContainer(inspector, testActor,
   setEditableFieldValue(field, newValue, inspector);
 
   info("Listening to the markupmutation event");
-  yield onMutated;
+  await onMutated;
 
-  nodeValue = yield getFirstChildNodeValue(selector, testActor);
+  nodeValue = await getFirstChildNodeValue(selector, testActor);
   is(nodeValue, newValue, "The test node's text content has changed");
 
   let isNewValueInline = newValue.length <= DEFAULT_VALUE_SUMMARY_LENGTH;
@@ -79,6 +79,6 @@ function* editContainer(inspector, testActor,
   }
 
   info("Selecting the <body> to reset the selection");
-  let bodyContainer = yield getContainerForSelector("body", inspector);
+  let bodyContainer = await getContainerForSelector("body", inspector);
   inspector.markup.markNodeAsSelected(bodyContainer.node);
 }

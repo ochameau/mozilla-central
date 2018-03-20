@@ -40,18 +40,18 @@ add_task(async function() {
   await testEditDisableProperty(view, rule, prop, "value", "VK_RETURN");
 });
 
-function* testEditDisableProperty(view, rule, prop, fieldType, commitKey) {
+async function testEditDisableProperty(view, rule, prop, fieldType, commitKey) {
   let field = fieldType === "name" ? prop.editor.nameSpan
                                    : prop.editor.valueSpan;
 
-  let editor = yield focusEditableField(view, field);
+  let editor = await focusEditableField(view, field);
 
   ok(!prop.editor.element.classList.contains("ruleview-overridden"),
     "property is not overridden.");
   is(prop.editor.enable.style.visibility, "hidden",
     "property enable checkbox is hidden.");
 
-  let newValue = yield executeInContent("Test:GetRulePropertyValue", {
+  let newValue = await executeInContent("Test:GetRulePropertyValue", {
     styleSheetIndex: 0,
     ruleIndex: 0,
     name: "background-color"
@@ -65,8 +65,8 @@ function* testEditDisableProperty(view, rule, prop, fieldType, commitKey) {
 
   let onBlur = once(editor.input, "blur");
   EventUtils.synthesizeKey(commitKey, {}, view.styleWindow);
-  yield onBlur;
-  yield onChangeDone;
+  await onBlur;
+  await onChangeDone;
 
   ok(!prop.enabled, "property is disabled.");
   ok(prop.editor.element.classList.contains("ruleview-overridden"),
@@ -76,7 +76,7 @@ function* testEditDisableProperty(view, rule, prop, fieldType, commitKey) {
   ok(!prop.editor.enable.getAttribute("checked"),
     "property enable checkbox is not checked.");
 
-  newValue = yield executeInContent("Test:GetRulePropertyValue", {
+  newValue = await executeInContent("Test:GetRulePropertyValue", {
     styleSheetIndex: 0,
     ruleIndex: 0,
     name: "background-color"

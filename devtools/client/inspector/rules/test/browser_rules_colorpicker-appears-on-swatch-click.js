@@ -32,7 +32,7 @@ add_task(async function() {
   }
 });
 
-function* testColorPickerAppearsOnColorSwatchClick(view, swatch) {
+async function testColorPickerAppearsOnColorSwatchClick(view, swatch) {
   let cPicker = view.tooltips.getTooltip("colorPicker");
   ok(cPicker, "The rule-view has the expected colorPicker property");
 
@@ -41,11 +41,11 @@ function* testColorPickerAppearsOnColorSwatchClick(view, swatch) {
 
   let onColorPickerReady = cPicker.once("ready");
   swatch.click();
-  yield onColorPickerReady;
+  await onColorPickerReady;
 
   ok(true, "The color picker was shown on click of the color swatch");
   ok(!inplaceEditor(swatch.parentNode),
     "The inplace editor wasn't shown as a result of the color swatch click");
 
-  yield hideTooltipAndWaitForRuleViewChanged(cPicker, view);
+  await hideTooltipAndWaitForRuleViewChanged(cPicker, view);
 }

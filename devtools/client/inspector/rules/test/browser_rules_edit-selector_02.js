@@ -51,14 +51,14 @@ add_task(async function() {
   Services.prefs.clearUserPref(PSEUDO_PREF);
 });
 
-function* testEditSelector(view, name) {
+async function testEditSelector(view, name) {
   info("Test editing existing selector fields");
 
   let idRuleEditor = getRuleViewRuleEditor(view, 1) ||
     getRuleViewRuleEditor(view, 1, 0);
 
   info("Focusing an existing selector name in the rule-view");
-  let editor = yield focusEditableField(view, idRuleEditor.selectorText);
+  let editor = await focusEditableField(view, idRuleEditor.selectorText);
 
   is(inplaceEditor(idRuleEditor.selectorText), editor,
     "The selector editor got focused");
@@ -71,7 +71,7 @@ function* testEditSelector(view, name) {
 
   info("Entering the commit key");
   EventUtils.synthesizeKey("KEY_Enter");
-  yield onRuleViewChanged;
+  await onRuleViewChanged;
 
   is(view._elementStyle.rules.length, 2, "Should have 2 rule.");
   ok(getRuleViewRule(view, name), "Rule with " + name + " selector exists.");

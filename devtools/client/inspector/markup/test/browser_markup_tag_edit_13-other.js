@@ -16,19 +16,19 @@ add_task(async function() {
   await testOrderAfterAttributeChange(inspector, testActor);
 });
 
-function* testOriginalAttributesOrder(inspector) {
+async function testOriginalAttributesOrder(inspector) {
   info("Testing order of attributes on initial node render");
 
-  let attributes = yield getAttributesFromEditor("#order", inspector);
+  let attributes = await getAttributesFromEditor("#order", inspector);
   ok(isEqual(attributes, ["id", "class", "a", "b", "c"]), "ordered correctly");
 }
 
-function* testOrderAfterAttributeChange(inspector, testActor) {
+async function testOrderAfterAttributeChange(inspector, testActor) {
   info("Testing order of attributes after attribute is change by setAttribute");
 
-  yield testActor.setAttribute("#order", "a", "changed");
+  await testActor.setAttribute("#order", "a", "changed");
 
-  let attributes = yield getAttributesFromEditor("#order", inspector);
+  let attributes = await getAttributesFromEditor("#order", inspector);
   ok(isEqual(attributes, ["id", "class", "a", "b", "c"]),
     "order isn't changed");
 }

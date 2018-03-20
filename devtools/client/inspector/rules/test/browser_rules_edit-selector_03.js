@@ -23,13 +23,13 @@ add_task(async function() {
   await testEditSelector(view, "asd@:::!");
 });
 
-function* testEditSelector(view, name) {
+async function testEditSelector(view, name) {
   info("Test editing existing selector fields");
 
   let ruleEditor = getRuleViewRuleEditor(view, 1);
 
   info("Focusing an existing selector name in the rule-view");
-  let editor = yield focusEditableField(view, ruleEditor.selectorText);
+  let editor = await focusEditableField(view, ruleEditor.selectorText);
 
   is(inplaceEditor(ruleEditor.selectorText), editor,
     "The selector editor got focused");
@@ -38,7 +38,7 @@ function* testEditSelector(view, name) {
   editor.input.value = name;
   let onRuleViewChanged = once(view, "ruleview-invalid-selector");
   EventUtils.synthesizeKey("KEY_Enter");
-  yield onRuleViewChanged;
+  await onRuleViewChanged;
 
   is(view._elementStyle.rules.length, 2, "Should have 2 rules.");
   is(getRuleViewRule(view, name), undefined,

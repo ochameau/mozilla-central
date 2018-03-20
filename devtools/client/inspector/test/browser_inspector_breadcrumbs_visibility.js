@@ -60,7 +60,7 @@ add_task(async function() {
   hostWindow.resizeTo(originalWidth, originalHeight);
 });
 
-function* testBreadcrumbTransitions(hostWindow, inspector) {
+async function testBreadcrumbTransitions(hostWindow, inspector) {
   let breadcrumbs = inspector.panelDoc.getElementById("inspector-breadcrumbs");
   let startBtn = breadcrumbs.querySelector(".scrollbutton-up");
   let endBtn = breadcrumbs.querySelector(".scrollbutton-down");
@@ -68,10 +68,10 @@ function* testBreadcrumbTransitions(hostWindow, inspector) {
   let breadcrumbsUpdated = inspector.once("breadcrumbs-updated");
 
   info("Selecting initial node");
-  yield selectNode(NODE_SEVEN, inspector);
+  await selectNode(NODE_SEVEN, inspector);
 
   // So just need to wait for a duration
-  yield breadcrumbsUpdated;
+  await breadcrumbsUpdated;
   let initialCrumb = container.querySelector("button[checked]");
   is(isElementInViewport(hostWindow, initialCrumb), true,
      "initial element was visible");
@@ -86,7 +86,7 @@ function* testBreadcrumbTransitions(hostWindow, inspector) {
       EventUtils.synthesizeMouseAtCenter(startBtn, {}, inspector.panelWin);
     }
 
-    yield breadcrumbsUpdated;
+    await breadcrumbsUpdated;
     let selector = "button[title=\"" + node.title + "\"]";
     let relevantCrumb = container.querySelector(selector);
     is(isElementInViewport(hostWindow, relevantCrumb), true,

@@ -89,19 +89,19 @@ async function followLinkWaitForTab(linkEl, isMetaClick, expectedTabURI) {
   gBrowser.removeTab(target);
 }
 
-function* followLinkWaitForNewNode(linkEl, isMetaClick, inspector) {
+async function followLinkWaitForNewNode(linkEl, isMetaClick, inspector) {
   let onSelection = inspector.selection.once("new-node-front");
   performMouseDown(linkEl, isMetaClick);
-  yield onSelection;
+  await onSelection;
 
   ok(true, "A new node was selected");
   is(inspector.selection.nodeFront.id, "name", "The right node was selected");
 }
 
-function* followLinkNoNewNode(linkEl, isMetaClick, inspector) {
+async function followLinkNoNewNode(linkEl, isMetaClick, inspector) {
   let onFailed = inspector.once("idref-attribute-link-failed");
   performMouseDown(linkEl, isMetaClick);
-  yield onFailed;
+  await onFailed;
 
   ok(true, "The node selection failed");
   is(inspector.selection.nodeFront.tagName.toLowerCase(), "output",

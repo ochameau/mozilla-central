@@ -37,8 +37,8 @@ add_task(async function() {
   inspector.markup.cancelDragging();
 });
 
-function* checkIsDragging(inspector, selector, isDragging) {
-  let container = yield getContainerForSelector(selector, inspector);
+async function checkIsDragging(inspector, selector, isDragging) {
+  let container = await getContainerForSelector(selector, inspector);
   if (isDragging) {
     ok(container.isDragging, "The container is being dragged");
     ok(inspector.markup.isDragging, "And the markup-view knows it");

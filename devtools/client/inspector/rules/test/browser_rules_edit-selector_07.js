@@ -30,13 +30,13 @@ add_task(async function() {
   await testEditSelector(view, "span");
 });
 
-function* testEditSelector(view, name) {
+async function testEditSelector(view, name) {
   info("Test editing existing selector fields");
 
   let ruleEditor = getRuleViewRuleEditor(view, 1);
 
   info("Focusing an existing selector name in the rule-view");
-  let editor = yield focusEditableField(view, ruleEditor.selectorText);
+  let editor = await focusEditableField(view, ruleEditor.selectorText);
 
   is(inplaceEditor(ruleEditor.selectorText), editor,
     "The selector editor got focused");
@@ -47,7 +47,7 @@ function* testEditSelector(view, name) {
   info("Entering the commit key");
   let onRuleViewChanged = once(view, "ruleview-changed");
   EventUtils.synthesizeKey("KEY_Enter");
-  yield onRuleViewChanged;
+  await onRuleViewChanged;
 
   // Get the new rule editor that replaced the original
   ruleEditor = getRuleViewRuleEditor(view, 1);

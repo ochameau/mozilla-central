@@ -25,8 +25,8 @@ const TEST_URL = URL_ROOT + "doc_markup_flashing.html";
 //   If missing, the rootNode (".list") will be expected to flash
 const TEST_DATA = [{
   desc: "Adding a new node should flash the new node",
-  mutate: function* (testActor) {
-    yield testActor.eval(`
+  mutate: async function(testActor) {
+    await testActor.eval(`
       let newLi = document.createElement("LI");
       newLi.textContent = "new list item";
       document.querySelector(".list").appendChild(newLi);
@@ -35,16 +35,16 @@ const TEST_DATA = [{
   flashedNode: ".list li:nth-child(3)"
 }, {
   desc: "Removing a node should flash its parent",
-  mutate: function* (testActor) {
-    yield testActor.eval(`
+  mutate: async function(testActor) {
+    await testActor.eval(`
       let root = document.querySelector(".list");
       root.removeChild(root.lastElementChild);
     `);
   }
 }, {
   desc: "Re-appending an existing node should only flash this node",
-  mutate: function* (testActor) {
-    yield testActor.eval(`
+  mutate: async function(testActor) {
+    await testActor.eval(`
       let root = document.querySelector(".list");
       root.appendChild(root.firstElementChild);
     `);
@@ -53,27 +53,27 @@ const TEST_DATA = [{
 }, {
   desc: "Adding an attribute should flash the attribute",
   attribute: "test-name",
-  mutate: function* (testActor) {
-    yield testActor.setAttribute(".list", "test-name", "value-" + Date.now());
+  mutate: async function(testActor) {
+    await testActor.setAttribute(".list", "test-name", "value-" + Date.now());
   }
 }, {
   desc: "Adding an attribute with css reserved characters should flash the " +
         "attribute",
   attribute: "one:two",
-  mutate: function* (testActor) {
-    yield testActor.setAttribute(".list", "one:two", "value-" + Date.now());
+  mutate: async function(testActor) {
+    await testActor.setAttribute(".list", "one:two", "value-" + Date.now());
   }
 }, {
   desc: "Editing an attribute should flash the attribute",
   attribute: "class",
-  mutate: function* (testActor) {
-    yield testActor.setAttribute(".list", "class", "list value-" + Date.now());
+  mutate: async function(testActor) {
+    await testActor.setAttribute(".list", "class", "list value-" + Date.now());
   }
 }, {
   desc: "Multiple changes to an attribute should flash the attribute",
   attribute: "class",
-  mutate: function* (testActor) {
-    yield testActor.eval(`
+  mutate: async function(testActor) {
+    await testActor.eval(`
       let root = document.querySelector(".list");
       root.removeAttribute("class");
       root.setAttribute("class", "list value-" + Date.now());
@@ -85,8 +85,8 @@ const TEST_DATA = [{
   }
 }, {
   desc: "Removing an attribute should flash the node",
-  mutate: function* (testActor) {
-    yield testActor.eval(`
+  mutate: async function(testActor) {
+    await testActor.eval(`
       let root = document.querySelector(".list");
       root.removeAttribute("class");
     `);

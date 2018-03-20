@@ -110,8 +110,8 @@ const TEST_DATA = [
   },
   {
     desc: "Testing a matched rule selector (bestmatch)",
-    getHoveredNode: function* (view) {
-      let el = yield getComputedViewMatchedRules(view, "background-color");
+    getHoveredNode: async function(view) {
+      let el = await getComputedViewMatchedRules(view, "background-color");
       return el.querySelector(".bestmatch");
     },
     assertNodeInfo: function(nodeInfo) {
@@ -121,8 +121,8 @@ const TEST_DATA = [
   },
   {
     desc: "Testing a matched rule selector (matched)",
-    getHoveredNode: function* (view) {
-      let el = yield getComputedViewMatchedRules(view, "background-color");
+    getHoveredNode: async function(view) {
+      let el = await getComputedViewMatchedRules(view, "background-color");
       return el.querySelector(".matched");
     },
     assertNodeInfo: function(nodeInfo) {
@@ -132,8 +132,8 @@ const TEST_DATA = [
   },
   {
     desc: "Testing a matched rule selector (parentmatch)",
-    getHoveredNode: function* (view) {
-      let el = yield getComputedViewMatchedRules(view, "color");
+    getHoveredNode: async function(view) {
+      let el = await getComputedViewMatchedRules(view, "color");
       return el.querySelector(".parentmatch");
     },
     assertNodeInfo: function(nodeInfo) {
@@ -143,8 +143,8 @@ const TEST_DATA = [
   },
   {
     desc: "Testing a matched rule value",
-    getHoveredNode: function* (view) {
-      let el = yield getComputedViewMatchedRules(view, "color");
+    getHoveredNode: async function(view) {
+      let el = await getComputedViewMatchedRules(view, "color");
       return el.querySelector(".computed-other-property-value");
     },
     assertNodeInfo: function(nodeInfo) {
@@ -155,8 +155,8 @@ const TEST_DATA = [
   },
   {
     desc: "Testing a matched rule stylesheet link",
-    getHoveredNode: function* (view) {
-      let el = yield getComputedViewMatchedRules(view, "color");
+    getHoveredNode: async function(view) {
+      let el = await getComputedViewMatchedRules(view, "color");
       return el.querySelector(".rule-link .theme-link");
     },
     assertNodeInfo: function(nodeInfo) {

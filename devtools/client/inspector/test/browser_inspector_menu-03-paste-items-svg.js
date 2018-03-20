@@ -27,13 +27,13 @@ add_task(async function() {
   is(html, expectedHtml, "The innerHTML of the SVG node is correct");
 
   // Helpers
-  function* pasteContent(menuId, clipboardData) {
+  async function pasteContent(menuId, clipboardData) {
     let allMenuItems = openContextMenuAndGetAllItems(inspector, {
       target: markupTagLine,
     });
     info(`Testing ${menuId} for ${clipboardData}`);
 
-    yield SimpleTest.promiseClipboardChange(clipboardData,
+    await SimpleTest.promiseClipboardChange(clipboardData,
       () => {
         clipboard.copyString(clipboardData);
       }
@@ -42,6 +42,6 @@ add_task(async function() {
     let onMutation = inspector.once("markupmutation");
     allMenuItems.find(item => item.id === menuId).click();
     info("Waiting for mutation to occur");
-    yield onMutation;
+    await onMutation;
   }
 });

@@ -18,52 +18,52 @@ add_task(async function() {
   await testAttributeDeletion(inspector);
 });
 
-function* testAttributeEditing(inspector) {
+async function testAttributeEditing(inspector) {
   info("Testing focus position after attribute editing");
 
   info("Setting the first non-id attribute in edit mode");
   // focuses id
-  yield activateFirstAttribute("#attr", inspector);
+  await activateFirstAttribute("#attr", inspector);
   // focuses the first attr after id
   collapseSelectionAndTab(inspector);
 
-  let attrs = yield getAttributesFromEditor("#attr", inspector);
+  let attrs = await getAttributesFromEditor("#attr", inspector);
 
   info("Editing this attribute, keeping the same name, " +
        "and tabbing to the next");
-  yield editAttributeAndTab(attrs[1] + '="99"', inspector);
+  await editAttributeAndTab(attrs[1] + '="99"', inspector);
   checkFocusedAttribute(attrs[2], true);
 
   info("Editing the new focused attribute, keeping the name, " +
        "and tabbing to the previous");
-  yield editAttributeAndTab(attrs[2] + '="99"', inspector, true);
+  await editAttributeAndTab(attrs[2] + '="99"', inspector, true);
   checkFocusedAttribute(attrs[1], true);
 
   info("Editing attribute name, changes attribute order");
-  yield editAttributeAndTab("d='4'", inspector);
+  await editAttributeAndTab("d='4'", inspector);
   checkFocusedAttribute("id", true);
 
   // Escape of the currently focused field for the next test
   EventUtils.sendKey("escape", inspector.panelWin);
 }
 
-function* testAttributeDeletion(inspector) {
+async function testAttributeDeletion(inspector) {
   info("Testing focus position after attribute deletion");
 
   info("Setting the first non-id attribute in edit mode");
   // focuses id
-  yield activateFirstAttribute("#delattr", inspector);
+  await activateFirstAttribute("#delattr", inspector);
   // focuses the first attr after id
   collapseSelectionAndTab(inspector);
 
-  let attrs = yield getAttributesFromEditor("#delattr", inspector);
+  let attrs = await getAttributesFromEditor("#delattr", inspector);
 
   info("Entering an invalid attribute to delete the attribute");
-  yield editAttributeAndTab('"', inspector);
+  await editAttributeAndTab('"', inspector);
   checkFocusedAttribute(attrs[2], true);
 
   info("Deleting the last attribute");
-  yield editAttributeAndTab(" ", inspector);
+  await editAttributeAndTab(" ", inspector);
 
   // Check we're on the newattr element
   let focusedAttr = Services.focus.focusedElement;
@@ -72,7 +72,7 @@ function* testAttributeDeletion(inspector) {
   is(focusedAttr.tagName, "textarea", "newattr is active");
 }
 
-function* editAttributeAndTab(newValue, inspector, goPrevious) {
+async function editAttributeAndTab(newValue, inspector, goPrevious) {
   let onEditMutation = inspector.markup.once("refocusedonedit");
   inspector.markup.doc.activeElement.value = newValue;
   if (goPrevious) {
@@ -81,15 +81,15 @@ function* editAttributeAndTab(newValue, inspector, goPrevious) {
   } else {
     EventUtils.sendKey("tab", inspector.panelWin);
   }
-  yield onEditMutation;
+  await onEditMutation;
 }
 
 /**
  * Given a markup container, focus and turn in edit mode its first attribute
  * field.
  */
-function* activateFirstAttribute(container, inspector) {
-  let {editor} = yield focusNode(container, inspector);
+async function activateFirstAttribute(container, inspector) {
+  let {editor} = await focusNode(container, inspector);
   editor.tag.focus();
 
   // Go to "id" attribute and trigger edit mode.

@@ -41,19 +41,19 @@ add_task(async function() {
  * Returns a promise that will resolve when the navigation is complete.
  * @return {Promise}
  */
-function* switchToFrameContext(frameIndex, toolbox, inspector) {
+async function switchToFrameContext(frameIndex, toolbox, inspector) {
   // Open frame menu and wait till it's available on the screen.
   let btn = toolbox.doc.getElementById("command-button-frames");
-  let menu = yield toolbox.showFramesMenu({target: btn});
-  yield once(menu, "open");
+  let menu = await toolbox.showFramesMenu({target: btn});
+  await once(menu, "open");
 
   info("Select the iframe in the frame list.");
   let newRoot = inspector.once("new-root");
 
   menu.items[frameIndex].click();
 
-  yield newRoot;
-  yield inspector.once("inspector-updated");
+  await newRoot;
+  await inspector.once("inspector-updated");
 
   info("Navigation to the iframe is done.");
 }

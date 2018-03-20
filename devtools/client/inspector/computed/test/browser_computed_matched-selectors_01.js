@@ -18,10 +18,10 @@ add_task(async function() {
   await testMatchedSelectors(view, inspector);
 });
 
-function* testMatchedSelectors(view, inspector) {
+async function testMatchedSelectors(view, inspector) {
   info("checking selector counts, matched rules and titles");
 
-  let nodeFront = yield getNodeFront("#test", inspector);
+  let nodeFront = await getNodeFront("#test", inspector);
   is(nodeFront, view._viewedElement,
     "style inspector node matches the selected node");
 
@@ -30,7 +30,7 @@ function* testMatchedSelectors(view, inspector) {
   propertyView.buildSelectorContainer();
   propertyView.matchedExpanded = true;
 
-  yield propertyView.refreshMatchedSelectors();
+  await propertyView.refreshMatchedSelectors();
 
   let numMatchedSelectors = propertyView.matchedSelectors.length;
   is(numMatchedSelectors, 6,

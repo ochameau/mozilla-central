@@ -28,20 +28,20 @@ add_task(async function() {
   await assertAllNodesAreVisible(inspector, testActor);
 });
 
-function* showAllNodes(inspector) {
-  let container = yield getContainerForSelector("ul", inspector);
+async function showAllNodes(inspector) {
+  let container = await getContainerForSelector("ul", inspector);
   let button = container.elt.querySelector("button");
   ok(button, "All nodes button is here");
   let win = button.ownerDocument.defaultView;
 
   EventUtils.sendMouseEvent({type: "click"}, button, win);
-  yield inspector.markup._waitForChildren();
+  await inspector.markup._waitForChildren();
 }
 
-function* assertAllNodesAreVisible(inspector, testActor) {
-  let container = yield getContainerForSelector("ul", inspector);
+async function assertAllNodesAreVisible(inspector, testActor) {
+  let container = await getContainerForSelector("ul", inspector);
   ok(!container.elt.querySelector("button"),
      "All nodes button isn't here anymore");
-  let numItems = yield testActor.getNumberOfElementMatches("ul > *");
+  let numItems = await testActor.getNumberOfElementMatches("ul > *");
   is(container.children.childNodes.length, numItems);
 }

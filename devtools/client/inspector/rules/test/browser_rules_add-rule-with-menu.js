@@ -17,7 +17,7 @@ add_task(async function() {
   await testNewRule(view);
 });
 
-function* addNewRuleFromContextMenu(inspector, view) {
+async function addNewRuleFromContextMenu(inspector, view) {
   info("Waiting for context menu to be shown");
 
   let allMenuItems = openStyleContextMenuAndGetAllItems(view, view.element);
@@ -29,7 +29,7 @@ function* addNewRuleFromContextMenu(inspector, view) {
   info("Adding the new rule and expecting a ruleview-changed event");
   let onRuleViewChanged = view.once("ruleview-changed");
   menuitemAddRule.click();
-  yield onRuleViewChanged;
+  await onRuleViewChanged;
 }
 
 function testNewRule(view) {

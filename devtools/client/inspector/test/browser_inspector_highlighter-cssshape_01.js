@@ -39,39 +39,39 @@ add_task(async function() {
   await highlighter.finalize();
 });
 
-function* getShapeHidden(testActor, highlighterFront) {
+async function getShapeHidden(testActor, highlighterFront) {
   let hidden = {};
   for (let shape of SHAPE_IDS) {
-    hidden[shape] = yield testActor.getHighlighterNodeAttribute(
+    hidden[shape] = await testActor.getHighlighterNodeAttribute(
       "shapes-" + shape, "hidden", highlighterFront);
   }
   return hidden;
 }
 
-function* isHiddenByDefault(testActor, highlighterFront) {
+async function isHiddenByDefault(testActor, highlighterFront) {
   info("Checking that highlighter is hidden by default");
 
-  let polygonHidden = yield testActor.getHighlighterNodeAttribute(
+  let polygonHidden = await testActor.getHighlighterNodeAttribute(
     "shapes-polygon", "hidden", highlighterFront);
-  let ellipseHidden = yield testActor.getHighlighterNodeAttribute(
+  let ellipseHidden = await testActor.getHighlighterNodeAttribute(
     "shapes-ellipse", "hidden", highlighterFront);
   ok(polygonHidden && ellipseHidden, "The highlighter is hidden by default");
 }
 
-function* isVisibleWhenShown(testActor, inspector, highlighterFront) {
+async function isVisibleWhenShown(testActor, inspector, highlighterFront) {
   for (let { shapeName, highlighter } of SHAPE_TYPES) {
     info(`Asking to show the highlighter on the ${shapeName} node`);
 
-    let node = yield getNodeFront(`#${shapeName}`, inspector);
-    yield highlighterFront.show(node, {mode: "cssClipPath"});
+    let node = await getNodeFront(`#${shapeName}`, inspector);
+    await highlighterFront.show(node, {mode: "cssClipPath"});
 
-    let hidden = yield getShapeHidden(testActor, highlighterFront);
+    let hidden = await getShapeHidden(testActor, highlighterFront);
     ok(!hidden[highlighter], `The ${shapeName} highlighter is visible`);
   }
 
   info("Hiding the highlighter");
-  yield highlighterFront.hide();
+  await highlighterFront.hide();
 
-  let hidden = yield getShapeHidden(testActor, highlighterFront);
+  let hidden = await getShapeHidden(testActor, highlighterFront);
   ok(hidden.polygon && hidden.ellipse && hidden.rect, "The highlighter is hidden");
 }

@@ -304,8 +304,8 @@ function executeInContent(name, data = {}, objects = {},
  * @param {String} name
  *        name of the property.
  */
-function* getComputedStyleProperty(selector, pseudo, propName) {
-  return yield executeInContent("Test:GetComputedStylePropertyValue",
+async function getComputedStyleProperty(selector, pseudo, propName) {
+  return await executeInContent("Test:GetComputedStylePropertyValue",
     {selector,
      pseudo,
      name: propName});
@@ -326,8 +326,8 @@ function* getComputedStyleProperty(selector, pseudo, propName) {
  * @param {String} name
  *        the name used in test message
  */
-function* waitForComputedStyleProperty(selector, pseudo, name, expected) {
-  return yield executeInContent("Test:WaitForComputedStylePropertyValue",
+async function waitForComputedStyleProperty(selector, pseudo, name, expected) {
+  return await executeInContent("Test:WaitForComputedStylePropertyValue",
     {selector,
      pseudo,
      expected,

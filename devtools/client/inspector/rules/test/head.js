@@ -73,12 +73,12 @@ function getStyle(testActor, selector, propName) {
  * @param {SwatchBasedEditorTooltip} editorTooltip
  * @param {CSSRuleView} view
  */
-function* hideTooltipAndWaitForRuleViewChanged(editorTooltip, view) {
+async function hideTooltipAndWaitForRuleViewChanged(editorTooltip, view) {
   let onModified = view.once("ruleview-changed");
   let onHidden = editorTooltip.tooltip.once("hidden");
   editorTooltip.hide();
-  yield onModified;
-  yield onHidden;
+  await onModified;
+  await onHidden;
 }
 
 /**
@@ -395,11 +395,11 @@ var togglePropStatus = async function(view, textProp) {
  * @param {TestActor} testActor
  *        The current instance of the TestActor
  */
-function* reloadPage(inspector, testActor) {
+async function reloadPage(inspector, testActor) {
   let onNewRoot = inspector.once("new-root");
-  yield testActor.reload();
-  yield onNewRoot;
-  yield inspector.markup._waitForChildren();
+  await testActor.reload();
+  await onNewRoot;
+  await inspector.markup._waitForChildren();
 }
 
 /**
@@ -412,12 +412,12 @@ function* reloadPage(inspector, testActor) {
  *        The instance of the rule-view panel
  * @return a promise that resolves after the rule has been added
  */
-function* addNewRule(inspector, view) {
+async function addNewRule(inspector, view) {
   info("Adding the new rule using the button");
   view.addRuleButton.click();
 
   info("Waiting for rule view to change");
-  yield view.once("ruleview-changed");
+  await view.once("ruleview-changed");
 }
 
 /**
@@ -434,8 +434,8 @@ function* addNewRule(inspector, view) {
  *        The index we expect the rule to have in the rule-view
  * @return a promise that resolves after the rule has been added
  */
-function* addNewRuleAndDismissEditor(inspector, view, expectedSelector, expectedIndex) {
-  yield addNewRule(inspector, view);
+async function addNewRuleAndDismissEditor(inspector, view, expectedSelector, expectedIndex) {
+  await addNewRule(inspector, view);
 
   info("Getting the new rule at index " + expectedIndex);
   let ruleEditor = getRuleViewRuleEditor(view, expectedIndex);
@@ -463,12 +463,12 @@ function* addNewRuleAndDismissEditor(inspector, view, expectedSelector, expected
  *        "RETURN", "ESCAPE"
  * @return a promise that resolves after the element received the focus
  */
-function* sendKeysAndWaitForFocus(view, element, keys) {
+async function sendKeysAndWaitForFocus(view, element, keys) {
   let onFocus = once(element, "focus", true);
   for (let key of keys) {
     EventUtils.sendKey(key, view.styleWindow);
   }
-  yield onFocus;
+  await onFocus;
 }
 
 /**
@@ -496,10 +496,10 @@ function waitForStyleModification(inspector) {
  * @param {DOMNode} icon
  * @param {CSSRuleView} view
  */
-function* clickSelectorIcon(icon, view) {
+async function clickSelectorIcon(icon, view) {
   let onToggled = view.once("ruleview-selectorhighlighter-toggled");
   EventUtils.synthesizeMouseAtCenter(icon, {}, view.styleWindow);
-  yield onToggled;
+  await onToggled;
 }
 
 /**
@@ -508,7 +508,7 @@ function* clickSelectorIcon(icon, view) {
  * @param {CssRuleView} view The rule-view instance.
  * @param {String} name The class name to find the checkbox.
  */
-function* toggleClassPanelCheckBox(view, name) {
+async function toggleClassPanelCheckBox(view, name) {
   info(`Clicking on checkbox for class ${name}`);
   const checkBox = [...view.classPanel.querySelectorAll("[type=checkbox]")].find(box => {
     return box.dataset.name === name;
@@ -517,7 +517,7 @@ function* toggleClassPanelCheckBox(view, name) {
   const onMutation = view.inspector.once("markupmutation");
   checkBox.click();
   info("Waiting for a markupmutation as a result of toggling this class");
-  yield onMutation;
+  await onMutation;
 }
 
 /**
@@ -545,18 +545,18 @@ function checkClassPanelContent(view, classes) {
  * @param {view} ruleView
  * @param {swatch} color swatch of a particular property
  */
-function* openEyedropper(view, swatch) {
+async function openEyedropper(view, swatch) {
   let tooltip = view.tooltips.getTooltip("colorPicker").tooltip;
 
   info("Click on the swatch");
   let onColorPickerReady = view.tooltips.getTooltip("colorPicker").once("ready");
   swatch.click();
-  yield onColorPickerReady;
+  await onColorPickerReady;
 
   let dropperButton = tooltip.container.querySelector("#eyedropper-button");
 
   info("Click on the eyedropper icon");
   let onOpened = tooltip.once("eyedropper-opened");
   dropperButton.click();
-  yield onOpened;
+  await onOpened;
 }

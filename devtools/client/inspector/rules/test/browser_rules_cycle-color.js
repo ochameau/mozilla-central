@@ -28,7 +28,7 @@ add_task(async function() {
   await checkColorCyclingPersist(inspector, view);
 });
 
-function* checkColorCycling(container, view) {
+async function checkColorCycling(container, view) {
   let valueNode = container.querySelector(".ruleview-color");
   let win = view.styleWindow;
 
@@ -53,12 +53,12 @@ function* checkColorCycling(container, view) {
   }];
 
   for (let test of tests) {
-    yield checkSwatchShiftClick(container, win, test.value, test.comment);
+    await checkSwatchShiftClick(container, win, test.value, test.comment);
   }
 }
 
-function* checkAlphaColorCycling(inspector, view) {
-  yield selectNode("span", inspector);
+async function checkAlphaColorCycling(inspector, view) {
+  await selectNode("span", inspector);
   let container = getRuleViewProperty(view, "span", "border-color").valueSpan;
   let valueNode = container.querySelector(".ruleview-color");
   let win = view.styleWindow;
@@ -78,25 +78,25 @@ function* checkAlphaColorCycling(inspector, view) {
   }];
 
   for (let test of tests) {
-    yield checkSwatchShiftClick(container, win, test.value, test.comment);
+    await checkSwatchShiftClick(container, win, test.value, test.comment);
   }
 }
 
-function* checkColorCyclingPersist(inspector, view) {
-  yield selectNode("span", inspector);
+async function checkColorCyclingPersist(inspector, view) {
+  await selectNode("span", inspector);
   let container = getRuleViewProperty(view, "span", "color").valueSpan;
   let valueNode = container.querySelector(".ruleview-color");
   let win = view.styleWindow;
 
   is(valueNode.textContent, "blue", "Color displayed as a color name.");
 
-  yield checkSwatchShiftClick(container, win, "#00f",
+  await checkSwatchShiftClick(container, win, "#00f",
     "Color displayed as a hex value.");
 
   // Select the body and reselect the span to see
   // if the new color unit persisted
-  yield selectNode("body", inspector);
-  yield selectNode("span", inspector);
+  await selectNode("body", inspector);
+  await selectNode("span", inspector);
 
   // We have to query for the container and the swatch because
   // they've been re-generated
@@ -106,7 +106,7 @@ function* checkColorCyclingPersist(inspector, view) {
     "Color  is still displayed as a hex value.");
 }
 
-function* checkSwatchShiftClick(container, win, expectedValue, comment) {
+async function checkSwatchShiftClick(container, win, expectedValue, comment) {
   let swatch = container.querySelector(".ruleview-colorswatch");
   let valueNode = container.querySelector(".ruleview-color");
 
@@ -115,6 +115,6 @@ function* checkSwatchShiftClick(container, win, expectedValue, comment) {
     type: "mousedown",
     shiftKey: true
   }, win);
-  yield onUnitChange;
+  await onUnitChange;
   is(valueNode.textContent, expectedValue, comment);
 }

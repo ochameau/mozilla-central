@@ -80,21 +80,21 @@ add_task(async function() {
   await runAutocompletionTest(toolbox, inspector, view);
 });
 
-function* runAutocompletionTest(toolbox, inspector, view) {
+async function runAutocompletionTest(toolbox, inspector, view) {
   info("Selecting the test node");
-  yield selectNode("h1", inspector);
+  await selectNode("h1", inspector);
 
   info("Focusing the css property editable field");
   let propertyName = view.styleDocument.querySelectorAll(".ruleview-propertyname")[0];
-  let editor = yield focusEditableField(view, propertyName);
+  let editor = await focusEditableField(view, propertyName);
 
   info("Starting to test for css property completion");
   for (let i = 0; i < testData.length; i++) {
-    yield testCompletion(testData[i], editor, view);
+    await testCompletion(testData[i], editor, view);
   }
 }
 
-function* testCompletion([key, completion, open, selected],
+async function testCompletion([key, completion, open, selected],
                          editor, view) {
   info("Pressing key " + key);
   info("Expecting " + completion);
@@ -123,8 +123,8 @@ function* testCompletion([key, completion, open, selected],
   // Flush the debounce for the preview text.
   view.debounce.flush();
 
-  yield onSuggest;
-  yield onPopupEvent;
+  await onSuggest;
+  await onPopupEvent;
 
   info("Checking the state");
   if (completion !== null) {

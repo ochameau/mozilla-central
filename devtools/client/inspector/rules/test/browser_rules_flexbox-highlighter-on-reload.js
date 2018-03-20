@@ -31,18 +31,18 @@ add_task(async function() {
   await checkFlexboxHighlighter();
 });
 
-function* checkFlexboxHighlighter() {
-  let {inspector, view} = yield openRuleView();
+async function checkFlexboxHighlighter() {
+  let {inspector, view} = await openRuleView();
   let {highlighters} = view;
 
-  yield selectNode("#flex", inspector);
+  await selectNode("#flex", inspector);
   let container = getRuleViewProperty(view, "#flex", "display").valueSpan;
   let flexboxToggle = container.querySelector(".ruleview-flex");
 
   info("Toggling ON the flexbox highlighter from the rule-view.");
   let onHighlighterShown = highlighters.once("flexbox-highlighter-shown");
   flexboxToggle.click();
-  yield onHighlighterShown;
+  await onHighlighterShown;
 
   ok(highlighters.flexboxHighlighterShown, "Flexbox highlighter is shown.");
 }

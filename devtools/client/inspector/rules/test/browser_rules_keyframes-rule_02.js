@@ -16,10 +16,10 @@ add_task(async function() {
   await testBoxy(inspector, view);
 });
 
-function* testPacman(inspector, view) {
+async function testPacman(inspector, view) {
   info("Test content in the keyframes rule of #pacman");
 
-  let rules = yield getKeyframeRules("#pacman", inspector, view);
+  let rules = await getKeyframeRules("#pacman", inspector, view);
 
   info("Test text properties for Keyframes #pacman");
 
@@ -52,10 +52,10 @@ function* testPacman(inspector, view) {
   //   "Added opacity property should have been used.");
 }
 
-function* testBoxy(inspector, view) {
+async function testBoxy(inspector, view) {
   info("Test content in the keyframes rule of #boxy");
 
-  let rules = yield getKeyframeRules("#boxy", inspector, view);
+  let rules = await getKeyframeRules("#boxy", inspector, view);
 
   info("Test text properties for Keyframes #boxy");
 
@@ -79,8 +79,8 @@ function convertTextPropsToString(textProps) {
   return textProps.map(t => t.name + ": " + t.value).join("; ");
 }
 
-function* getKeyframeRules(selector, inspector, view) {
-  yield selectNode(selector, inspector);
+async function getKeyframeRules(selector, inspector, view) {
+  await selectNode(selector, inspector);
   let elementStyle = view._elementStyle;
 
   let rules = {

@@ -26,7 +26,7 @@ add_task(async function() {
   await testFilterOverriddenProperty(inspector, view);
 });
 
-function* testFilterOverriddenProperty(inspector, ruleView) {
+async function testFilterOverriddenProperty(inspector, ruleView) {
   info("Check that the correct rules are visible");
   is(ruleView.element.children.length, 3, "Should have 3 rules.");
 
@@ -51,7 +51,7 @@ function* testFilterOverriddenProperty(inspector, ruleView) {
 
   info("Click the overridden search");
   textPropEditor.filterProperty.click();
-  yield onRuleViewFiltered;
+  await onRuleViewFiltered;
 
   info("Check that the overridden search is applied");
   is(searchField.value, "`width`", "The search field value is width.");

@@ -23,14 +23,14 @@ add_task(async function() {
   await editAndCheck(view);
 });
 
-function* editAndCheck(view) {
+async function editAndCheck(view) {
   let idRuleEditor = getRuleViewRuleEditor(view, 1);
   let prop = idRuleEditor.rule.textProps[0];
   let propEditor = prop.editor;
   let newPaddingValue = "20px";
 
   info("Focusing the inplace editor field");
-  let editor = yield focusEditableField(view, propEditor.valueSpan);
+  let editor = await focusEditableField(view, propEditor.valueSpan);
   is(inplaceEditor(propEditor.valueSpan), editor,
     "Focused editor should be the value span.");
 
@@ -45,10 +45,10 @@ function* editAndCheck(view) {
     "changes to document");
 
   view.debounce.flush();
-  yield onPropertyChange;
+  await onPropertyChange;
 
   info("Waiting for ruleview-refreshed after previewValue was applied.");
-  yield onRefreshAfterPreview;
+  await onRefreshAfterPreview;
 
   let onBlur = once(editor.input, "blur");
 
@@ -56,10 +56,10 @@ function* editAndCheck(view) {
   EventUtils.synthesizeKey("KEY_Enter");
 
   info("Waiting for blur on the field");
-  yield onBlur;
+  await onBlur;
 
   info("Waiting for the style changes to be applied");
-  yield once(view, "ruleview-changed");
+  await once(view, "ruleview-changed");
 
   let computed = prop.computed;
   let propNames = [

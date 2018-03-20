@@ -70,10 +70,10 @@ function testBodyFonts(inspector, viewDoc) {
   ok(!isRemote(lis[4]), "local font is local");
 }
 
-function* testDivFonts(inspector, viewDoc) {
+async function testDivFonts(inspector, viewDoc) {
   let updated = inspector.once("fontinspector-updated");
-  yield selectNode("div", inspector);
-  yield updated;
+  await selectNode("div", inspector);
+  await updated;
 
   let lis = getUsedFontsEls(viewDoc);
   is(lis.length, 1, "Found 1 font on DIV");

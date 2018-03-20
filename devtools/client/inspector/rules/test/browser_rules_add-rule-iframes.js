@@ -42,13 +42,13 @@ add_task(async function() {
  * @param {String} value
  *        The value of the new property.
  */
-function* addNewProperty(view, index, name, value) {
+async function addNewProperty(view, index, name, value) {
   let idRuleEditor = getRuleViewRuleEditor(view, index);
   info(`Adding new property "${name}: ${value};"`);
 
   let onRuleViewChanged = view.once("ruleview-changed");
   idRuleEditor.addProperty(name, value, "", true);
-  yield onRuleViewChanged;
+  await onRuleViewChanged;
 
   let textProps = idRuleEditor.rule.textProps;
   let lastProperty = textProps[textProps.length - 1];

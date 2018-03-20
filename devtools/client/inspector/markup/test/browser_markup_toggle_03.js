@@ -46,8 +46,8 @@ add_task(async function() {
   }
 });
 
-function* getNodeFronts(inspector) {
-  let nodeList = yield inspector.walker.querySelectorAll(
+async function getNodeFronts(inspector) {
+  let nodeList = await inspector.walker.querySelectorAll(
     inspector.walker.rootNode, "ul, li, span, em");
   return nodeList.items();
 }

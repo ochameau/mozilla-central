@@ -65,15 +65,15 @@ function testAccordionStateAfterSwitchingSidebars(inspector, doc) {
   ok(!Services.prefs.getBoolPref(GRID_OPENED_PREF), `${GRID_OPENED_PREF} is pref off.`);
 }
 
-function* testAccordionStateAfterReopeningLayoutView(toolbox) {
+async function testAccordionStateAfterReopeningLayoutView(toolbox) {
   info("Checking the grid accordion state is persistent after closing and re-opening the "
   + "layout view.");
 
   info("Closing the toolbox.");
-  yield toolbox.destroy();
+  await toolbox.destroy();
 
   info("Re-opening the layout view.");
-  let { gridInspector } = yield openLayoutView();
+  let { gridInspector } = await openLayoutView();
   let { document: doc } = gridInspector;
   let gContent = doc.querySelector(".grid-pane ._content");
 

@@ -83,7 +83,7 @@ add_task(async function() {
      "Modifying an earlier property shouldn't override a later property.");
 });
 
-function* getValue(selector, propName) {
-  let value = yield getComputedStyleProperty(selector, null, propName);
+async function getValue(selector, propName) {
+  let value = await getComputedStyleProperty(selector, null, propName);
   return value;
 }

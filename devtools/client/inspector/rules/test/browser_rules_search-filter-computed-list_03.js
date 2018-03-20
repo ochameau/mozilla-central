@@ -27,8 +27,8 @@ add_task(async function() {
   await testAddTextInFilter(inspector, view);
 });
 
-function* testAddTextInFilter(inspector, view) {
-  yield setSearchFilter(view, SEARCH);
+async function testAddTextInFilter(inspector, view) {
+  await setSearchFilter(view, SEARCH);
 
   info("Check that the correct rules are visible");
   is(view.element.children.length, 2, "Should have 2 rules.");
