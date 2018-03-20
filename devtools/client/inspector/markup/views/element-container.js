@@ -8,7 +8,6 @@ const PREVIEW_MAX_DIM_PREF = "devtools.inspector.imagePreviewTooltipSize";
 
 const promise = require("promise");
 const Services = require("Services");
-const {Task} = require("devtools/shared/task");
 const nodeConstants = require("devtools/shared/dom-node-constants");
 const clipboardHelper = require("devtools/shared/platform/clipboard");
 const {setImageTooltip, setBrokenImageTooltip} =

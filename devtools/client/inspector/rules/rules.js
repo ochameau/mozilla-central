@@ -8,7 +8,6 @@
 
 const promise = require("promise");
 const Services = require("Services");
-const {Task} = require("devtools/shared/task");
 const {l10n} = require("devtools/shared/inspector/css-logic");
 const {ELEMENT_STYLE} = require("devtools/shared/specs/styles");
 const OutputParser = require("devtools/client/shared/output-parser");

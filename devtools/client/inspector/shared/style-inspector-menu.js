@@ -7,7 +7,6 @@
 "use strict";
 
 const Services = require("Services");
-const {Task} = require("devtools/shared/task");
 
 const Menu = require("devtools/client/framework/menu");
 const MenuItem = require("devtools/client/framework/menu-item");

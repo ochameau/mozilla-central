@@ -4,7 +4,6 @@
 
 "use strict";
 
-const {Task} = require("devtools/shared/task");
 const {KeyCodes} = require("devtools/client/shared/keycodes");
 const {flashElementOn, flashElementOff} =
       require("devtools/client/inspector/markup/utils");

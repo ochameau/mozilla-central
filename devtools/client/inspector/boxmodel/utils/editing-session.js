@@ -4,7 +4,6 @@
 
 "use strict";
 
-const { Task } = require("devtools/shared/task");
 const { getCssProperties } = require("devtools/shared/fronts/css-properties");
 
 /**

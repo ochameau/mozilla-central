@@ -6,7 +6,6 @@
 
 const promise = require("promise");
 const Services = require("Services");
-const {Task} = require("devtools/shared/task");
 const nodeConstants = require("devtools/shared/dom-node-constants");
 const nodeFilterConstants = require("devtools/shared/dom-node-filter-constants");
 const EventEmitter = require("devtools/shared/event-emitter");

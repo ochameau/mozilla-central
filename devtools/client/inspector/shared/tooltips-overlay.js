@@ -11,7 +11,6 @@
  * editor tooltips that appear when clicking swatch based editors.
  */
 
-const { Task } = require("devtools/shared/task");
 const Services = require("Services");
 const {
   VIEW_NODE_VALUE_TYPE,
