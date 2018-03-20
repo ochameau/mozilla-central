@@ -20,8 +20,8 @@ const XHTML = `
 
 const TEST_URI = "data:application/xhtml+xml;charset=utf-8," + encodeURI(XHTML);
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL(TEST_URI);
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL(TEST_URI);
 
   let testData = [
     {
@@ -35,7 +35,7 @@ add_task(function* () {
   ];
 
   for (let currTest of testData) {
-    yield testNode(currTest, inspector, testActor);
+    await testNode(currTest, inspector, testActor);
   }
 });
 

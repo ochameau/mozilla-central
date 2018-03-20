@@ -108,12 +108,12 @@ const TEST_DATA = [
   }
 ];
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL(TEST_URL);
 
   for (let data of TEST_DATA) {
     info("Running test case: " + data.desc);
-    yield runTestData(inspector, testActor, data);
+    await runTestData(inspector, testActor, data);
   }
 });
 

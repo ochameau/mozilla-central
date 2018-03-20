@@ -8,13 +8,13 @@
 const HIGHLIGHTER_TYPE = "EyeDropper";
 const ID = "eye-dropper-";
 
-add_task(function* () {
-  let helper = yield openInspectorForURL("data:text/html;charset=utf-8,eye-dropper test")
+add_task(async function() {
+  let helper = await openInspectorForURL("data:text/html;charset=utf-8,eye-dropper test")
                .then(getHighlighterHelperFor(HIGHLIGHTER_TYPE));
   helper.prefix = ID;
 
-  yield isInitiallyHidden(helper);
-  yield canBeShownAndHidden(helper);
+  await isInitiallyHidden(helper);
+  await canBeShownAndHidden(helper);
 
   helper.finalize();
 });

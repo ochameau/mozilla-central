@@ -17,20 +17,20 @@ const TEST_URI = `
   <div id="testElement">test element</div>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode("#testElement", inspector);
-  yield testRuleView(view, inspector.selection.nodeFront);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode("#testElement", inspector);
+  await testRuleView(view, inspector.selection.nodeFront);
 
   info("Opening the computed view");
   let onComputedViewReady = inspector.once("computed-view-refreshed");
   view = selectComputedView(inspector);
-  yield onComputedViewReady;
+  await onComputedViewReady;
 
-  yield testComputedView(view, inspector.selection.nodeFront);
+  await testComputedView(view, inspector.selection.nodeFront);
 
-  yield testExpandedComputedViewProperty(view, inspector.selection.nodeFront);
+  await testExpandedComputedViewProperty(view, inspector.selection.nodeFront);
 });
 
 function* testRuleView(ruleView, nodeFront) {

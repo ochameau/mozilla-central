@@ -10,12 +10,12 @@ const {PropertyView} =
       require("devtools/client/inspector/computed/computed");
 const TEST_URI = URL_ROOT + "doc_matched_selectors.html";
 
-add_task(function* () {
-  yield addTab(TEST_URI);
-  let {inspector, view} = yield openComputedView();
+add_task(async function() {
+  await addTab(TEST_URI);
+  let {inspector, view} = await openComputedView();
 
-  yield selectNode("#test", inspector);
-  yield testMatchedSelectors(view, inspector);
+  await selectNode("#test", inspector);
+  await testMatchedSelectors(view, inspector);
 });
 
 function* testMatchedSelectors(view, inspector) {

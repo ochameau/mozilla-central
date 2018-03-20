@@ -55,12 +55,12 @@ const res2 = [
   },
 ];
 
-add_task(function* () {
-  yield addTab("data:text/html," + encodeURIComponent(TEST_URI));
-  let { inspector, boxmodel, testActor } = yield openLayoutView();
+add_task(async function() {
+  await addTab("data:text/html," + encodeURIComponent(TEST_URI));
+  let { inspector, boxmodel, testActor } = await openLayoutView();
 
-  yield testInitialValues(inspector, boxmodel);
-  yield testChangingValues(inspector, boxmodel, testActor);
+  await testInitialValues(inspector, boxmodel);
+  await testChangingValues(inspector, boxmodel, testActor);
 });
 
 function* testInitialValues(inspector, boxmodel) {

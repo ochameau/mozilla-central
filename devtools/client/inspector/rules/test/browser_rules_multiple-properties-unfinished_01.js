@@ -9,11 +9,11 @@
 
 const TEST_URI = "<div>Test Element</div>";
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode("div", inspector);
-  yield testCreateNewMultiUnfinished(inspector, view);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode("div", inspector);
+  await testCreateNewMultiUnfinished(inspector, view);
 });
 
 function* testCreateNewMultiUnfinished(inspector, view) {

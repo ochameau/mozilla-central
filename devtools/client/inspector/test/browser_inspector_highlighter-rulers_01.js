@@ -20,16 +20,16 @@ const RULERS_MAX_Y_AXIS = 15000;
 // currently the unit is in pixel.
 const RULERS_TEXT_STEP = 100;
 
-add_task(function* () {
-  let { inspector, testActor } = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let { inspector, testActor } = await openInspectorForURL(TEST_URL);
   let front = inspector.inspector;
 
-  let highlighter = yield front.getHighlighterByType("RulersHighlighter");
+  let highlighter = await front.getHighlighterByType("RulersHighlighter");
 
-  yield isHiddenByDefault(highlighter, inspector, testActor);
-  yield hasRightLabelsContent(highlighter, inspector, testActor);
+  await isHiddenByDefault(highlighter, inspector, testActor);
+  await hasRightLabelsContent(highlighter, inspector, testActor);
 
-  yield highlighter.finalize();
+  await highlighter.finalize();
 });
 
 function* isHiddenByDefault(highlighterFront, inspector, testActor) {

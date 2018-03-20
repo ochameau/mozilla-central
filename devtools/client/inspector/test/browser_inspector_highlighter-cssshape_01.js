@@ -28,15 +28,15 @@ const SHAPE_TYPES = [
   }
 ];
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL(TEST_URL);
   let front = inspector.inspector;
-  let highlighter = yield front.getHighlighterByType(HIGHLIGHTER_TYPE);
+  let highlighter = await front.getHighlighterByType(HIGHLIGHTER_TYPE);
 
-  yield isHiddenByDefault(testActor, highlighter);
-  yield isVisibleWhenShown(testActor, inspector, highlighter);
+  await isHiddenByDefault(testActor, highlighter);
+  await isVisibleWhenShown(testActor, inspector, highlighter);
 
-  yield highlighter.finalize();
+  await highlighter.finalize();
 });
 
 function* getShapeHidden(testActor, highlighterFront) {

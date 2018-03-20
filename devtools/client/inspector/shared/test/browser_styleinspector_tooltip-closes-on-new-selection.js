@@ -9,17 +9,17 @@
 const TEST_URI = "<div class='one'>el 1</div><div class='two'>el 2</div>";
 const XHTML_NS = "http://www.w3.org/1999/xhtml";
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode(".one", inspector);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode(".one", inspector);
 
   info("Testing rule view tooltip closes on new selection");
-  yield testRuleView(view, inspector);
+  await testRuleView(view, inspector);
 
   info("Testing computed view tooltip closes on new selection");
   view = selectComputedView(inspector);
-  yield testComputedView(view, inspector);
+  await testComputedView(view, inspector);
 });
 
 function* testRuleView(ruleView, inspector) {

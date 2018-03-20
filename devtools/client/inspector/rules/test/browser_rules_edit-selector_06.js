@@ -18,12 +18,12 @@ const TEST_URI = `
   <div class="testclass">Styled Node</div>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode(".testclass", inspector);
-  yield testEditClassSelector(view);
-  yield testEditDivSelector(view);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode(".testclass", inspector);
+  await testEditClassSelector(view);
+  await testEditDivSelector(view);
 });
 
 function* testEditClassSelector(view) {

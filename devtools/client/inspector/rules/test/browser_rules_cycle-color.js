@@ -19,13 +19,13 @@ const TEST_URI = `
   <body><span>Test</span> cycling color types in the rule view!</body>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
   let container = getRuleViewProperty(view, "body", "color").valueSpan;
-  yield checkColorCycling(container, view);
-  yield checkAlphaColorCycling(inspector, view);
-  yield checkColorCyclingPersist(inspector, view);
+  await checkColorCycling(container, view);
+  await checkAlphaColorCycling(inspector, view);
+  await checkColorCyclingPersist(inspector, view);
 });
 
 function* checkColorCycling(container, view) {

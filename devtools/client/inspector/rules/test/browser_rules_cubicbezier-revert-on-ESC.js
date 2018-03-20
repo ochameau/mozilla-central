@@ -15,14 +15,14 @@ const TEST_URI = `
   </style>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {view} = yield openRuleView();
-  yield testPressingEscapeRevertsChanges(view);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {view} = await openRuleView();
+  await testPressingEscapeRevertsChanges(view);
 });
 
-function* testPressingEscapeRevertsChanges(view) {
-  let {propEditor} = yield openCubicBezierAndChangeCoords(view, 1, 0,
+async function testPressingEscapeRevertsChanges(view) {
+  let {propEditor} = await openCubicBezierAndChangeCoords(view, 1, 0,
     [0.1, 2, 0.9, -1], {
       selector: "body",
       name: "animation-timing-function",
@@ -32,9 +32,9 @@ function* testPressingEscapeRevertsChanges(view) {
   is(propEditor.valueSpan.textContent, "cubic-bezier(.1,2,.9,-1)",
     "Got expected property value.");
 
-  yield escapeTooltip(view);
+  await escapeTooltip(view);
 
-  yield waitForComputedStyleProperty("body", null, "animation-timing-function",
+  await waitForComputedStyleProperty("body", null, "animation-timing-function",
     "linear");
   is(propEditor.valueSpan.textContent, "linear",
     "Got expected property value.");

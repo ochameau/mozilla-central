@@ -9,14 +9,14 @@
 const TEST_URL = URL_ROOT + "doc_inspector_highlighter_cssshapes_iframe.html";
 const HIGHLIGHTER_TYPE = "ShapesHighlighter";
 
-add_task(function* () {
-  let inspector = yield openInspectorForURL(TEST_URL);
-  let helper = yield getHighlighterHelperFor(HIGHLIGHTER_TYPE)(inspector);
+add_task(async function() {
+  let inspector = await openInspectorForURL(TEST_URL);
+  let helper = await getHighlighterHelperFor(HIGHLIGHTER_TYPE)(inspector);
   let {testActor} = inspector;
 
-  yield testPolygonIframeMovePoint(testActor, helper);
+  await testPolygonIframeMovePoint(testActor, helper);
 
-  yield helper.finalize();
+  await helper.finalize();
 });
 
 function* testPolygonIframeMovePoint(testActor, helper) {

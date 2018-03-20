@@ -93,7 +93,7 @@ const TEST_DATA = [{
   }
 }];
 
-add_task(function* () {
+add_task(async function() {
   let timerPrecision = Preferences.get("privacy.reduceTimerPrecision");
   Preferences.set("privacy.reduceTimerPrecision", false);
 
@@ -101,46 +101,46 @@ add_task(function* () {
     Preferences.set("privacy.reduceTimerPrecision", timerPrecision);
   });
 
-  let {inspector, testActor} = yield openInspectorForURL(TEST_URL);
+  let {inspector, testActor} = await openInspectorForURL(TEST_URL);
 
   // Make sure mutated nodes flash for a very long time so we can more easily
   // assert they do
   inspector.markup.CONTAINER_FLASHING_DURATION = 1000 * 60 * 60;
 
   info("Getting the <ul.list> root node to test mutations on");
-  let rootNodeFront = yield getNodeFront(".list", inspector);
+  let rootNodeFront = await getNodeFront(".list", inspector);
 
   info("Selecting the last element of the root node before starting");
-  yield selectNode(".list .item:nth-child(2)", inspector);
+  await selectNode(".list .item:nth-child(2)", inspector);
 
   for (let {mutate, flashedNode, desc, attribute} of TEST_DATA) {
     info("Starting test: " + desc);
 
     info("Mutating the DOM and listening for markupmutation event");
     let onMutation = inspector.once("markupmutation");
-    yield mutate(testActor);
-    let mutations = yield onMutation;
+    await mutate(testActor);
+    let mutations = await onMutation;
 
     info("Wait for the breadcrumbs widget to update if it needs to");
     if (inspector.breadcrumbs._hasInterestingMutations(mutations)) {
-      yield inspector.once("breadcrumbs-updated");
+      await inspector.once("breadcrumbs-updated");
     }
 
     info("Asserting that the correct markup-container is flashing");
     let flashingNodeFront = rootNodeFront;
     if (flashedNode) {
-      flashingNodeFront = yield getNodeFront(flashedNode, inspector);
+      flashingNodeFront = await getNodeFront(flashedNode, inspector);
     }
 
     if (attribute) {
-      yield assertAttributeFlashing(flashingNodeFront, attribute, inspector);
+      await assertAttributeFlashing(flashingNodeFront, attribute, inspector);
     } else {
-      yield assertNodeFlashing(flashingNodeFront, inspector);
+      await assertNodeFlashing(flashingNodeFront, inspector);
     }
   }
 });
 
-function* assertNodeFlashing(nodeFront, inspector) {
+function assertNodeFlashing(nodeFront, inspector) {
   let container = getContainerForNodeFront(nodeFront, inspector);
   ok(container, "Markup container for node found");
   ok(container.tagState.classList.contains("theme-bg-contrast"),
@@ -153,7 +153,7 @@ function* assertNodeFlashing(nodeFront, inspector) {
   container.tagState.classList.remove("theme-bg-contrast");
 }
 
-function* assertAttributeFlashing(nodeFront, attribute, inspector) {
+function assertAttributeFlashing(nodeFront, attribute, inspector) {
   let container = getContainerForNodeFront(nodeFront, inspector);
   ok(container, "Markup container for node found");
   ok(container.editor.attrElements.get(attribute),

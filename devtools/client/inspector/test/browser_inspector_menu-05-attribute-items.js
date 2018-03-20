@@ -7,15 +7,15 @@ http://creativecommons.org/publicdomain/zero/1.0/ */
 
 const TEST_URL = URL_ROOT + "doc_inspector_menu.html";
 
-add_task(function* () {
-  let { inspector, testActor } = yield openInspectorForURL(TEST_URL);
-  yield selectNode("#attributes", inspector);
+add_task(async function() {
+  let { inspector, testActor } = await openInspectorForURL(TEST_URL);
+  await selectNode("#attributes", inspector);
 
-  yield testAddAttribute();
-  yield testCopyAttributeValue();
-  yield testCopyLongAttributeValue();
-  yield testEditAttribute();
-  yield testRemoveAttribute();
+  await testAddAttribute();
+  await testCopyAttributeValue();
+  await testCopyLongAttributeValue();
+  await testEditAttribute();
+  await testRemoveAttribute();
 
   function* testAddAttribute() {
     info("Triggering 'Add Attribute' and waiting for mutation to occur");
@@ -31,7 +31,7 @@ add_task(function* () {
     ok(hasAttribute, "attribute was successfully added");
   }
 
-  function* testCopyAttributeValue() {
+  async function testCopyAttributeValue() {
     info("Testing 'Copy Attribute Value' and waiting for clipboard promise to resolve");
     let copyAttributeValue = getMenuItem("node-menu-copy-attribute");
 
@@ -42,10 +42,10 @@ add_task(function* () {
       value: "the"
     };
 
-    yield waitForClipboardPromise(() => copyAttributeValue.click(), "the");
+    await waitForClipboardPromise(() => copyAttributeValue.click(), "the");
   }
 
-  function* testCopyLongAttributeValue() {
+  async function testCopyLongAttributeValue() {
     info("Testing 'Copy Attribute Value' copies very long attribute values");
     let copyAttributeValue = getMenuItem("node-menu-copy-attribute");
     let longAttribute = "#01234567890123456789012345678901234567890123456789" +
@@ -59,7 +59,7 @@ add_task(function* () {
       value: longAttribute
     };
 
-    yield waitForClipboardPromise(() => copyAttributeValue.click(), longAttribute);
+    await waitForClipboardPromise(() => copyAttributeValue.click(), longAttribute);
   }
 
   function* testEditAttribute() {

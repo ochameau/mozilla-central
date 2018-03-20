@@ -32,13 +32,13 @@ const TEST_URI = `
   </div>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openComputedView();
-  yield selectNode("span", inspector);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openComputedView();
+  await selectNode("span", inspector);
 
-  yield testCopySome(view);
-  yield testCopyAll(view);
+  await testCopySome(view);
+  await testCopyAll(view);
 });
 
 function* testCopySome(view) {

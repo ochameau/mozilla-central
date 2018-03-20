@@ -28,21 +28,21 @@ const TEST_URI = `
   <div id="test"></div>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
 
-  let {inspector, view} = yield openRuleView();
-  yield selectNode("#test", inspector);
+  let {inspector, view} = await openRuleView();
+  await selectNode("#test", inspector);
 
-  yield testMarginIncrements(view);
-  yield testVariousUnitIncrements(view);
-  yield testHexIncrements(view);
-  yield testAlphaHexIncrements(view);
-  yield testRgbIncrements(view);
-  yield testShorthandIncrements(view);
-  yield testOddCases(view);
-  yield testZeroValueIncrements(view);
-  yield testOpacityIncrements(view);
+  await testMarginIncrements(view);
+  await testVariousUnitIncrements(view);
+  await testHexIncrements(view);
+  await testAlphaHexIncrements(view);
+  await testRgbIncrements(view);
+  await testShorthandIncrements(view);
+  await testOddCases(view);
+  await testZeroValueIncrements(view);
+  await testOpacityIncrements(view);
 });
 
 function* testMarginIncrements(view) {

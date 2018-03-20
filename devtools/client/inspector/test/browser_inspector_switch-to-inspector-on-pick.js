@@ -9,14 +9,14 @@
 const TEST_URI = "data:text/html;charset=UTF-8," +
   "<p>Switch to inspector on pick</p>";
 
-add_task(function* () {
-  let tab = yield addTab(TEST_URI);
-  let toolbox = yield openToolbox(tab);
+add_task(async function() {
+  let tab = await addTab(TEST_URI);
+  let toolbox = await openToolbox(tab);
 
-  yield startPickerAndAssertSwitchToInspector(toolbox);
+  await startPickerAndAssertSwitchToInspector(toolbox);
 
   info("Stoppping element picker.");
-  yield toolbox.highlighterUtils.stopPicker();
+  await toolbox.highlighterUtils.stopPicker();
 });
 
 function openToolbox(tab) {

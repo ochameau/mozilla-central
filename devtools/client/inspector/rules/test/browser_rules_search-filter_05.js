@@ -9,11 +9,11 @@
 const SEARCH = "doc_urls_clickable.css";
 const TEST_URI = URL_ROOT + "doc_urls_clickable.html";
 
-add_task(function* () {
-  yield addTab(TEST_URI);
-  let {inspector, view} = yield openRuleView();
-  yield selectNode(".relative1", inspector);
-  yield testAddTextInFilter(inspector, view);
+add_task(async function() {
+  await addTab(TEST_URI);
+  let {inspector, view} = await openRuleView();
+  await selectNode(".relative1", inspector);
+  await testAddTextInFilter(inspector, view);
 });
 
 function* testAddTextInFilter(inspector, view) {

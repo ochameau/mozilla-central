@@ -25,12 +25,12 @@ const TEST_URI = `
   <p>Testing the color picker tooltip!</p>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
 
-  yield testSimpleMultipleColorChanges(inspector, view);
-  yield testComplexMultipleColorChanges(inspector, view);
+  await testSimpleMultipleColorChanges(inspector, view);
+  await testComplexMultipleColorChanges(inspector, view);
 });
 
 function* testSimpleMultipleColorChanges(inspector, ruleView) {

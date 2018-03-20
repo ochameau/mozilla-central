@@ -60,24 +60,24 @@ const TESTS = {
   }
 };
 
-add_task(function* () {
-  let inspector = yield openInspectorForURL(TEST_URL);
-  let helper = yield getHighlighterHelperFor(HIGHLIGHTER_TYPE)(inspector);
+add_task(async function() {
+  let inspector = await openInspectorForURL(TEST_URL);
+  let helper = await getHighlighterHelperFor(HIGHLIGHTER_TYPE)(inspector);
 
   helper.prefix = ID;
 
   let { show, hide, finalize } = helper;
 
   info("Showing the highlighter");
-  yield show("#node2");
+  await show("#node2");
 
   for (let desc in TESTS) {
-    yield executeTest(helper, desc, TESTS[desc]);
+    await executeTest(helper, desc, TESTS[desc]);
   }
 
   info("Hiding the highlighter");
-  yield hide();
-  yield finalize();
+  await hide();
+  await finalize();
 });
 
 function* executeTest(helper, desc, data) {

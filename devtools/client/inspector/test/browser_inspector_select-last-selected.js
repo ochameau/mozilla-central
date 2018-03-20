@@ -55,18 +55,18 @@ var TEST_DATA = [
   }
 ];
 
-add_task(function* () {
-  let { inspector, toolbox, testActor } = yield openInspectorForURL(PAGE_1);
+add_task(async function() {
+  let { inspector, toolbox, testActor } = await openInspectorForURL(PAGE_1);
 
   for (let { url, nodeToSelect, selectedNode } of TEST_DATA) {
     if (nodeToSelect) {
       info("Selecting node " + nodeToSelect + " before navigation.");
-      yield selectNode(nodeToSelect, inspector);
+      await selectNode(nodeToSelect, inspector);
     }
 
-    yield navigateToAndWaitForNewRoot(url);
+    await navigateToAndWaitForNewRoot(url);
 
-    let nodeFront = yield getNodeFront(selectedNode, inspector);
+    let nodeFront = await getNodeFront(selectedNode, inspector);
     ok(nodeFront, "Got expected node front");
     is(inspector.selection.nodeFront, nodeFront,
        selectedNode + " is selected after navigation.");

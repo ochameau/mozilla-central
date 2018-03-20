@@ -17,17 +17,17 @@ const TEST_URI = `
   <span>This is a span</span>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode("#testid", inspector);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode("#testid", inspector);
 
-  yield addNewRule(inspector, view);
-  yield testEditSelector(view, "span");
+  await addNewRule(inspector, view);
+  await testEditSelector(view, "span");
 
   info("Selecting the modified element with the new rule");
-  yield selectNode("span", inspector);
-  yield checkModifiedElement(view, "span");
+  await selectNode("span", inspector);
+  await checkModifiedElement(view, "span");
 });
 
 function* testEditSelector(view, name) {
@@ -49,7 +49,7 @@ function* testEditSelector(view, name) {
   ok(getRuleViewRule(view, name), "Rule with " + name + " selector exists.");
 }
 
-function* checkModifiedElement(view, name) {
+function checkModifiedElement(view, name) {
   is(view._elementStyle.rules.length, 2, "Should have 2 rules.");
   ok(getRuleViewRule(view, name), "Rule with " + name + " selector exists.");
 }

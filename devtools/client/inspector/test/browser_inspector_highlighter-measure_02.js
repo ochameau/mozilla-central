@@ -24,23 +24,23 @@ const WIDTH = 160;
 const HEIGHT = 100;
 const HYPOTENUSE = Math.hypot(WIDTH, HEIGHT).toFixed(2);
 
-add_task(function* () {
-  let helper = yield openInspectorForURL(TEST_URL)
+add_task(async function() {
+  let helper = await openInspectorForURL(TEST_URL)
                        .then(getHighlighterHelperFor(HIGHLIGHTER_TYPE));
 
   let { show, finalize } = helper;
 
   helper.prefix = PREFIX;
 
-  yield show();
+  await show();
 
-  yield hasNoLabelsWhenStarts(helper);
-  yield hasSizeLabelWhenMoved(helper);
-  yield hasCorrectSizeLabelValue(helper);
-  yield hasSizeLabelAndGuidesWhenStops(helper);
-  yield hasCorrectSizeLabelValue(helper);
+  await hasNoLabelsWhenStarts(helper);
+  await hasSizeLabelWhenMoved(helper);
+  await hasCorrectSizeLabelValue(helper);
+  await hasSizeLabelAndGuidesWhenStops(helper);
+  await hasCorrectSizeLabelValue(helper);
 
-  yield finalize();
+  await finalize();
 });
 
 function* hasNoLabelsWhenStarts({isElementHidden, synthesizeMouse}) {

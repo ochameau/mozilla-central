@@ -16,17 +16,17 @@ const TEST_URI = `
   <p>Test the selector highlighter</p>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode("p", inspector);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode("p", inspector);
 
   ok(!view.selectorHighlighter,
     "No selectorhighlighter exist in the rule-view");
 
-  yield testSelectorHighlight(view, "p");
-  yield testEditSelector(view, "body");
-  yield testSelectorHighlight(view, "body");
+  await testSelectorHighlight(view, "p");
+  await testEditSelector(view, "body");
+  await testSelectorHighlight(view, "body");
 });
 
 function* testSelectorHighlight(view, name) {

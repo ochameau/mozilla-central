@@ -13,7 +13,7 @@ const TEST_DATA_URI = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQA
 const INVALID_IMAGE_URI = "resource://devtools/client/definitions.js";
 const ERROR_MESSAGE = STYLE_INSPECTOR_L10N.getStr("styleinspector.copyImageDataUrlError");
 
-add_task(function* () {
+add_task(async function() {
   const TEST_URI = `<style type="text/css">
       .valid-background {
         background-image: url(${TEST_DATA_URI});
@@ -25,9 +25,9 @@ add_task(function* () {
     <div class="valid-background">Valid background image</div>
     <div class="invalid-background">Invalid background image</div>`;
 
-  yield addTab("data:text/html;charset=utf8," + encodeURIComponent(TEST_URI));
+  await addTab("data:text/html;charset=utf8," + encodeURIComponent(TEST_URI));
 
-  yield startTest();
+  await startTest();
 });
 
 function* startTest() {
@@ -62,9 +62,9 @@ function* startTest() {
     ".invalid-background", INVALID_IMAGE_URI);
 }
 
-function* testCopyUrlToClipboard({view, inspector}, type, selector, expected) {
+async function testCopyUrlToClipboard({view, inspector}, type, selector, expected) {
   info("Select node in inspector panel");
-  yield selectNode(selector, inspector);
+  await selectNode(selector, inspector);
 
   info("Retrieve background-image link for selected node in current " +
        "styleinspector view");
@@ -87,12 +87,12 @@ function* testCopyUrlToClipboard({view, inspector}, type, selector, expected) {
 
   if (type == "data-uri") {
     info("Click Copy Data URI and wait for clipboard");
-    yield waitForClipboardPromise(() => {
+    await waitForClipboardPromise(() => {
       return menuitemCopyImageDataUrl.click();
     }, expected);
   } else {
     info("Click Copy URL and wait for clipboard");
-    yield waitForClipboardPromise(() => {
+    await waitForClipboardPromise(() => {
       return menuitemCopyUrl.click();
     }, expected);
   }

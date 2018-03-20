@@ -12,20 +12,20 @@ const TEST_URL = "data:text/html;charset=utf-8," +
 
 const ID = "rulers-highlighter-";
 
-add_task(function* () {
-  let { inspector, testActor } = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let { inspector, testActor } = await openInspectorForURL(TEST_URL);
   let front = inspector.inspector;
 
-  let highlighter = yield front.getHighlighterByType("RulersHighlighter");
+  let highlighter = await front.getHighlighterByType("RulersHighlighter");
 
   // the rulers doesn't need any node, but as highligher it seems mandatory
   // ones, so the body is given
-  let body = yield getNodeFront("body", inspector);
-  yield highlighter.show(body);
+  let body = await getNodeFront("body", inspector);
+  await highlighter.show(body);
 
-  yield isUpdatedAfterScroll(highlighter, inspector, testActor);
+  await isUpdatedAfterScroll(highlighter, inspector, testActor);
 
-  yield highlighter.finalize();
+  await highlighter.finalize();
 });
 
 function* isUpdatedAfterScroll(highlighterFront, inspector, testActor) {

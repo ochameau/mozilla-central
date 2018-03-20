@@ -9,11 +9,11 @@
 const TEST_URL = `data:text/html;charset=utf8,
                   <div a b id='order' c class></div>`;
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL(TEST_URL);
 
-  yield testOriginalAttributesOrder(inspector);
-  yield testOrderAfterAttributeChange(inspector, testActor);
+  await testOriginalAttributesOrder(inspector);
+  await testOrderAfterAttributeChange(inspector, testActor);
 });
 
 function* testOriginalAttributesOrder(inspector) {

@@ -21,12 +21,12 @@ const TEST_URI = `
   <div id="testid" class="testclass">Styled Node</div>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode("#testid", inspector);
-  yield testAddTextInFilter(inspector, view);
-  yield testEscapeKeypress(inspector, view);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode("#testid", inspector);
+  await testAddTextInFilter(inspector, view);
+  await testEscapeKeypress(inspector, view);
 });
 
 function* testAddTextInFilter(inspector, view) {

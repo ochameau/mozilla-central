@@ -19,19 +19,19 @@ const HIGHLIGHTER_TYPE = "MeasuringToolHighlighter";
 const X = 32;
 const Y = 20;
 
-add_task(function* () {
-  let helper = yield openInspectorForURL(TEST_URL)
+add_task(async function() {
+  let helper = await openInspectorForURL(TEST_URL)
                        .then(getHighlighterHelperFor(HIGHLIGHTER_TYPE));
 
   let { finalize } = helper;
 
   helper.prefix = PREFIX;
 
-  yield isHiddenByDefault(helper);
-  yield areLabelsHiddenByDefaultWhenShows(helper);
-  yield areLabelsProperlyDisplayedWhenMouseMoved(helper);
+  await isHiddenByDefault(helper);
+  await areLabelsHiddenByDefaultWhenShows(helper);
+  await areLabelsProperlyDisplayedWhenMouseMoved(helper);
 
-  yield finalize();
+  await finalize();
 });
 
 function* isHiddenByDefault({isElementHidden}) {

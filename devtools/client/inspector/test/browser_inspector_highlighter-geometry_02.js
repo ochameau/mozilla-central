@@ -73,17 +73,17 @@ const POSITIONED_ELEMENT_TESTS = [{
   ]
 }];
 
-add_task(function* () {
-  let helper = yield openInspectorForURL(TEST_URL)
+add_task(async function() {
+  let helper = await openInspectorForURL(TEST_URL)
                        .then(getHighlighterHelperFor(HIGHLIGHTER_TYPE));
 
   helper.prefix = ID;
 
   let { finalize } = helper;
 
-  yield positionLabelsAreCorrect(helper);
+  await positionLabelsAreCorrect(helper);
 
-  yield finalize();
+  await finalize();
 });
 
 function* positionLabelsAreCorrect(

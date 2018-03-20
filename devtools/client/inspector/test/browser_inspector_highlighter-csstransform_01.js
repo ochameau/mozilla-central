@@ -19,21 +19,21 @@ const TEST_URL = `
  </span>
 `;
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL(
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL(
     "data:text/html;charset=utf-8," + encodeURI(TEST_URL));
   let front = inspector.inspector;
 
-  let highlighter = yield front.getHighlighterByType("CssTransformHighlighter");
+  let highlighter = await front.getHighlighterByType("CssTransformHighlighter");
 
-  yield isHiddenByDefault(testActor, highlighter);
-  yield has2PolygonsAnd4Lines(testActor, highlighter);
-  yield isNotShownForUntransformed(testActor, inspector, highlighter);
-  yield isNotShownForInline(testActor, inspector, highlighter);
-  yield isVisibleWhenShown(testActor, inspector, highlighter);
-  yield linesLinkThePolygons(testActor, inspector, highlighter);
+  await isHiddenByDefault(testActor, highlighter);
+  await has2PolygonsAnd4Lines(testActor, highlighter);
+  await isNotShownForUntransformed(testActor, inspector, highlighter);
+  await isNotShownForInline(testActor, inspector, highlighter);
+  await isVisibleWhenShown(testActor, inspector, highlighter);
+  await linesLinkThePolygons(testActor, inspector, highlighter);
 
-  yield highlighter.finalize();
+  await highlighter.finalize();
 });
 
 function* isHiddenByDefault(testActor, highlighterFront) {

@@ -25,17 +25,17 @@ const HIGHLIGHTER_TYPE = "GeometryEditorHighlighter";
 const ID = "geometry-editor-";
 const SIDES = ["left", "right", "top", "bottom"];
 
-add_task(function* () {
-  let helper = yield openInspectorForURL(TEST_URL)
+add_task(async function() {
+  let helper = await openInspectorForURL(TEST_URL)
                        .then(getHighlighterHelperFor(HIGHLIGHTER_TYPE));
 
   let { finalize } = helper;
 
   helper.prefix = ID;
 
-  yield hasArrowsAndLabelsAndHandlers(helper);
-  yield isHiddenForNonPositionedNonSizedElement(helper);
-  yield sideArrowsAreDisplayedForPositionedNode(helper);
+  await hasArrowsAndLabelsAndHandlers(helper);
+  await isHiddenForNonPositionedNonSizedElement(helper);
+  await sideArrowsAreDisplayedForPositionedNode(helper);
 
   finalize();
 });

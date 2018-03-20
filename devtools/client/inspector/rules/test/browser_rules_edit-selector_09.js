@@ -23,14 +23,14 @@ const TEST_URI = `
   <span class="testclass">This is a span</span>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
 
-  yield selectNode("#testid", inspector);
-  yield testEditSelector(view, "span");
-  yield testAddImportantProperty(view);
-  yield testAddMatchedRule(view, "span, div");
+  await selectNode("#testid", inspector);
+  await testEditSelector(view, "span");
+  await testAddImportantProperty(view);
+  await testAddMatchedRule(view, "span, div");
 });
 
 function* testEditSelector(view, name) {

@@ -12,13 +12,13 @@
 const TEST_PAGE = URL_ROOT +
   "doc_inspector_delete-selected-node-02.html";
 
-add_task(function* () {
-  let { inspector } = yield openInspectorForURL(TEST_PAGE);
+add_task(async function() {
+  let { inspector } = await openInspectorForURL(TEST_PAGE);
 
-  yield testManuallyDeleteSelectedNode();
-  yield testAutomaticallyDeleteSelectedNode();
-  yield testDeleteSelectedNodeContainerFrame();
-  yield testDeleteWithNonElementNode();
+  await testManuallyDeleteSelectedNode();
+  await testAutomaticallyDeleteSelectedNode();
+  await testDeleteSelectedNodeContainerFrame();
+  await testDeleteWithNonElementNode();
 
   function* testManuallyDeleteSelectedNode() {
     info("Selecting a node, deleting it via context menu and checking that " +
@@ -125,7 +125,7 @@ add_task(function* () {
     return menuItem;
   }
 
-  function* assertNodeSelectedAndCrumbsUpdated(expectedCrumbs,
+  function assertNodeSelectedAndCrumbsUpdated(expectedCrumbs,
                                                expectedNodeType) {
     info("Performing checks");
     let actualNodeType = inspector.selection.nodeFront.nodeType;

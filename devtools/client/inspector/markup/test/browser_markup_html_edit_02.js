@@ -112,8 +112,8 @@ const TEST_URL = "data:text/html," +
   "</body>" +
   "</html>";
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL(TEST_URL);
   inspector.markup._frame.focus();
-  yield runEditOuterHTMLTests(TEST_DATA, inspector, testActor);
+  await runEditOuterHTMLTests(TEST_DATA, inspector, testActor);
 });

@@ -34,7 +34,7 @@ const TEST_DATA = [{
   output: ["html", "body", "article#i1", "div#i11", "div#i111", "div#i1111"]
 }, {
   desc: "Updating an ID to an displayed element should refresh",
-  setup: function* () {},
+  setup: function() {},
   run: function* ({walker}) {
     let node = yield walker.querySelector(walker.rootNode, "#i1");
     yield node.modifyAttributes([{
@@ -47,7 +47,7 @@ const TEST_DATA = [{
            "div#i1111"]
 }, {
   desc: "Updating an class to a displayed element should refresh",
-  setup: function* () {},
+  setup: function() {},
   run: function* ({walker}) {
     let node = yield walker.querySelector(walker.rootNode, "body");
     yield node.modifyAttributes([{
@@ -61,7 +61,7 @@ const TEST_DATA = [{
 }, {
   desc: "Updating a non id/class attribute to a displayed element should not " +
         "refresh",
-  setup: function* () {},
+  setup: function() {},
   run: function* ({walker}) {
     let node = yield walker.querySelector(walker.rootNode, "#i11");
     yield node.modifyAttributes([{
@@ -74,7 +74,7 @@ const TEST_DATA = [{
            "div#i111", "div#i1111"]
 }, {
   desc: "Moving a child in an element that's not displayed should not refresh",
-  setup: function* () {},
+  setup: function() {},
   run: function* ({walker}) {
     // Re-append #i1211 as a last child of #i2.
     let parent = yield walker.querySelector(walker.rootNode, "#i2");
@@ -86,7 +86,7 @@ const TEST_DATA = [{
            "div#i111", "div#i1111"]
 }, {
   desc: "Moving an undisplayed child in a displayed element should not refresh",
-  setup: function* () {},
+  setup: function() {},
   run: function* ({walker}) {
     // Re-append #i2 in body (move it to the end).
     let parent = yield walker.querySelector(walker.rootNode, "body");
@@ -99,7 +99,7 @@ const TEST_DATA = [{
 }, {
   desc: "Updating attributes on an element that's not displayed should not " +
         "refresh",
-  setup: function* () {},
+  setup: function() {},
   run: function* ({walker}) {
     let node = yield walker.querySelector(walker.rootNode, "#i2");
     yield node.modifyAttributes([{
@@ -125,7 +125,7 @@ const TEST_DATA = [{
   output: ["html", "body.test-class"]
 }, {
   desc: "Changing the class of the currently selected node should refresh",
-  setup: function* () {},
+  setup: function() {},
   run: function* ({selection}) {
     yield selection.nodeFront.modifyAttributes([{
       attributeName: "class",
@@ -136,7 +136,7 @@ const TEST_DATA = [{
   output: ["html", "body.test-class-changed"]
 }, {
   desc: "Changing the id of the currently selected node should refresh",
-  setup: function* () {},
+  setup: function() {},
   run: function* ({selection}) {
     yield selection.nodeFront.modifyAttributes([{
       attributeName: "id",
@@ -147,8 +147,8 @@ const TEST_DATA = [{
   output: ["html", "body#new-id.test-class-changed"]
 }];
 
-add_task(function* () {
-  let {inspector} = yield openInspectorForURL(TEST_URI);
+add_task(async function() {
+  let {inspector} = await openInspectorForURL(TEST_URI);
   let breadcrumbs = inspector.panelDoc.getElementById("inspector-breadcrumbs");
   let container = breadcrumbs.querySelector(".html-arrowscrollbox-inner");
   let win = container.ownerDocument.defaultView;
@@ -161,7 +161,7 @@ add_task(function* () {
     let onContentMutation = inspector.once("markupmutation");
 
     info("Running setup");
-    yield setup(inspector);
+    await setup(inspector);
 
     info("Listen to mutations on the breadcrumbs container");
     let hasBreadcrumbsMutated = false;
@@ -186,14 +186,14 @@ add_task(function* () {
     });
 
     info("Running the test case");
-    yield run(inspector);
+    await run(inspector);
 
     info("Wait until the page has mutated");
-    yield onContentMutation;
+    await onContentMutation;
 
     if (shouldRefresh) {
       info("The breadcrumbs is expected to refresh, so wait for it");
-      yield inspector.once("inspector-updated");
+      await inspector.once("inspector-updated");
     } else {
       ok(!inspector._updateProgress,
         "The breadcrumbs widget is not currently updating");

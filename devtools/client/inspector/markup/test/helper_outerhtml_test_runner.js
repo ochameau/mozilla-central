@@ -21,11 +21,11 @@
  */
 function runEditOuterHTMLTests(tests, inspector, testActor) {
   info("Running " + tests.length + " edit-outer-html tests");
-  return Task.spawn(function* () {
+  return (async function() {
     for (let step of tests) {
-      yield runEditOuterHTMLTest(step, inspector, testActor);
+      await runEditOuterHTMLTest(step, inspector, testActor);
     }
-  });
+  })();
 }
 
 /**

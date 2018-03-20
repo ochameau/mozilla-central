@@ -15,20 +15,20 @@ const TEST_URI = `
   <div>Testing the color picker tooltip!</div>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
 
-  let {inspector, view} = yield openRuleView();
+  let {inspector, view} = await openRuleView();
 
-  yield testCopyToClipboard(inspector, view);
-  yield testManualEdit(inspector, view);
-  yield testColorPickerEdit(inspector, view);
+  await testCopyToClipboard(inspector, view);
+  await testManualEdit(inspector, view);
+  await testColorPickerEdit(inspector, view);
 });
 
-function* testCopyToClipboard(inspector, view) {
+async function testCopyToClipboard(inspector, view) {
   info("Testing that color is copied to clipboard");
 
-  yield selectNode("div", inspector);
+  await selectNode("div", inspector);
 
   let element = getRuleViewProperty(view, "div", "color").valueSpan
     .querySelector(".ruleview-colorswatch");
@@ -39,7 +39,7 @@ function* testCopyToClipboard(inspector, view) {
 
   ok(menuitemCopyColor.visible, "Copy color is visible");
 
-  yield waitForClipboardPromise(() => menuitemCopyColor.click(),
+  await waitForClipboardPromise(() => menuitemCopyColor.click(),
     "#123ABC");
 
   EventUtils.synthesizeKey("KEY_Escape");

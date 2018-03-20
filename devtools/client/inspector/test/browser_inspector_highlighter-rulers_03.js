@@ -14,18 +14,18 @@ const ID = "rulers-highlighter-";
 
 var {Toolbox} = require("devtools/client/framework/toolbox");
 
-add_task(function* () {
-  let { inspector, testActor } = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let { inspector, testActor } = await openInspectorForURL(TEST_URL);
   let front = inspector.inspector;
 
-  let highlighter = yield front.getHighlighterByType("RulersHighlighter");
+  let highlighter = await front.getHighlighterByType("RulersHighlighter");
 
-  yield isShown(highlighter, inspector, testActor);
-  yield hasRightLabelsContent(highlighter, inspector, testActor);
-  yield resizeInspector(highlighter, inspector, testActor);
-  yield hasRightLabelsContent(highlighter, inspector, testActor);
+  await isShown(highlighter, inspector, testActor);
+  await hasRightLabelsContent(highlighter, inspector, testActor);
+  await resizeInspector(highlighter, inspector, testActor);
+  await hasRightLabelsContent(highlighter, inspector, testActor);
 
-  yield highlighter.finalize();
+  await highlighter.finalize();
 });
 
 function* isShown(highlighterFront, inspector, testActor) {

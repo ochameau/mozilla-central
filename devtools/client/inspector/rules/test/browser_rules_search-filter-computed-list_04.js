@@ -19,11 +19,11 @@ const TEST_URI = `
   <h1 id='testid'>Styled Node</h1>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode("#testid", inspector);
-  yield testModifyPropertyValueFilter(inspector, view);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode("#testid", inspector);
+  await testModifyPropertyValueFilter(inspector, view);
 });
 
 function* testModifyPropertyValueFilter(inspector, view) {

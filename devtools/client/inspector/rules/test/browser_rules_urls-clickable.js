@@ -12,10 +12,10 @@ const BASE_64_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAA" +
   "FCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAA" +
   "BJRU5ErkJggg==";
 
-add_task(function* () {
-  yield addTab(TEST_URI);
-  let {inspector, view} = yield openRuleView();
-  yield selectNodes(inspector, view);
+add_task(async function() {
+  await addTab(TEST_URI);
+  let {inspector, view} = await openRuleView();
+  await selectNodes(inspector, view);
 });
 
 function* selectNodes(inspector, ruleView) {

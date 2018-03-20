@@ -15,7 +15,7 @@ const TEST_URI = `
   <div id='testid' class='testclass'>Styled Node</div>
 `;
 
-add_task(function* () {
+add_task(async function() {
   let TESTS = [
     {name: "hex", result: "#0f0"},
     {name: "rgb", result: "rgb(0, 255, 0)"}
@@ -25,15 +25,15 @@ add_task(function* () {
     info("starting test for " + name);
     Services.prefs.setCharPref("devtools.defaultColorUnit", name);
 
-    let tab = yield addTab("data:text/html;charset=utf-8," +
+    let tab = await addTab("data:text/html;charset=utf-8," +
                            encodeURIComponent(TEST_URI));
-    let {inspector, view} = yield openRuleView();
+    let {inspector, view} = await openRuleView();
 
-    yield selectNode("#testid", inspector);
-    yield basicTest(view, name, result);
+    await selectNode("#testid", inspector);
+    await basicTest(view, name, result);
 
     let target = TargetFactory.forTab(tab);
-    yield gDevTools.closeToolbox(target);
+    await gDevTools.closeToolbox(target);
     gBrowser.removeCurrentTab();
   }
 });

@@ -10,14 +10,14 @@ const TEST_URL = URL_ROOT + "doc_inspector_menu.html";
 // Use the old webconsole since the node isn't being rendered as an HTML tag
 // in the new one (Bug 1304794)
 Services.prefs.setBoolPref("devtools.webconsole.new-frontend-enabled", false);
-registerCleanupFunction(function* () {
+registerCleanupFunction(function() {
   Services.prefs.clearUserPref("devtools.webconsole.new-frontend-enabled");
 });
 
-add_task(function* () {
-  let { inspector, toolbox } = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let { inspector, toolbox } = await openInspectorForURL(TEST_URL);
 
-  yield testUseInConsole();
+  await testUseInConsole();
 
   function* testUseInConsole() {
     info("Testing 'Use in Console' menu item.");

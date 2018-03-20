@@ -9,11 +9,11 @@
 
 const TEST_URI = URL_ROOT + "doc_keyframeanimation.html";
 
-add_task(function* () {
-  yield addTab(TEST_URI);
-  let {inspector, view} = yield openRuleView();
-  yield testPacman(inspector, view);
-  yield testBoxy(inspector, view);
+add_task(async function() {
+  await addTab(TEST_URI);
+  let {inspector, view} = await openRuleView();
+  await testPacman(inspector, view);
+  await testBoxy(inspector, view);
 });
 
 function* testPacman(inspector, view) {

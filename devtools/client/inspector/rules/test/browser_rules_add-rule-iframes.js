@@ -13,22 +13,22 @@ const TEST_URI =
   <iframe id="frame2" src="data:text/html;charset=utf-8,<div>inner2</div>">
   </iframe>`;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode("div", inspector);
-  yield addNewRuleAndDismissEditor(inspector, view, "div", 1);
-  yield addNewProperty(view, 1, "color", "red");
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode("div", inspector);
+  await addNewRuleAndDismissEditor(inspector, view, "div", 1);
+  await addNewProperty(view, 1, "color", "red");
 
-  let innerFrameDiv1 = yield getNodeFrontInFrame("div", "#frame1", inspector);
-  yield selectNode(innerFrameDiv1, inspector);
-  yield addNewRuleAndDismissEditor(inspector, view, "div", 1);
-  yield addNewProperty(view, 1, "color", "blue");
+  let innerFrameDiv1 = await getNodeFrontInFrame("div", "#frame1", inspector);
+  await selectNode(innerFrameDiv1, inspector);
+  await addNewRuleAndDismissEditor(inspector, view, "div", 1);
+  await addNewProperty(view, 1, "color", "blue");
 
-  let innerFrameDiv2 = yield getNodeFrontInFrame("div", "#frame2", inspector);
-  yield selectNode(innerFrameDiv2, inspector);
-  yield addNewRuleAndDismissEditor(inspector, view, "div", 1);
-  yield addNewProperty(view, 1, "color", "green");
+  let innerFrameDiv2 = await getNodeFrontInFrame("div", "#frame2", inspector);
+  await selectNode(innerFrameDiv2, inspector);
+  await addNewRuleAndDismissEditor(inspector, view, "div", 1);
+  await addNewProperty(view, 1, "color", "green");
 });
 
 /**

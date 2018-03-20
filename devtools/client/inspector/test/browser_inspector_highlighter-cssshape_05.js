@@ -11,16 +11,16 @@ const TEST_URL = URL_ROOT + "doc_inspector_highlighter_cssshapes.html";
 const HIGHLIGHTER_TYPE = "ShapesHighlighter";
 const CSS_SHAPES_ENABLED_PREF = "devtools.inspector.shapesHighlighter.enabled";
 
-add_task(function* () {
-  yield pushPref(CSS_SHAPES_ENABLED_PREF, true);
-  let env = yield openInspectorForURL(TEST_URL);
-  let helper = yield getHighlighterHelperFor(HIGHLIGHTER_TYPE)(env);
+add_task(async function() {
+  await pushPref(CSS_SHAPES_ENABLED_PREF, true);
+  let env = await openInspectorForURL(TEST_URL);
+  let helper = await getHighlighterHelperFor(HIGHLIGHTER_TYPE)(env);
   let { testActor, inspector } = env;
   let view = selectRuleView(inspector);
   let highlighters = view.highlighters;
 
-  yield highlightFromRuleView(inspector, view, highlighters, testActor);
-  yield highlightFromHighlighter(view, highlighters, testActor, helper);
+  await highlightFromRuleView(inspector, view, highlighters, testActor);
+  await highlightFromHighlighter(view, highlighters, testActor, helper);
 });
 
 function* highlightFromRuleView(inspector, view, highlighters, testActor) {

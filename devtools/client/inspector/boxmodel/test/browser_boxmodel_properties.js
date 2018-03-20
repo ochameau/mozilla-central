@@ -79,16 +79,16 @@ const res2 = [
   },
 ];
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let { inspector, boxmodel, testActor } = yield openLayoutView();
-  yield selectNode("div", inspector);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let { inspector, boxmodel, testActor } = await openLayoutView();
+  await selectNode("div", inspector);
 
-  yield testInitialValues(inspector, boxmodel);
-  yield testChangingValues(inspector, boxmodel, testActor);
+  await testInitialValues(inspector, boxmodel);
+  await testChangingValues(inspector, boxmodel, testActor);
 });
 
-function* testInitialValues(inspector, boxmodel) {
+function testInitialValues(inspector, boxmodel) {
   info("Test that the initial values of the box model are correct");
   let doc = boxmodel.document;
 

@@ -22,12 +22,12 @@ const TEST_URI = `
   <div id='testid'>Styled Node</div>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode("#testid", inspector);
-  yield testEditableFieldFocus(inspector, view, "KEY_Enter");
-  yield testEditableFieldFocus(inspector, view, "KEY_Tab");
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode("#testid", inspector);
+  await testEditableFieldFocus(inspector, view, "KEY_Enter");
+  await testEditableFieldFocus(inspector, view, "KEY_Tab");
 });
 
 function* testEditableFieldFocus(inspector, view, commitKey) {

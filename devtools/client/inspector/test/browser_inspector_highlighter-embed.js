@@ -8,12 +8,12 @@
 
 const TEST_URL = URL_ROOT + "doc_inspector_embed.html";
 
-add_task(function* () {
-  let {inspector} = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let {inspector} = await openInspectorForURL(TEST_URL);
 
   info("Get a node inside the <embed> element and select/highlight it");
-  let body = yield getEmbeddedBody(inspector);
-  yield selectAndHighlightNode(body, inspector);
+  let body = await getEmbeddedBody(inspector);
+  await selectAndHighlightNode(body, inspector);
 
   let selectedNode = inspector.selection.nodeFront;
   is(selectedNode.tagName.toLowerCase(), "body", "The selected node is <body>");

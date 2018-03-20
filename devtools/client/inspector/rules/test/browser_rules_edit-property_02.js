@@ -19,14 +19,14 @@ const TEST_URI = `
   <div id="testid2">Styled Node</div>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode("#testid", inspector);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode("#testid", inspector);
 
-  yield testEditProperty(inspector, view);
-  yield testDisableProperty(inspector, view);
-  yield testPropertyStillMarkedDirty(inspector, view);
+  await testEditProperty(inspector, view);
+  await testDisableProperty(inspector, view);
+  await testPropertyStillMarkedDirty(inspector, view);
 });
 
 function* testEditProperty(inspector, ruleView) {

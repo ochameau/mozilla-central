@@ -9,18 +9,18 @@
 const TEST_URI = URL_ROOT + "doc_pseudoelement.html";
 const PSEUDO_PREF = "devtools.inspector.show_pseudo_elements";
 
-add_task(function* () {
-  yield pushPref(PSEUDO_PREF, true);
+add_task(async function() {
+  await pushPref(PSEUDO_PREF, true);
 
-  yield addTab(TEST_URI);
-  let {inspector, view} = yield openRuleView();
+  await addTab(TEST_URI);
+  let {inspector, view} = await openRuleView();
 
-  yield testTopLeft(inspector, view);
-  yield testTopRight(inspector, view);
-  yield testBottomRight(inspector, view);
-  yield testBottomLeft(inspector, view);
-  yield testParagraph(inspector, view);
-  yield testBody(inspector, view);
+  await testTopLeft(inspector, view);
+  await testTopRight(inspector, view);
+  await testBottomRight(inspector, view);
+  await testBottomLeft(inspector, view);
+  await testParagraph(inspector, view);
+  await testBody(inspector, view);
 });
 
 function* testTopLeft(inspector, view) {

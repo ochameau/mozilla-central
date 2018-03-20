@@ -21,10 +21,10 @@ const TEST_URI = `
   <div class="test">Testing the cubic-bezier tooltip!</div>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode("div", inspector);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode("div", inspector);
 
   let swatches = [];
   swatches.push(
@@ -46,7 +46,7 @@ add_task(function* () {
 
   for (let swatch of swatches) {
     info("Testing that the cubic-bezier appears on cubicswatch click");
-    yield testAppears(view, swatch);
+    await testAppears(view, swatch);
   }
 });
 

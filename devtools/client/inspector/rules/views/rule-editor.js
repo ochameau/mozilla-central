@@ -160,7 +160,7 @@ RuleEditor.prototype = {
     }
 
     if (this.rule.domRule.type !== CSSRule.KEYFRAME_RULE) {
-      Task.spawn(function* () {
+      (async function() {
         let selector;
 
         if (this.rule.domRule.selectors) {
@@ -169,7 +169,7 @@ RuleEditor.prototype = {
         } else if (this.rule.inherited) {
           // This is an inline style from an inherited rule. Need to resolve the unique
           // selector from the node which rule this is inherited from.
-          selector = yield this.rule.inherited.getUniqueSelector();
+          selector = await this.rule.inherited.getUniqueSelector();
         } else {
           // This is an inline style from the current node.
           selector = this.ruleView.inspector.selectionCssSelector;
@@ -187,7 +187,7 @@ RuleEditor.prototype = {
 
         this.uniqueSelector = selector;
         this.emit("selector-icon-created");
-      }.bind(this));
+      }.bind(this))();
     }
 
     this.openBrace = createChild(header, "span", {
@@ -614,7 +614,7 @@ RuleEditor.prototype = {
    * @param {Number} direction
    *        The move focus direction number.
    */
-  _onSelectorDone: Task.async(function* (value, commit, direction) {
+  async _onSelectorDone(value, commit, direction) {
     if (!commit || this.isEditing || value === "" ||
         value === this.rule.selectorText) {
       return;
@@ -629,7 +629,7 @@ RuleEditor.prototype = {
     this.isEditing = true;
 
     try {
-      let response = yield this.rule.domRule.modifySelector(element, value);
+      let response = await this.rule.domRule.modifySelector(element, value);
 
       if (!supportsUnmatchedRules) {
         this.isEditing = false;
@@ -642,7 +642,7 @@ RuleEditor.prototype = {
 
       // We recompute the list of applied styles, because editing a
       // selector might cause this rule's position to change.
-      let applied = yield elementStyle.pageStyle.getApplied(element, {
+      let applied = await elementStyle.pageStyle.getApplied(element, {
         inherited: true,
         matchedSelectors: true,
         filter: elementStyle.showUserAgentStyles ? "ua" : undefined
@@ -695,7 +695,7 @@ RuleEditor.prototype = {
       this.isEditing = false;
       promiseWarn(err);
     }
-  }),
+  },
 
   /**
    * Handle moving the focus change after a tab or return keypress in the

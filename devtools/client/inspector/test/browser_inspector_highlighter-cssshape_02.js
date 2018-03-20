@@ -9,17 +9,17 @@
 const TEST_URL = URL_ROOT + "doc_inspector_highlighter_cssshapes.html";
 const HIGHLIGHTER_TYPE = "ShapesHighlighter";
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL(TEST_URL);
   let front = inspector.inspector;
-  let highlighter = yield front.getHighlighterByType(HIGHLIGHTER_TYPE);
+  let highlighter = await front.getHighlighterByType(HIGHLIGHTER_TYPE);
 
-  yield polygonHasCorrectAttrs(testActor, inspector, highlighter);
-  yield circleHasCorrectAttrs(testActor, inspector, highlighter);
-  yield ellipseHasCorrectAttrs(testActor, inspector, highlighter);
-  yield insetHasCorrectAttrs(testActor, inspector, highlighter);
+  await polygonHasCorrectAttrs(testActor, inspector, highlighter);
+  await circleHasCorrectAttrs(testActor, inspector, highlighter);
+  await ellipseHasCorrectAttrs(testActor, inspector, highlighter);
+  await insetHasCorrectAttrs(testActor, inspector, highlighter);
 
-  yield highlighter.finalize();
+  await highlighter.finalize();
 });
 
 function* polygonHasCorrectAttrs(testActor, inspector, highlighterFront) {

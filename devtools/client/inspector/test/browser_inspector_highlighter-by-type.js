@@ -9,13 +9,13 @@
 
 const TEST_URL = "data:text/html;charset=utf-8,custom highlighters";
 
-add_task(function* () {
-  let {inspector} = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let {inspector} = await openInspectorForURL(TEST_URL);
 
-  yield onlyOneInstanceOfMainHighlighter(inspector);
-  yield manyInstancesOfCustomHighlighters(inspector);
-  yield showHideMethodsAreAvailable(inspector);
-  yield unknownHighlighterTypeShouldntBeAccepted(inspector);
+  await onlyOneInstanceOfMainHighlighter(inspector);
+  await manyInstancesOfCustomHighlighters(inspector);
+  await showHideMethodsAreAvailable(inspector);
+  await unknownHighlighterTypeShouldntBeAccepted(inspector);
 });
 
 function* onlyOneInstanceOfMainHighlighter({inspector}) {

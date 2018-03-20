@@ -14,21 +14,21 @@ const ID = "geometry-editor-";
 const HIGHLIGHTER_TYPE = "GeometryEditorHighlighter";
 const PROPS = ["left", "right", "top", "bottom"];
 
-add_task(function* () {
-  let helper = yield openInspectorForURL(TEST_URL)
+add_task(async function() {
+  let helper = await openInspectorForURL(TEST_URL)
                        .then(getHighlighterHelperFor(HIGHLIGHTER_TYPE));
 
   helper.prefix = ID;
 
   let { finalize } = helper;
 
-  yield checkArrowsLabelsAndHandlers(
+  await checkArrowsLabelsAndHandlers(
     "#node2", ["top", "left", "bottom", "right"],
      helper);
 
-  yield checkArrowsLabelsAndHandlers("#node3", ["top", "left"], helper);
+  await checkArrowsLabelsAndHandlers("#node3", ["top", "left"], helper);
 
-  yield finalize();
+  await finalize();
 });
 
 function* checkArrowsLabelsAndHandlers(selector, expectedProperties,

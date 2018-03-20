@@ -19,13 +19,13 @@ const TEST_DATA = [
   [":focus"]
 ];
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode("#element", inspector);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode("#element", inspector);
 
   for (let data of TEST_DATA) {
-    yield runTestData(inspector, view, data);
+    await runTestData(inspector, view, data);
   }
 });
 

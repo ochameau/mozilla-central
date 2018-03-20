@@ -57,25 +57,25 @@ const TEST_DATA = [
   }
 ];
 
-add_task(function* () {
+add_task(async function() {
   requestLongerTimeout(4);
 
   info("Starting the test with the pref set to true before toolbox is opened");
-  yield setUserAgentStylesPref(true);
+  await setUserAgentStylesPref(true);
 
-  yield addTab(TEST_URI);
-  let {inspector, view} = yield openRuleView();
+  await addTab(TEST_URI);
+  let {inspector, view} = await openRuleView();
 
   info("Making sure that UA styles are visible on initial load");
-  yield userAgentStylesVisible(inspector, view);
+  await userAgentStylesVisible(inspector, view);
 
   info("Making sure that setting the pref to false hides UA styles");
-  yield setUserAgentStylesPref(false);
-  yield userAgentStylesNotVisible(inspector, view);
+  await setUserAgentStylesPref(false);
+  await userAgentStylesNotVisible(inspector, view);
 
   info("Making sure that resetting the pref to true shows UA styles again");
-  yield setUserAgentStylesPref(true);
-  yield userAgentStylesVisible(inspector, view);
+  await setUserAgentStylesPref(true);
+  await userAgentStylesVisible(inspector, view);
 
   info("Resetting " + PREF_UA_STYLES);
   Services.prefs.clearUserPref(PREF_UA_STYLES);

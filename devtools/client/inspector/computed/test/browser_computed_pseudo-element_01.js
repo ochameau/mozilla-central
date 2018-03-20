@@ -8,10 +8,10 @@
 
 const TEST_URI = URL_ROOT + "doc_pseudoelement.html";
 
-add_task(function* () {
-  yield addTab(TEST_URI);
-  let {inspector, view} = yield openComputedView();
-  yield testTopLeft(inspector, view);
+add_task(async function() {
+  await addTab(TEST_URI);
+  let {inspector, view} = await openComputedView();
+  await testTopLeft(inspector, view);
 });
 
 function* testTopLeft(inspector, view) {

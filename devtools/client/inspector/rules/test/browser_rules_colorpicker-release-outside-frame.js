@@ -9,14 +9,14 @@
 
 const TEST_URI = "<body style='color: red'>Test page for bug 1160720";
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {view} = yield openRuleView();
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {view} = await openRuleView();
 
   let cSwatch = getRuleViewProperty(view, "element", "color").valueSpan
     .querySelector(".ruleview-colorswatch");
 
-  let picker = yield openColorPickerForSwatch(cSwatch, view);
+  let picker = await openColorPickerForSwatch(cSwatch, view);
   let spectrum = picker.spectrum;
   let change = spectrum.once("changed");
 
@@ -25,9 +25,9 @@ add_task(function* () {
   EventUtils.synthesizeMouseAtCenter(spectrum.dragger, {
     type: "mousedown",
   }, spectrum.dragger.ownerDocument.defaultView);
-  yield onRuleViewChanged;
+  await onRuleViewChanged;
 
-  let value = yield change;
+  let value = await change;
   info(`Color changed to ${value} on mousedown.`);
 
   // If the mousemove below fails to detect that the button is no longer pressed

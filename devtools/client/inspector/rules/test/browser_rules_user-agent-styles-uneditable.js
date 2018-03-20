@@ -17,14 +17,14 @@ const TEST_URI = `
 
 var PREF_UA_STYLES = "devtools.inspector.showUserAgentStyles";
 
-add_task(function* () {
+add_task(async function() {
   info("Starting the test with the pref set to true before toolbox is opened");
   Services.prefs.setBoolPref(PREF_UA_STYLES, true);
 
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
 
-  yield userAgentStylesUneditable(inspector, view);
+  await userAgentStylesUneditable(inspector, view);
 
   info("Resetting " + PREF_UA_STYLES);
   Services.prefs.clearUserPref(PREF_UA_STYLES);

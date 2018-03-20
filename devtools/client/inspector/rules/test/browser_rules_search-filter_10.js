@@ -35,11 +35,11 @@ const TEST_DATA = [
   }
 ];
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode("#testid", inspector);
-  yield testAddTextInFilter(inspector, view);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode("#testid", inspector);
+  await testAddTextInFilter(inspector, view);
 });
 
 function* testAddTextInFilter(inspector, view) {
@@ -51,7 +51,7 @@ function* testAddTextInFilter(inspector, view) {
   }
 }
 
-function* checkRules(view, data) {
+function checkRules(view, data) {
   info("Check that the correct rules are visible");
   is(view.element.children.length, 2, "Should have 2 rules.");
   is(getRuleViewRuleEditor(view, 0).rule.selectorText, "element",

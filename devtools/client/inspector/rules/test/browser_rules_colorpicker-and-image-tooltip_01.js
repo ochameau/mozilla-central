@@ -17,13 +17,13 @@ const TEST_URI = `
   Testing the color picker tooltip!
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {view} = yield openRuleView();
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {view} = await openRuleView();
   let value = getRuleViewProperty(view, "body", "background").valueSpan;
   let swatch = value.querySelectorAll(".ruleview-colorswatch")[0];
   let url = value.querySelector(".theme-link");
-  yield testImageTooltipAfterColorChange(swatch, url, view);
+  await testImageTooltipAfterColorChange(swatch, url, view);
 });
 
 function* testImageTooltipAfterColorChange(swatch, url, ruleView) {

@@ -12,25 +12,25 @@ const TEST_URI = `
   <p id='id2' style='width:100px;'>element 2</p>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view, testActor} = yield openRuleView();
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view, testActor} = await openRuleView();
 
-  yield selectNode("#id1", inspector);
-  yield modifyRuleViewWidth("300px", view, inspector);
-  yield assertRuleAndMarkupViewWidth("id1", "300px", view, inspector);
+  await selectNode("#id1", inspector);
+  await modifyRuleViewWidth("300px", view, inspector);
+  await assertRuleAndMarkupViewWidth("id1", "300px", view, inspector);
 
-  yield selectNode("#id2", inspector);
-  yield assertRuleAndMarkupViewWidth("id2", "100px", view, inspector);
-  yield modifyRuleViewWidth("50px", view, inspector);
-  yield assertRuleAndMarkupViewWidth("id2", "50px", view, inspector);
+  await selectNode("#id2", inspector);
+  await assertRuleAndMarkupViewWidth("id2", "100px", view, inspector);
+  await modifyRuleViewWidth("50px", view, inspector);
+  await assertRuleAndMarkupViewWidth("id2", "50px", view, inspector);
 
-  yield reloadPage(inspector, testActor);
+  await reloadPage(inspector, testActor);
 
-  yield selectNode("#id1", inspector);
-  yield assertRuleAndMarkupViewWidth("id1", "200px", view, inspector);
-  yield selectNode("#id2", inspector);
-  yield assertRuleAndMarkupViewWidth("id2", "100px", view, inspector);
+  await selectNode("#id1", inspector);
+  await assertRuleAndMarkupViewWidth("id1", "200px", view, inspector);
+  await selectNode("#id2", inspector);
+  await assertRuleAndMarkupViewWidth("id2", "100px", view, inspector);
 });
 
 function getStyleRule(ruleView) {

@@ -17,12 +17,12 @@ const TEST_URI = `
   <span id="matches" class="matches">Some styled text</span>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openComputedView();
-  yield selectNode("#matches", inspector);
-  yield testAddTextInFilter(inspector, view);
-  yield testClearSearchFilter(inspector, view);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openComputedView();
+  await selectNode("#matches", inspector);
+  await testAddTextInFilter(inspector, view);
+  await testClearSearchFilter(inspector, view);
 });
 
 function* testAddTextInFilter(inspector, computedView) {

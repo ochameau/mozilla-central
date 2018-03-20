@@ -8,14 +8,14 @@
 
 const TEST_URL = URL_ROOT + "doc_markup_svg_attributes.html";
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL(TEST_URL);
 
-  yield inspector.markup.expandAll();
-  yield selectNode("svg", inspector);
+  await inspector.markup.expandAll();
+  await selectNode("svg", inspector);
 
-  yield testWellformedMixedCase(inspector, testActor);
-  yield testMalformedMixedCase(inspector, testActor);
+  await testWellformedMixedCase(inspector, testActor);
+  await testMalformedMixedCase(inspector, testActor);
 });
 
 function* testWellformedMixedCase(inspector, testActor) {

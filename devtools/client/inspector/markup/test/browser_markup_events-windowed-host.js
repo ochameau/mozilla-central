@@ -15,17 +15,17 @@ registerCleanupFunction(() => {
   Services.prefs.clearUserPref("devtools.toolbox.host");
 });
 
-add_task(function* () {
-  let { inspector, toolbox } = yield openInspectorForURL(TEST_URL);
-  yield runTests(inspector);
+add_task(async function() {
+  let { inspector, toolbox } = await openInspectorForURL(TEST_URL);
+  await runTests(inspector);
 
-  yield toolbox.switchHost("window");
-  yield runTests(inspector);
+  await toolbox.switchHost("window");
+  await runTests(inspector);
 
-  yield toolbox.switchHost("bottom");
-  yield runTests(inspector);
+  await toolbox.switchHost("bottom");
+  await runTests(inspector);
 
-  yield toolbox.destroy();
+  await toolbox.destroy();
 });
 
 function* runTests(inspector) {

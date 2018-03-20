@@ -41,18 +41,18 @@ const TEST_DATA = [
   }
 ];
 
-add_task(function* () {
-  let {inspector} = yield openInspectorForURL(TEST_URL);
-  yield inspector.markup.expandAll();
+add_task(async function() {
+  let {inspector} = await openInspectorForURL(TEST_URL);
+  await inspector.markup.expandAll();
 
   for (let {node, draggable} of TEST_DATA) {
     let container;
     let name;
     if (typeof node === "string") {
-      container = yield getContainerForSelector(node, inspector);
+      container = await getContainerForSelector(node, inspector);
       name = node;
     } else {
-      container = yield node(inspector);
+      container = await node(inspector);
       name = container.toString();
     }
 

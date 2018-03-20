@@ -9,12 +9,12 @@
 
 const TEST_URI = "<h1 style='color: red'>Header</h1>";
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {toolbox, inspector, view} = yield openRuleView();
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {toolbox, inspector, view} = await openRuleView();
 
   info("Test autocompletion for background-color");
-  yield runAutocompletionTest(toolbox, inspector, view);
+  await runAutocompletionTest(toolbox, inspector, view);
 });
 
 function* runAutocompletionTest(toolbox, inspector, view) {

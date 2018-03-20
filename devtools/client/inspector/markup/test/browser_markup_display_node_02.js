@@ -83,13 +83,13 @@ const TEST_DATA = [
   }
 ];
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL("data:text/html;charset=utf-8," +
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL("data:text/html;charset=utf-8," +
     encodeURIComponent(TEST_URI));
 
   for (let data of TEST_DATA) {
     info("Running test case: " + data.desc);
-    yield runTestData(inspector, testActor, data);
+    await runTestData(inspector, testActor, data);
   }
 });
 

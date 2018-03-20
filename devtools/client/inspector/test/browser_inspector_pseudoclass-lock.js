@@ -18,9 +18,9 @@ const TEST_URL = "data:text/html;charset=UTF-8," +
                  "  </div>" +
                  "</body>";
 
-add_task(function* () {
+add_task(async function() {
   info("Creating the test tab and opening the rule-view");
-  let {toolbox, inspector, testActor} = yield openInspectorForURL(TEST_URL);
+  let {toolbox, inspector, testActor} = await openInspectorForURL(TEST_URL);
 
   info("Selecting the ruleview sidebar");
   inspector.sidebar.select("ruleview");
@@ -28,41 +28,41 @@ add_task(function* () {
   let view = inspector.getPanel("ruleview").view;
 
   info("Selecting the test node");
-  yield selectNode("#div-1", inspector);
+  await selectNode("#div-1", inspector);
 
-  yield togglePseudoClass(inspector);
-  yield assertPseudoAddedToNode(inspector, testActor, view, "#div-1");
+  await togglePseudoClass(inspector);
+  await assertPseudoAddedToNode(inspector, testActor, view, "#div-1");
 
-  yield togglePseudoClass(inspector);
-  yield assertPseudoRemovedFromNode(testActor, "#div-1");
-  yield assertPseudoRemovedFromView(inspector, testActor, view, "#div-1");
+  await togglePseudoClass(inspector);
+  await assertPseudoRemovedFromNode(testActor, "#div-1");
+  await assertPseudoRemovedFromView(inspector, testActor, view, "#div-1");
 
-  yield togglePseudoClass(inspector);
-  yield testNavigate(inspector, testActor, view);
+  await togglePseudoClass(inspector);
+  await testNavigate(inspector, testActor, view);
 
   info("Toggle pseudo on the parent and ensure everything is toggled off");
-  yield selectNode("#parent-div", inspector);
-  yield togglePseudoClass(inspector);
-  yield assertPseudoRemovedFromNode(testActor, "#div-1");
-  yield assertPseudoRemovedFromView(inspector, testActor, view, "#div-1");
+  await selectNode("#parent-div", inspector);
+  await togglePseudoClass(inspector);
+  await assertPseudoRemovedFromNode(testActor, "#div-1");
+  await assertPseudoRemovedFromView(inspector, testActor, view, "#div-1");
 
-  yield togglePseudoClass(inspector);
+  await togglePseudoClass(inspector);
   info("Assert pseudo is dismissed when toggling it on a sibling node");
-  yield selectNode("#div-2", inspector);
-  yield togglePseudoClass(inspector);
-  yield assertPseudoAddedToNode(inspector, testActor, view, "#div-2");
-  let hasLock = yield testActor.hasPseudoClassLock("#div-1", PSEUDO);
+  await selectNode("#div-2", inspector);
+  await togglePseudoClass(inspector);
+  await assertPseudoAddedToNode(inspector, testActor, view, "#div-2");
+  let hasLock = await testActor.hasPseudoClassLock("#div-1", PSEUDO);
   ok(!hasLock, "pseudo-class lock has been removed for the previous locked node");
 
   info("Destroying the toolbox");
   let tab = toolbox.target.tab;
-  yield toolbox.destroy();
+  await toolbox.destroy();
 
   // As the toolbox get detroyed, we need to fetch a new test-actor
-  testActor = yield getTestActorWithoutToolbox(tab);
+  testActor = await getTestActorWithoutToolbox(tab);
 
-  yield assertPseudoRemovedFromNode(testActor, "#div-1");
-  yield assertPseudoRemovedFromNode(testActor, "#div-2");
+  await assertPseudoRemovedFromNode(testActor, "#div-1");
+  await assertPseudoRemovedFromNode(testActor, "#div-2");
 });
 
 function* togglePseudoClass(inspector) {

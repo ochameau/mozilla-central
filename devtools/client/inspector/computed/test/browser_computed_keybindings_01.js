@@ -15,10 +15,10 @@ const TEST_URI = `
   <span class="matches">Some styled text</span>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openComputedView();
-  yield selectNode(".matches", inspector);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openComputedView();
+  await selectNode(".matches", inspector);
 
   let propView = getFirstVisiblePropertyView(view);
   let rulesTable = propView.matchedSelectorsContainer;
@@ -28,13 +28,13 @@ add_task(function* () {
   matchedExpander.scrollIntoView();
   let onMatchedExpanderFocus = once(matchedExpander, "focus", true);
   EventUtils.synthesizeMouseAtCenter(matchedExpander, {}, view.styleWindow);
-  yield onMatchedExpanderFocus;
+  await onMatchedExpanderFocus;
 
-  yield checkToggleKeyBinding(view.styleWindow, "VK_SPACE", rulesTable,
+  await checkToggleKeyBinding(view.styleWindow, "VK_SPACE", rulesTable,
                               inspector);
-  yield checkToggleKeyBinding(view.styleWindow, "VK_RETURN", rulesTable,
+  await checkToggleKeyBinding(view.styleWindow, "VK_RETURN", rulesTable,
                               inspector);
-  yield checkHelpLinkKeybinding(view);
+  await checkHelpLinkKeybinding(view);
 });
 
 function getFirstVisiblePropertyView(view) {

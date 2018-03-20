@@ -18,12 +18,12 @@ function* createTestContent(style) {
   return view;
 }
 
-add_task(function* () {
+add_task(async function() {
   let gradientText1 = "(orange, blue);";
   let gradientText2 = "(pink, teal);";
 
   let view =
-      yield createTestContent("#testid {" +
+      await createTestContent("#testid {" +
                               "  background-image: linear-gradient" +
                               gradientText1 +
                               "  background-image: -ms-linear-gradient" +
@@ -42,7 +42,7 @@ add_task(function* () {
     is(prop.overridden, i !== 2, "check overridden for " + i);
   }
 
-  yield togglePropStatus(view, rule.textProps[2]);
+  await togglePropStatus(view, rule.textProps[2]);
 
   // Now the first property should be active.
   for (let i = 0; i < 3; ++i) {

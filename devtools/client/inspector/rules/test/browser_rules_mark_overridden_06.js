@@ -17,11 +17,11 @@ const TEST_URI = `
   <div id='testid' class='testclass'>Styled Node</div>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode("#testid", inspector);
-  yield testMarkOverridden(inspector, view);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode("#testid", inspector);
+  await testMarkOverridden(inspector, view);
 });
 
 function* testMarkOverridden(inspector, view) {

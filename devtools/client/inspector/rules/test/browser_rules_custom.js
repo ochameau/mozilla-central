@@ -8,13 +8,13 @@ const TEST_URI = URL_ROOT + "doc_custom.html";
 
 // Tests the display of custom declarations in the rule-view.
 
-add_task(function* () {
-  yield addTab(TEST_URI);
-  let {inspector, view} = yield openRuleView();
+add_task(async function() {
+  await addTab(TEST_URI);
+  let {inspector, view} = await openRuleView();
 
-  yield simpleCustomOverride(inspector, view);
-  yield importantCustomOverride(inspector, view);
-  yield disableCustomOverride(inspector, view);
+  await simpleCustomOverride(inspector, view);
+  await importantCustomOverride(inspector, view);
+  await disableCustomOverride(inspector, view);
 });
 
 function* simpleCustomOverride(inspector, view) {

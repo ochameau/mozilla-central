@@ -41,15 +41,15 @@ const DOCUMENT_URL = "data:text/html;charset=utf-8," + encodeURIComponent(
    </body>
    </html>`);
 
-add_task(function* () {
-  yield addTab(DOCUMENT_URL);
-  let {toolbox, inspector, view, testActor} = yield openComputedView();
-  yield selectNode("span", inspector);
+add_task(async function() {
+  await addTab(DOCUMENT_URL);
+  let {toolbox, inspector, view, testActor} = await openComputedView();
+  await selectNode("span", inspector);
 
-  yield testInlineStyle(view);
-  yield testFirstInlineStyleSheet(view, toolbox, testActor);
-  yield testSecondInlineStyleSheet(view, toolbox, testActor);
-  yield testExternalStyleSheet(view, toolbox, testActor);
+  await testInlineStyle(view);
+  await testFirstInlineStyleSheet(view, toolbox, testActor);
+  await testSecondInlineStyleSheet(view, toolbox, testActor);
+  await testExternalStyleSheet(view, toolbox, testActor);
 });
 
 function* testInlineStyle(view) {

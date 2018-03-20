@@ -68,16 +68,16 @@ var testData = [
 
 const TEST_URI = "<h1 style='font: 24px serif'>Header</h1>";
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {toolbox, inspector, view, testActor} = yield openRuleView();
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {toolbox, inspector, view, testActor} = await openRuleView();
 
   info("Test autocompletion after 1st page load");
-  yield runAutocompletionTest(toolbox, inspector, view);
+  await runAutocompletionTest(toolbox, inspector, view);
 
   info("Test autocompletion after page navigation");
-  yield reloadPage(inspector, testActor);
-  yield runAutocompletionTest(toolbox, inspector, view);
+  await reloadPage(inspector, testActor);
+  await runAutocompletionTest(toolbox, inspector, view);
 });
 
 function* runAutocompletionTest(toolbox, inspector, view) {

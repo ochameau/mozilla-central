@@ -55,12 +55,12 @@ const TEST_DATA = [
   }
 ];
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let { inspector, view } = yield openRuleView();
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let { inspector, view } = await openRuleView();
 
   for (let data of TEST_DATA) {
-    yield runTestData(inspector, view, data);
+    await runTestData(inspector, view, data);
   }
 });
 

@@ -18,13 +18,13 @@ const TEST_URI = `
   <body><div>Test</div>cycling angle units in the rule view!</body>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
   let container = getRuleViewProperty(
     view, "body", "image-orientation").valueSpan;
-  yield checkAngleCycling(container, view);
-  yield checkAngleCyclingPersist(inspector, view);
+  await checkAngleCycling(container, view);
+  await checkAngleCyclingPersist(inspector, view);
 });
 
 function* checkAngleCycling(container, view) {

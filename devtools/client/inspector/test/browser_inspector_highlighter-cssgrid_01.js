@@ -38,16 +38,16 @@ const TEST_URL = `
 
 const HIGHLIGHTER_TYPE = "CssGridHighlighter";
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL(
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL(
     "data:text/html;charset=utf-8," + encodeURIComponent(TEST_URL));
   let front = inspector.inspector;
-  let highlighter = yield front.getHighlighterByType(HIGHLIGHTER_TYPE);
+  let highlighter = await front.getHighlighterByType(HIGHLIGHTER_TYPE);
 
-  yield isHiddenByDefault(testActor, highlighter);
-  yield isVisibleWhenShown(testActor, inspector, highlighter);
+  await isHiddenByDefault(testActor, highlighter);
+  await isVisibleWhenShown(testActor, inspector, highlighter);
 
-  yield highlighter.finalize();
+  await highlighter.finalize();
 });
 
 function* isHiddenByDefault(testActor, highlighterFront) {

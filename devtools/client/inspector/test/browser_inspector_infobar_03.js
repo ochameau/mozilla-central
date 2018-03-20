@@ -8,8 +8,8 @@
 
 const TEST_URI = URL_ROOT + "doc_inspector_infobar_03.html";
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL(TEST_URI);
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL(TEST_URI);
 
   let testData = {
     selector: "body",
@@ -17,7 +17,7 @@ add_task(function* () {
     style: "position:fixed",
   };
 
-  yield testPositionAndStyle(testData, inspector, testActor);
+  await testPositionAndStyle(testData, inspector, testActor);
 });
 
 function* testPositionAndStyle(test, inspector, testActor) {

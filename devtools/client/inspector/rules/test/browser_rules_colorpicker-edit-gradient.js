@@ -16,15 +16,15 @@ const TEST_URI = `
   Updating a gradient declaration with the color picker tooltip
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {view} = yield openRuleView();
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {view} = await openRuleView();
 
   info("Testing that the colors in gradient properties are parsed correctly");
   testColorParsing(view);
 
   info("Testing that changing one of the colors of a gradient property works");
-  yield testPickingNewColor(view);
+  await testPickingNewColor(view);
 });
 
 function testColorParsing(view) {

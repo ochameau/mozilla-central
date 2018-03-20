@@ -184,21 +184,21 @@ const TEST_DATA = [
   }
 ];
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL(
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL(
     "data:text/html;charset=utf-8," + encodeURI(TEST_URL));
 
-  let divFront = yield getNodeFront("div", inspector);
+  let divFront = await getNodeFront("div", inspector);
 
   for (let {desc, options, checkHighlighter} of TEST_DATA) {
     info("Running test: " + desc);
 
     info("Show the box-model highlighter with options " + options);
-    yield inspector.highlighter.showBoxModel(divFront, options);
+    await inspector.highlighter.showBoxModel(divFront, options);
 
-    yield checkHighlighter(testActor);
+    await checkHighlighter(testActor);
 
     info("Hide the box-model highlighter");
-    yield inspector.highlighter.hideBoxModel();
+    await inspector.highlighter.hideBoxModel();
   }
 });

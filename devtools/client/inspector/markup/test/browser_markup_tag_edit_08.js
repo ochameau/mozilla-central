@@ -13,13 +13,13 @@ const LONG_ATTRIBUTE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ-ABCDEFGHIJKLMNOPQRSTUVWXYZ-AB
 const LONG_ATTRIBUTE_COLLAPSED = "ABCDEFGHIJKLMNOPQRSTUVWXYZ-ABCDEFGHIJKLMNOPQRSTUVWXYZ-ABCDEF\u2026UVWXYZ-ABCDEFGHIJKLMNOPQRSTUVWXYZ-ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 /* eslint-enable */
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL(TEST_URL);
 
-  yield inspector.markup.expandAll();
-  yield testCollapsedLongAttribute(inspector, testActor);
-  yield testModifyInlineStyleWithQuotes(inspector, testActor);
-  yield testEditingAttributeWithMixedQuotes(inspector, testActor);
+  await inspector.markup.expandAll();
+  await testCollapsedLongAttribute(inspector, testActor);
+  await testModifyInlineStyleWithQuotes(inspector, testActor);
+  await testEditingAttributeWithMixedQuotes(inspector, testActor);
 });
 
 function* testCollapsedLongAttribute(inspector, testActor) {

@@ -232,18 +232,18 @@ registerCleanupFunction(() => {
   clipboard = null;
 });
 
-add_task(function* () {
-  let { inspector } = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let { inspector } = await openInspectorForURL(TEST_URL);
   for (let test of TEST_CASES) {
     let { desc, disabled, selector, attributeTrigger } = test;
 
     info(`Test ${desc}`);
     setupClipboard(test.clipboardData, test.clipboardDataType);
 
-    let front = yield getNodeFrontForSelector(selector, inspector);
+    let front = await getNodeFrontForSelector(selector, inspector);
 
     info("Selecting the specified node.");
-    yield selectNode(front, inspector);
+    await selectNode(front, inspector);
 
     info("Simulating context menu click on the selected node container.");
     let nodeFrontContainer = getContainerForNodeFront(front, inspector);

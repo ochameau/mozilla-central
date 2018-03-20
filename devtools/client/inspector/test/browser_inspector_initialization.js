@@ -25,13 +25,13 @@ const HTML = `
 
 const TEST_URI = "data:text/html;charset=utf-8," + encodeURI(HTML);
 
-add_task(function* () {
-  let tab = yield addTab(TEST_URI);
-  let testActor = yield getTestActorWithoutToolbox(tab);
+add_task(async function() {
+  let tab = await addTab(TEST_URI);
+  let testActor = await getTestActorWithoutToolbox(tab);
 
-  yield testToolboxInitialization(testActor, tab);
-  yield testContextMenuInitialization(testActor);
-  yield testContextMenuInspectorAlreadyOpen(testActor);
+  await testToolboxInitialization(testActor, tab);
+  await testContextMenuInitialization(testActor);
+  await testContextMenuInspectorAlreadyOpen(testActor);
 });
 
 function* testToolboxInitialization(testActor, tab) {

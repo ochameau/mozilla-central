@@ -10,25 +10,25 @@
 const IFRAME1 = URL_ROOT + "doc_boxmodel_iframe1.html";
 const IFRAME2 = URL_ROOT + "doc_boxmodel_iframe2.html";
 
-add_task(function* () {
-  yield addTab(IFRAME1);
-  let {inspector, boxmodel, testActor} = yield openLayoutView();
+add_task(async function() {
+  await addTab(IFRAME1);
+  let {inspector, boxmodel, testActor} = await openLayoutView();
 
-  yield testFirstPage(inspector, boxmodel, testActor);
+  await testFirstPage(inspector, boxmodel, testActor);
 
   info("Navigate to the second page");
   let onMarkupLoaded = waitForMarkupLoaded(inspector);
-  yield testActor.eval(`location.href="${IFRAME2}"`);
-  yield onMarkupLoaded;
+  await testActor.eval(`location.href="${IFRAME2}"`);
+  await onMarkupLoaded;
 
-  yield testSecondPage(inspector, boxmodel, testActor);
+  await testSecondPage(inspector, boxmodel, testActor);
 
   info("Go back to the first page");
   onMarkupLoaded = waitForMarkupLoaded(inspector);
-  yield testActor.eval("history.back();");
-  yield onMarkupLoaded;
+  await testActor.eval("history.back();");
+  await onMarkupLoaded;
 
-  yield testBackToFirstPage(inspector, boxmodel, testActor);
+  await testBackToFirstPage(inspector, boxmodel, testActor);
 });
 
 function* testFirstPage(inspector, boxmodel, testActor) {

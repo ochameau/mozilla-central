@@ -15,15 +15,15 @@ const TEST_URI = `
   <h1>Some header text</h1>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openComputedView();
-  yield selectNode("h1", inspector);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openComputedView();
+  await selectNode("h1", inspector);
 
-  yield testExpandOnTwistyClick(view, inspector);
-  yield testCollapseOnTwistyClick(view, inspector);
-  yield testExpandOnDblClick(view, inspector);
-  yield testCollapseOnDblClick(view, inspector);
+  await testExpandOnTwistyClick(view, inspector);
+  await testCollapseOnTwistyClick(view, inspector);
+  await testExpandOnDblClick(view, inspector);
+  await testCollapseOnDblClick(view, inspector);
 });
 
 function* testExpandOnTwistyClick({styleDocument, styleWindow}, inspector) {

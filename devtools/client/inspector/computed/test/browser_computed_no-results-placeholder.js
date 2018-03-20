@@ -15,15 +15,15 @@ const TEST_URI = `
   <span id="matches" class="matches">Some styled text</span>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openComputedView();
-  yield selectNode("#matches", inspector);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openComputedView();
+  await selectNode("#matches", inspector);
 
-  yield enterInvalidFilter(inspector, view);
+  await enterInvalidFilter(inspector, view);
   checkNoResultsPlaceholderShown(view);
 
-  yield clearFilterText(inspector, view);
+  await clearFilterText(inspector, view);
   checkNoResultsPlaceholderHidden(view);
 });
 

@@ -76,16 +76,16 @@ const MOVE_EVENTS_DATA = [
   },
 ];
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL(
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL(
     "data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let helper = yield getHighlighterHelperFor(HIGHLIGHTER_TYPE)({inspector, testActor});
+  let helper = await getHighlighterHelperFor(HIGHLIGHTER_TYPE)({inspector, testActor});
 
   helper.prefix = ID;
 
-  yield helper.show("html");
-  yield respondsToMoveEvents(helper, testActor);
-  yield respondsToReturnAndEscape(helper);
+  await helper.show("html");
+  await respondsToMoveEvents(helper, testActor);
+  await respondsToReturnAndEscape(helper);
 
   helper.finalize();
 });

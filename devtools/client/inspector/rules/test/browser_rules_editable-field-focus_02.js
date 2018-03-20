@@ -22,11 +22,11 @@ const TEST_URI = `
   <div id='testid'>Styled Node</div>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode("#testid", inspector);
-  yield testEditableFieldFocus(inspector, view, "VK_TAB", { shiftKey: true });
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode("#testid", inspector);
+  await testEditableFieldFocus(inspector, view, "VK_TAB", { shiftKey: true });
 });
 
 function* testEditableFieldFocus(inspector, view, commitKey, options = {}) {
@@ -78,7 +78,7 @@ function* focusNextField(view, ruleEditor, commitKey, options) {
   yield onFocus;
 }
 
-function* assertEditor(view, element, message) {
+function assertEditor(view, element, message) {
   let editor = inplaceEditor(view.styleDocument.activeElement);
   is(inplaceEditor(element), editor, message);
 }

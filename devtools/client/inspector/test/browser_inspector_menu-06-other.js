@@ -5,14 +5,14 @@ http://creativecommons.org/publicdomain/zero/1.0/ */
 
 // Tests for menuitem functionality that doesn't fit into any specific category
 const TEST_URL = URL_ROOT + "doc_inspector_menu.html";
-add_task(function* () {
-  let { inspector, toolbox, testActor } = yield openInspectorForURL(TEST_URL);
-  yield testShowDOMProperties();
-  yield testDuplicateNode();
-  yield testDeleteNode();
-  yield testDeleteTextNode();
-  yield testDeleteRootNode();
-  yield testScrollIntoView();
+add_task(async function() {
+  let { inspector, toolbox, testActor } = await openInspectorForURL(TEST_URL);
+  await testShowDOMProperties();
+  await testDuplicateNode();
+  await testDeleteNode();
+  await testDeleteTextNode();
+  await testDeleteRootNode();
+  await testScrollIntoView();
   function* testShowDOMProperties() {
     info("Testing 'Show DOM Properties' menu item.");
     let allMenuItems = openContextMenuAndGetAllItems(inspector);
@@ -95,23 +95,23 @@ add_task(function* () {
     ok(nodesAfter.length == 0, "the node still had children");
   }
 
-  function* testDeleteRootNode() {
+  async function testDeleteRootNode() {
     info("Testing 'Delete Node' menu item does not delete root node.");
-    yield selectNode("html", inspector);
+    await selectNode("html", inspector);
 
     let allMenuItems = openContextMenuAndGetAllItems(inspector);
     let deleteNode = allMenuItems.find(item => item.id === "node-menu-delete");
     deleteNode.click();
 
-    yield new Promise(resolve => {
+    await new Promise(resolve => {
       executeSoon(resolve);
     });
 
-    ok((yield testActor.eval("!!document.documentElement")),
+    ok((await testActor.eval("!!document.documentElement")),
        "Document element still alive.");
   }
 
-  function* testScrollIntoView() {
+  function testScrollIntoView() {
     // Follow up bug to add this test - https://bugzilla.mozilla.org/show_bug.cgi?id=1154107
     todo(false, "Verify that node is scrolled into the viewport.");
   }

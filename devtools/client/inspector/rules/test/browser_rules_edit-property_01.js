@@ -31,14 +31,14 @@ var TEST_DATA = [
   { name: "border", value: "solid 1px foo", isValid: false },
 ];
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode("#testid", inspector);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode("#testid", inspector);
 
   let rule = getRuleViewRuleEditor(view, 1).rule;
   for (let {name, value, isValid} of TEST_DATA) {
-    yield testEditProperty(view, rule, name, value, isValid);
+    await testEditProperty(view, rule, name, value, isValid);
   }
 });
 

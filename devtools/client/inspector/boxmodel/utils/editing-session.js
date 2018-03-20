@@ -107,7 +107,7 @@ EditingSession.prototype = {
    *         is removed.
    * @return {Promise} Resolves when the modifications are complete.
    */
-  setProperties: Task.async(function* (properties) {
+  async setProperties(properties) {
     for (let property of properties) {
       // Get a RuleModificationList or RuleRewriter helper object from the
       // StyleRuleActor to make changes to CSS properties.
@@ -135,16 +135,16 @@ EditingSession.prototype = {
         modifications.setProperty(index, property.name, property.value, "");
       }
 
-      yield modifications.apply();
+      await modifications.apply();
     }
-  }),
+  },
 
   /**
    * Reverts all of the property changes made by this instance.
    *
    * @return {Promise} Resolves when all properties have been reverted.
    */
-  revert: Task.async(function* () {
+  async revert() {
     // Revert each property that we modified previously, one by one. See
     // setProperties for information about why.
     for (let [property, value] of this._modifications) {
@@ -170,9 +170,9 @@ EditingSession.prototype = {
         modifications.removeProperty(index, property);
       }
 
-      yield modifications.apply();
+      await modifications.apply();
     }
-  }),
+  },
 
   destroy: function() {
     this._doc = null;

@@ -8,18 +8,18 @@
 
 const TEST_URI = URL_ROOT + "doc_inspector_infobar_01.html";
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL(TEST_URI);
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL(TEST_URI);
   let testData = {
     selector: "#top",
     dims: "500" + " \u00D7 " + "100"
   };
 
-  yield testInfobar(testData, inspector, testActor);
+  await testInfobar(testData, inspector, testActor);
   info("Change zoom page to level 2.");
-  yield testActor.zoomPageTo(2);
+  await testActor.zoomPageTo(2);
   info("Testing again the infobar after zoom.");
-  yield testInfobar(testData, inspector, testActor);
+  await testInfobar(testData, inspector, testActor);
 });
 
 function* testInfobar(test, inspector, testActor) {

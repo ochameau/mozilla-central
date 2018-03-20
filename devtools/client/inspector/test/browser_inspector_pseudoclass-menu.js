@@ -11,13 +11,13 @@ const TEST_URI = "data:text/html;charset=UTF-8," +
                  "<div>test div</div>";
 const PSEUDOS = ["hover", "active", "focus"];
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL(TEST_URI);
-  yield selectNode("div", inspector);
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL(TEST_URI);
+  await selectNode("div", inspector);
 
   let allMenuItems = openContextMenuAndGetAllItems(inspector);
 
-  yield testMenuItems(testActor, allMenuItems, inspector);
+  await testMenuItems(testActor, allMenuItems, inspector);
 });
 
 function* testMenuItems(testActor, allMenuItems, inspector) {

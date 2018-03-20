@@ -8,16 +8,16 @@
 
 const TEST_URI = URL_ROOT + "doc_variables_2.html";
 
-add_task(function* () {
-  yield addTab(TEST_URI);
-  let {inspector, view} = yield openRuleView();
+add_task(async function() {
+  await addTab(TEST_URI);
+  let {inspector, view} = await openRuleView();
 
-  yield testBasic(inspector, view);
-  yield testNestedCssFunctions(inspector, view);
-  yield testBorderShorthandAndInheritance(inspector, view);
-  yield testSingleLevelVariable(inspector, view);
-  yield testDoubleLevelVariable(inspector, view);
-  yield testTripleLevelVariable(inspector, view);
+  await testBasic(inspector, view);
+  await testNestedCssFunctions(inspector, view);
+  await testBorderShorthandAndInheritance(inspector, view);
+  await testSingleLevelVariable(inspector, view);
+  await testDoubleLevelVariable(inspector, view);
+  await testTripleLevelVariable(inspector, view);
 });
 
 function* testBasic(inspector, view) {

@@ -23,14 +23,14 @@
  */
 function runAddAttributesTests(tests, nodeOrSelector, inspector, testActor) {
   info("Running " + tests.length + " add-attributes tests");
-  return Task.spawn(function* () {
+  return (async function() {
     info("Selecting the test node");
-    yield selectNode("div", inspector);
+    await selectNode("div", inspector);
 
     for (let test of tests) {
-      yield runAddAttributesTest(test, "div", inspector, testActor);
+      await runAddAttributesTest(test, "div", inspector, testActor);
     }
-  });
+  })();
 }
 
 /**
@@ -96,14 +96,14 @@ function* runAddAttributesTest(test, selector, inspector, testActor) {
  */
 function runEditAttributesTests(tests, inspector, testActor) {
   info("Running " + tests.length + " edit-attributes tests");
-  return Task.spawn(function* () {
+  return (async function() {
     info("Expanding all nodes in the markup-view");
-    yield inspector.markup.expandAll();
+    await inspector.markup.expandAll();
 
     for (let test of tests) {
-      yield runEditAttributesTest(test, inspector, testActor);
+      await runEditAttributesTest(test, inspector, testActor);
     }
-  });
+  })();
 }
 
 /**

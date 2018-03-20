@@ -37,27 +37,27 @@ const TEST_DATA = [{
   expected: "*more*uvwxy*more*"
 }];
 
-add_task(function* () {
-  let {inspector} = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let {inspector} = await openInspectorForURL(TEST_URL);
 
   info("Start iterating through the test data");
   for (let step of TEST_DATA) {
     info("Start test: " + step.desc);
 
     if (step.forceReload) {
-      yield forceReload(inspector);
+      await forceReload(inspector);
     }
     info("Selecting the node that corresponds to " + step.selector);
-    yield selectNode(step.selector, inspector);
+    await selectNode(step.selector, inspector);
 
     info("Checking that the right nodes are shwon");
-    yield assertChildren(step.expected, inspector);
+    await assertChildren(step.expected, inspector);
   }
 
   info("Checking that clicking the more button loads everything");
-  yield clickShowMoreNodes(inspector);
-  yield inspector.markup._waitForChildren();
-  yield assertChildren("abcdefghijklmnopqrstuvwxyz", inspector);
+  await clickShowMoreNodes(inspector);
+  await inspector.markup._waitForChildren();
+  await assertChildren("abcdefghijklmnopqrstuvwxyz", inspector);
 });
 
 function* assertChildren(expected, inspector) {

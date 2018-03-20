@@ -20,28 +20,28 @@ const NEW_HTML = '<div id="keyboard">Edited</div>';
 
 requestLongerTimeout(2);
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL(TEST_URL);
 
   inspector.markup._frame.focus();
 
   info("Check that pressing escape cancels edits");
-  yield testEscapeCancels(inspector, testActor);
+  await testEscapeCancels(inspector, testActor);
 
   info("Check that pressing F2 commits edits");
-  yield testF2Commits(inspector, testActor);
+  await testF2Commits(inspector, testActor);
 
   info("Check that editing the <body> element works like other nodes");
-  yield testBody(inspector, testActor);
+  await testBody(inspector, testActor);
 
   info("Check that editing the <head> element works like other nodes");
-  yield testHead(inspector, testActor);
+  await testHead(inspector, testActor);
 
   info("Check that editing the <html> element works like other nodes");
-  yield testDocumentElement(inspector, testActor);
+  await testDocumentElement(inspector, testActor);
 
   info("Check (again) that editing the <html> element works like other nodes");
-  yield testDocumentElement2(inspector, testActor);
+  await testDocumentElement2(inspector, testActor);
 });
 
 function* testEscapeCancels(inspector, testActor) {

@@ -23,11 +23,11 @@ const TEST_URI = `
   </div>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode(".pickme", inspector);
-  yield testEditSelector(view);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode(".pickme", inspector);
+  await testEditSelector(view);
 });
 
 function* testEditSelector(view) {

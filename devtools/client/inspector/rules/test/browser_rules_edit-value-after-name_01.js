@@ -17,17 +17,17 @@ const TEST_URI = `
   <div id="testid">Styled Node</div>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
 
-  yield selectNode("#testid", inspector);
+  await selectNode("#testid", inspector);
 
   let ruleEditor = getRuleViewRuleEditor(view, 1);
   let propEditor = ruleEditor.rule.textProps[0].editor;
 
-  yield testColorValueSpanClickWithoutNameChange(propEditor, view);
-  yield testColorValueSpanClickAfterNameChange(propEditor, view);
+  await testColorValueSpanClickWithoutNameChange(propEditor, view);
+  await testColorValueSpanClickAfterNameChange(propEditor, view);
 });
 
 function* testColorValueSpanClickWithoutNameChange(propEditor, view) {

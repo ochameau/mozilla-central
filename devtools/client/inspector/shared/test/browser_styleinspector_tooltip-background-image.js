@@ -25,29 +25,29 @@ const TEST_URI = `
   <div class="test-element">test element</div>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
 
   info("Testing the background-image property on the body rule");
-  yield testBodyRuleView(view);
+  await testBodyRuleView(view);
 
   info("Selecting the test div node");
-  yield selectNode(".test-element", inspector);
+  await selectNode(".test-element", inspector);
   info("Testing the the background property on the .test-element rule");
-  yield testDivRuleView(view);
+  await testDivRuleView(view);
 
   info("Testing that image preview tooltips show even when there are " +
     "fields being edited");
-  yield testTooltipAppearsEvenInEditMode(view);
+  await testTooltipAppearsEvenInEditMode(view);
 
   info("Switching over to the computed-view");
   let onComputedViewReady = inspector.once("computed-view-refreshed");
   view = selectComputedView(inspector);
-  yield onComputedViewReady;
+  await onComputedViewReady;
 
   info("Testing that the background-image computed style has a tooltip too");
-  yield testComputedView(view);
+  await testComputedView(view);
 });
 
 function* testBodyRuleView(view) {

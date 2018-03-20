@@ -34,18 +34,18 @@ const TEST_URI = `
   <div class="testclass a b c d e f">Styled Node</div>
 `;
 
-add_task(function* () {
+add_task(async function() {
   info("Toolbox height should be small enough to force scrollbars to appear");
-  yield new Promise(done => {
+  await new Promise(done => {
     let options = {"set": [
       ["devtools.toolbox.footer.height", 200],
     ]};
     SpecialPowers.pushPrefEnv(options, done);
   });
 
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view} = yield openRuleView();
-  yield selectNode(".testclass", inspector);
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view} = await openRuleView();
+  await selectNode(".testclass", inspector);
 
   info("Check we have an overflow on the ruleview container.");
   let container = view.element;
@@ -54,12 +54,12 @@ add_task(function* () {
 
   info("Focusing an existing selector name in the rule-view.");
   let ruleEditor = getRuleViewRuleEditor(view, 1);
-  let editor = yield focusEditableField(view, ruleEditor.selectorText);
+  let editor = await focusEditableField(view, ruleEditor.selectorText);
   is(inplaceEditor(ruleEditor.selectorText), editor,
     "The selector editor is focused.");
 
   info("Click on the scrollbar element.");
-  yield clickOnRuleviewScrollbar(view);
+  await clickOnRuleviewScrollbar(view);
 
   is(editor.input, view.styleDocument.activeElement,
     "The editor input should still be focused.");
@@ -71,7 +71,7 @@ add_task(function* () {
   info("Enter new value and commit.");
   editor.input.value = newValue;
   EventUtils.synthesizeKey("KEY_Enter");
-  yield onRuleViewChanged;
+  await onRuleViewChanged;
   ok(getRuleViewRule(view, newValue), "Rule with '" + newValue + " 'exists.");
 });
 

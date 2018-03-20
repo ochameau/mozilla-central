@@ -13,19 +13,19 @@ const TEST_URI = `
   </div>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector, view, testActor} = yield openRuleView();
-  yield selectNode("#testid", inspector);
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector, view, testActor} = await openRuleView();
+  await selectNode("#testid", inspector);
 
-  yield testPropertyChanges(inspector, view);
-  yield testPropertyChange0(inspector, view, "#testid", testActor);
-  yield testPropertyChange1(inspector, view, "#testid", testActor);
-  yield testPropertyChange2(inspector, view, "#testid", testActor);
-  yield testPropertyChange3(inspector, view, "#testid", testActor);
-  yield testPropertyChange4(inspector, view, "#testid", testActor);
-  yield testPropertyChange5(inspector, view, "#testid", testActor);
-  yield testPropertyChange6(inspector, view, "#testid", testActor);
+  await testPropertyChanges(inspector, view);
+  await testPropertyChange0(inspector, view, "#testid", testActor);
+  await testPropertyChange1(inspector, view, "#testid", testActor);
+  await testPropertyChange2(inspector, view, "#testid", testActor);
+  await testPropertyChange3(inspector, view, "#testid", testActor);
+  await testPropertyChange4(inspector, view, "#testid", testActor);
+  await testPropertyChange5(inspector, view, "#testid", testActor);
+  await testPropertyChange6(inspector, view, "#testid", testActor);
 });
 
 function* testPropertyChanges(inspector, ruleView) {

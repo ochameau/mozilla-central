@@ -11,12 +11,12 @@ const BLUE_DOT = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAf
 const TEST_STYLE = `h1 {background: url(${YELLOW_DOT}), url(${BLUE_DOT});}`;
 const TEST_URI = `<style>${TEST_STYLE}</style><h1>test element</h1>`;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {inspector} = yield openInspector();
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {inspector} = await openInspector();
 
-  yield testRuleViewUrls(inspector);
-  yield testComputedViewUrls(inspector);
+  await testRuleViewUrls(inspector);
+  await testComputedViewUrls(inspector);
 });
 
 function* testRuleViewUrls(inspector) {

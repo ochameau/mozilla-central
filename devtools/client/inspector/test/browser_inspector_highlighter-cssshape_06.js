@@ -10,13 +10,13 @@ const TEST_URL = URL_ROOT + "doc_inspector_highlighter_cssshapes.html";
 const HIGHLIGHTER_TYPE = "ShapesHighlighter";
 const SHAPE_IDS = ["#polygon-transform", "#circle", "#ellipse", "#inset"];
 
-add_task(function* () {
-  let inspector = yield openInspectorForURL(TEST_URL);
-  let helper = yield getHighlighterHelperFor(HIGHLIGHTER_TYPE)(inspector);
+add_task(async function() {
+  let inspector = await openInspectorForURL(TEST_URL);
+  let helper = await getHighlighterHelperFor(HIGHLIGHTER_TYPE)(inspector);
   let {testActor} = inspector;
 
-  yield testTranslate(testActor, helper);
-  yield testScale(testActor, helper);
+  await testTranslate(testActor, helper);
+  await testScale(testActor, helper);
 
   helper.finalize();
 });

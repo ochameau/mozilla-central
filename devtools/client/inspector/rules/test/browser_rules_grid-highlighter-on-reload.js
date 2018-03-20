@@ -20,20 +20,20 @@ const TEST_URI = `
   </div>
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
 
   info("Check that the grid highlighter can be displayed");
-  yield checkGridHighlighter();
+  await checkGridHighlighter();
 
   info("Close the toolbox before reloading the tab");
   let target = TargetFactory.forTab(gBrowser.selectedTab);
-  yield gDevTools.closeToolbox(target);
+  await gDevTools.closeToolbox(target);
 
-  yield refreshTab();
+  await refreshTab();
 
   info("Check that the grid highlighter can be displayed after reloading the page");
-  yield checkGridHighlighter();
+  await checkGridHighlighter();
 });
 
 function* checkGridHighlighter() {

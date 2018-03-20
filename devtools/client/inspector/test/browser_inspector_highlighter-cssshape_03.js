@@ -11,16 +11,16 @@ const TEST_URL = URL_ROOT + "doc_inspector_highlighter_cssshapes.html";
 const HIGHLIGHTER_TYPE = "ShapesHighlighter";
 const TEST_LEVELS = [0.5, 1, 2];
 
-add_task(function* () {
-  let inspector = yield openInspectorForURL(TEST_URL);
-  let helper = yield getHighlighterHelperFor(HIGHLIGHTER_TYPE)(inspector);
+add_task(async function() {
+  let inspector = await openInspectorForURL(TEST_URL);
+  let helper = await getHighlighterHelperFor(HIGHLIGHTER_TYPE)(inspector);
   let {testActor} = inspector;
 
-  yield testZoomSize(testActor, helper);
-  yield testGeometryBox(testActor, helper);
-  yield testStrokeBox(testActor, helper);
+  await testZoomSize(testActor, helper);
+  await testGeometryBox(testActor, helper);
+  await testStrokeBox(testActor, helper);
 
-  yield helper.finalize();
+  await helper.finalize();
 });
 
 function* testZoomSize(testActor, helper) {

@@ -150,21 +150,21 @@ var res2 = [
   },
 ];
 
-add_task(function* () {
+add_task(async function() {
   let style = "div { position: absolute; top: 42px; left: 42px; " +
               "height: 100.111px; width: 100px; border: 10px solid black; " +
               "padding: 20px; margin: 30px auto;}";
   let html = "<style>" + style + "</style><div></div>";
 
-  yield addTab("data:text/html," + encodeURIComponent(html));
-  let {inspector, boxmodel, testActor} = yield openLayoutView();
-  yield selectNode("div", inspector);
+  await addTab("data:text/html," + encodeURIComponent(html));
+  let {inspector, boxmodel, testActor} = await openLayoutView();
+  await selectNode("div", inspector);
 
-  yield testInitialValues(inspector, boxmodel);
-  yield testChangingValues(inspector, boxmodel, testActor);
+  await testInitialValues(inspector, boxmodel);
+  await testChangingValues(inspector, boxmodel, testActor);
 });
 
-function* testInitialValues(inspector, boxmodel) {
+function testInitialValues(inspector, boxmodel) {
   info("Test that the initial values of the box model are correct");
   let doc = boxmodel.document;
 

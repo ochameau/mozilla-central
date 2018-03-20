@@ -9,17 +9,17 @@
 const TEST_URL = URL_ROOT + "doc_inspector_highlighter_cssshapes.html";
 const HIGHLIGHTER_TYPE = "ShapesHighlighter";
 
-add_task(function* () {
-  let inspector = yield openInspectorForURL(TEST_URL);
-  let helper = yield getHighlighterHelperFor(HIGHLIGHTER_TYPE)(inspector);
+add_task(async function() {
+  let inspector = await openInspectorForURL(TEST_URL);
+  let helper = await getHighlighterHelperFor(HIGHLIGHTER_TYPE)(inspector);
   let {testActor} = inspector;
 
-  yield testPolygonMovePoint(testActor, helper);
-  yield testPolygonAddPoint(testActor, helper);
-  yield testPolygonRemovePoint(testActor, helper);
-  yield testCircleMoveCenter(testActor, helper);
-  yield testEllipseMoveRadius(testActor, helper);
-  yield testInsetMoveEdges(testActor, helper);
+  await testPolygonMovePoint(testActor, helper);
+  await testPolygonAddPoint(testActor, helper);
+  await testPolygonRemovePoint(testActor, helper);
+  await testCircleMoveCenter(testActor, helper);
+  await testEllipseMoveRadius(testActor, helper);
+  await testInsetMoveEdges(testActor, helper);
 
   helper.finalize();
 });

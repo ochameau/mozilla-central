@@ -70,8 +70,8 @@ const TEST_DATA = [{
   hasVisibleArrowsAndHandlers: true
 }];
 
-add_task(function* () {
-  let helper = yield openInspectorForURL(TEST_URL)
+add_task(async function() {
+  let helper = await openInspectorForURL(TEST_URL)
                        .then(getHighlighterHelperFor(HIGHLIGHTER_TYPE));
 
   helper.prefix = ID;
@@ -79,12 +79,12 @@ add_task(function* () {
   let { hide, finalize } = helper;
 
   for (let data of TEST_DATA) {
-    yield testNode(helper, data);
+    await testNode(helper, data);
   }
 
   info("Hiding the highlighter");
-  yield hide();
-  yield finalize();
+  await hide();
+  await finalize();
 });
 
 function* testNode(helper, data) {

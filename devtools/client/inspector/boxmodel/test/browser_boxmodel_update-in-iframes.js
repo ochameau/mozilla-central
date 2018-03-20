@@ -7,12 +7,12 @@
 // Test that the box model view for elements within iframes also updates when they
 // change
 
-add_task(function* () {
-  yield addTab(URL_ROOT + "doc_boxmodel_iframe1.html");
-  let {inspector, boxmodel, testActor} = yield openLayoutView();
+add_task(async function() {
+  await addTab(URL_ROOT + "doc_boxmodel_iframe1.html");
+  let {inspector, boxmodel, testActor} = await openLayoutView();
 
-  yield testResizingInIframe(inspector, boxmodel, testActor);
-  yield testReflowsAfterIframeDeletion(inspector, boxmodel, testActor);
+  await testResizingInIframe(inspector, boxmodel, testActor);
+  await testReflowsAfterIframeDeletion(inspector, boxmodel, testActor);
 });
 
 function* testResizingInIframe(inspector, boxmodel, testActor) {

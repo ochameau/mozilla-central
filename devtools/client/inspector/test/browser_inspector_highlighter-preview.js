@@ -10,28 +10,28 @@
 const TEST_URI = `data:text/html;charset=utf-8,
                   <p id="one">one</p><p id="two">two</p><p id="three">three</p>`;
 
-add_task(function* () {
-  let {inspector, toolbox, testActor} = yield openInspectorForURL(TEST_URI);
+add_task(async function() {
+  let {inspector, toolbox, testActor} = await openInspectorForURL(TEST_URI);
 
-  let body = yield getNodeFront("body", inspector);
+  let body = await getNodeFront("body", inspector);
   is(inspector.selection.nodeFront, body, "By default the body node is selected");
 
   info("Start the element picker");
-  yield startPicker(toolbox);
+  await startPicker(toolbox);
 
   info("Shift-clicking element #one should select it but keep the picker ON");
-  yield clickElement("#one", testActor, inspector, true);
-  yield checkElementSelected("#one", inspector);
+  await clickElement("#one", testActor, inspector, true);
+  await checkElementSelected("#one", inspector);
   checkPickerMode(toolbox, true);
 
   info("Shift-clicking element #two should select it but keep the picker ON");
-  yield clickElement("#two", testActor, inspector, true);
-  yield checkElementSelected("#two", inspector);
+  await clickElement("#two", testActor, inspector, true);
+  await checkElementSelected("#two", inspector);
   checkPickerMode(toolbox, true);
 
   info("Clicking element #three should select it and turn the picker OFF");
-  yield clickElement("#three", testActor, inspector, false);
-  yield checkElementSelected("#three", inspector);
+  await clickElement("#three", testActor, inspector, false);
+  await checkElementSelected("#three", inspector);
   checkPickerMode(toolbox, false);
 });
 

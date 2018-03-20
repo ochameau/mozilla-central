@@ -34,12 +34,12 @@ registerCleanupFunction(() => {
   clipboard = null;
 });
 
-add_task(function* () {
-  let { inspector, testActor } = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let { inspector, testActor } = await openInspectorForURL(TEST_URL);
 
-  yield testPasteOuterHTMLMenu();
-  yield testPasteInnerHTMLMenu();
-  yield testPasteAdjacentHTMLMenu();
+  await testPasteOuterHTMLMenu();
+  await testPasteInnerHTMLMenu();
+  await testPasteAdjacentHTMLMenu();
 
   function* testPasteOuterHTMLMenu() {
     info("Testing that 'Paste Outer HTML' menu item works.");

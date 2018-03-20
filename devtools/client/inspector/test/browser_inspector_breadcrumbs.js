@@ -25,8 +25,8 @@ const NODES = [
    title: "clipPath#clip"},
 ];
 
-add_task(function* () {
-  let { inspector } = yield openInspectorForURL(TEST_URI);
+add_task(async function() {
+  let { inspector } = await openInspectorForURL(TEST_URI);
   let breadcrumbs = inspector.panelDoc.getElementById("inspector-breadcrumbs");
   let container = breadcrumbs.querySelector(".html-arrowscrollbox-inner");
 
@@ -35,8 +35,8 @@ add_task(function* () {
 
     info("Selecting node and waiting for breadcrumbs to update");
     let breadcrumbsUpdated = inspector.once("breadcrumbs-updated");
-    yield selectNode(node.selector, inspector);
-    yield breadcrumbsUpdated;
+    await selectNode(node.selector, inspector);
+    await breadcrumbsUpdated;
 
     info("Performing checks for node " + node.selector);
     let buttonsLabelIds = node.ids.split(" ");
@@ -67,8 +67,8 @@ add_task(function* () {
       "Node " + node.selector + " has the expected tooltip");
   }
 
-  yield testPseudoElements(inspector, container);
-  yield testComments(inspector, container);
+  await testPseudoElements(inspector, container);
+  await testComments(inspector, container);
 });
 
 function* testPseudoElements(inspector, container) {
@@ -93,7 +93,7 @@ function* testPseudoElements(inspector, container) {
      "::before shows up in breadcrumb");
 }
 
-function* testComments(inspector, container) {
+async function testComments(inspector, container) {
   info("Checking for comment elements");
 
   let breadcrumbs = inspector.breadcrumbs;
@@ -102,7 +102,7 @@ function* testComments(inspector, container) {
 
   let onBreadcrumbsUpdated = inspector.once("breadcrumbs-updated");
   button.click();
-  yield onBreadcrumbsUpdated;
+  await onBreadcrumbsUpdated;
 
   is(breadcrumbs.currentIndex, checkedButtonIndex, "New button is selected");
   ok(breadcrumbs.outer.hasAttribute("aria-activedescendant"),
@@ -113,7 +113,7 @@ function* testComments(inspector, container) {
 
   let onInspectorUpdated = inspector.once("inspector-updated");
   inspector.selection.setNodeFront(comment);
-  yield onInspectorUpdated;
+  await onInspectorUpdated;
 
   is(breadcrumbs.currentIndex, -1,
     "When comment is selected no breadcrumb should be checked");
@@ -123,7 +123,7 @@ function* testComments(inspector, container) {
   onInspectorUpdated = inspector.once("inspector-updated");
   onBreadcrumbsUpdated = inspector.once("breadcrumbs-updated");
   button.click();
-  yield Promise.all([onInspectorUpdated, onBreadcrumbsUpdated]);
+  await Promise.all([onInspectorUpdated, onBreadcrumbsUpdated]);
 
   is(breadcrumbs.currentIndex, checkedButtonIndex,
     "Same button is selected again");

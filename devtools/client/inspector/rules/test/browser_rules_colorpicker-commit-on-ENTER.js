@@ -16,13 +16,13 @@ const TEST_URI = `
   Testing the color picker tooltip!
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {view} = yield openRuleView();
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {view} = await openRuleView();
 
   let swatch = getRuleViewProperty(view, "body", "border").valueSpan
     .querySelector(".ruleview-colorswatch");
-  yield testPressingEnterCommitsChanges(swatch, view);
+  await testPressingEnterCommitsChanges(swatch, view);
 });
 
 function* testPressingEnterCommitsChanges(swatch, ruleView) {

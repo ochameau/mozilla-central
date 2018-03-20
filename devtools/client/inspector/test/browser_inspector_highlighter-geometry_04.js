@@ -20,34 +20,34 @@ const handlerMap = {
   "right": {"cx": "x2", "cy": "y2"}
 };
 
-add_task(function* () {
-  let helper = yield openInspectorForURL(TEST_URL)
+add_task(async function() {
+  let helper = await openInspectorForURL(TEST_URL)
                        .then(getHighlighterHelperFor(HIGHLIGHTER_TYPE));
 
   helper.prefix = ID;
 
   let { hide, finalize } = helper;
 
-  yield checkArrowsAndHandlers(helper, ".absolute-all-4", {
+  await checkArrowsAndHandlers(helper, ".absolute-all-4", {
     "top": {x1: 506, y1: 51, x2: 506, y2: 61},
     "bottom": {x1: 506, y1: 451, x2: 506, y2: 251},
     "left": {x1: 401, y1: 156, x2: 411, y2: 156},
     "right": {x1: 901, y1: 156, x2: 601, y2: 156}
   });
 
-  yield checkArrowsAndHandlers(helper, ".relative", {
+  await checkArrowsAndHandlers(helper, ".relative", {
     "top": {x1: 901, y1: 51, x2: 901, y2: 91},
     "left": {x1: 401, y1: 97, x2: 651, y2: 97}
   });
 
-  yield checkArrowsAndHandlers(helper, ".fixed", {
+  await checkArrowsAndHandlers(helper, ".fixed", {
     "top": {x1: 25, y1: 0, x2: 25, y2: 400},
     "left": {x1: 0, y1: 425, x2: 0, y2: 425}
   });
 
   info("Hiding the highlighter");
-  yield hide();
-  yield finalize();
+  await hide();
+  await finalize();
 });
 
 function* checkArrowsAndHandlers(helper, selector, arrows) {

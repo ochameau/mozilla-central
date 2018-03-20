@@ -9,20 +9,20 @@
 const TEST_URL = URL_ROOT + "doc_markup_edit.html";
 const {DEFAULT_VALUE_SUMMARY_LENGTH} = require("devtools/server/actors/inspector/walker");
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL(TEST_URL);
 
   info("Expanding all nodes");
-  yield inspector.markup.expandAll();
-  yield waitForMultipleChildrenUpdates(inspector);
+  await inspector.markup.expandAll();
+  await waitForMultipleChildrenUpdates(inspector);
 
-  yield editContainer(inspector, testActor, {
+  await editContainer(inspector, testActor, {
     selector: ".node6",
     newValue: "New text",
     oldValue: "line6"
   });
 
-  yield editContainer(inspector, testActor, {
+  await editContainer(inspector, testActor, {
     selector: "#node17",
     newValue: "LOREM IPSUM DOLOR SIT AMET, CONSECTETUR ADIPISCING ELIT. " +
               "DONEC POSUERE PLACERAT MAGNA ET IMPERDIET.",
@@ -30,14 +30,14 @@ add_task(function* () {
               "Donec posuere placerat magna et imperdiet."
   });
 
-  yield editContainer(inspector, testActor, {
+  await editContainer(inspector, testActor, {
     selector: "#node17",
     newValue: "New value",
     oldValue: "LOREM IPSUM DOLOR SIT AMET, CONSECTETUR ADIPISCING ELIT. " +
               "DONEC POSUERE PLACERAT MAGNA ET IMPERDIET."
   });
 
-  yield editContainer(inspector, testActor, {
+  await editContainer(inspector, testActor, {
     selector: "#node17",
     newValue: "LOREM IPSUM DOLOR SIT AMET, CONSECTETUR ADIPISCING ELIT. " +
               "DONEC POSUERE PLACERAT MAGNA ET IMPERDIET.",

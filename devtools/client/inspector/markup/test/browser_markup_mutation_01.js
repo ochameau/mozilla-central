@@ -302,11 +302,11 @@ const TEST_DATA = [
   }
 ];
 
-add_task(function* () {
-  let {inspector, testActor} = yield openInspectorForURL(TEST_URL);
+add_task(async function() {
+  let {inspector, testActor} = await openInspectorForURL(TEST_URL);
 
   info("Expanding all markup-view nodes");
-  yield inspector.markup.expandAll();
+  await inspector.markup.expandAll();
 
   for (let {desc, test, check, numMutations} of TEST_DATA) {
     info("Starting test: " + desc);
@@ -329,13 +329,13 @@ add_task(function* () {
         }
       });
     });
-    yield test(testActor, inspector);
-    yield promise;
+    await test(testActor, inspector);
+    await promise;
 
     info("Expanding all markup-view nodes to make sure new nodes are imported");
-    yield inspector.markup.expandAll();
+    await inspector.markup.expandAll();
 
     info("Checking the markup-view content");
-    yield check(inspector);
+    await check(inspector);
   }
 });

@@ -13,10 +13,10 @@ const osString = Services.appinfo.OS;
 
 const TEST_URI = URL_ROOT + "doc_copystyles.html";
 
-add_task(function* () {
-  yield addTab(TEST_URI);
-  let { inspector, view } = yield openRuleView();
-  yield selectNode("#testid", inspector);
+add_task(async function() {
+  await addTab(TEST_URI);
+  let { inspector, view } = await openRuleView();
+  await selectNode("#testid", inspector);
 
   let ruleEditor = getRuleViewRuleEditor(view, 1);
 
@@ -204,15 +204,15 @@ add_task(function* () {
 
   for (let { setup, desc, node, menuItemLabel, expectedPattern, visible } of data) {
     if (setup) {
-      yield setup();
+      await setup();
     }
 
     info(desc);
-    yield checkCopyStyle(view, node, menuItemLabel, expectedPattern, visible);
+    await checkCopyStyle(view, node, menuItemLabel, expectedPattern, visible);
   }
 });
 
-function* checkCopyStyle(view, node, menuItemLabel, expectedPattern, visible) {
+async function checkCopyStyle(view, node, menuItemLabel, expectedPattern, visible) {
   let allMenuItems = openStyleContextMenuAndGetAllItems(view, node);
   let menuItem = allMenuItems.find(item =>
     item.label === STYLE_INSPECTOR_L10N.getStr(menuItemLabel));
@@ -267,7 +267,7 @@ function* checkCopyStyle(view, node, menuItemLabel, expectedPattern, visible) {
      visible.copyRule);
 
   try {
-    yield waitForClipboardPromise(() => menuItem.click(),
+    await waitForClipboardPromise(() => menuItem.click(),
       () => checkClipboardData(expectedPattern));
   } catch (e) {
     failedClipboard(expectedPattern);

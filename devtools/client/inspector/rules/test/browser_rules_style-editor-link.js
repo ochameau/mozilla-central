@@ -50,16 +50,16 @@ const DOCUMENT_URL = "data:text/html;charset=utf-8," + encodeURIComponent(`
   </html>
 `);
 
-add_task(function* () {
-  yield addTab(DOCUMENT_URL);
-  let {toolbox, inspector, view, testActor} = yield openRuleView();
-  yield selectNode("div", inspector);
+add_task(async function() {
+  await addTab(DOCUMENT_URL);
+  let {toolbox, inspector, view, testActor} = await openRuleView();
+  await selectNode("div", inspector);
 
-  yield testInlineStyle(view);
-  yield testFirstInlineStyleSheet(view, toolbox, testActor);
-  yield testSecondInlineStyleSheet(view, toolbox, testActor);
-  yield testExternalStyleSheet(view, toolbox, testActor);
-  yield testDisabledStyleEditor(view, toolbox);
+  await testInlineStyle(view);
+  await testFirstInlineStyleSheet(view, toolbox, testActor);
+  await testSecondInlineStyleSheet(view, toolbox, testActor);
+  await testExternalStyleSheet(view, toolbox, testActor);
+  await testDisabledStyleEditor(view, toolbox);
 });
 
 function* testInlineStyle(view) {

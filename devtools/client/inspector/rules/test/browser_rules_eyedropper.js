@@ -39,27 +39,27 @@ registerCleanupFunction(() => {
   Services.prefs.clearUserPref("devtools.toolbox.host");
 });
 
-add_task(function* () {
+add_task(async function() {
   info("Add the test tab, open the rule-view and select the test node");
 
   let url = "data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI);
-  yield addTab(url);
+  await addTab(url);
 
-  let {testActor, inspector, view, toolbox} = yield openRuleView();
+  let {testActor, inspector, view, toolbox} = await openRuleView();
 
-  yield runTest(testActor, inspector, view);
+  await runTest(testActor, inspector, view);
 
   info("Reload the page to restore the initial state");
-  yield navigateTo(inspector, url);
+  await navigateTo(inspector, url);
 
   info("Change toolbox host to WINDOW");
-  yield toolbox.switchHost("window");
+  await toolbox.switchHost("window");
 
-  yield runTest(testActor, inspector, view);
+  await runTest(testActor, inspector, view);
 });
 
-function* runTest(testActor, inspector, view) {
-  yield selectNode("#div2", inspector);
+async function runTest(testActor, inspector, view) {
+  await selectNode("#div2", inspector);
 
   info("Get the background-color property from the rule-view");
   let property = getRuleViewProperty(view, "#div2", "background-color");
@@ -67,26 +67,26 @@ function* runTest(testActor, inspector, view) {
   ok(swatch, "Color swatch is displayed for the bg-color property");
 
   info("Open the eyedropper from the colorpicker tooltip");
-  yield openEyedropper(view, swatch);
+  await openEyedropper(view, swatch);
 
   let tooltip = view.tooltips.getTooltip("colorPicker").tooltip;
   ok(!tooltip.isVisible(), "color picker tooltip is closed after opening eyedropper");
 
   info("Test that pressing escape dismisses the eyedropper");
-  yield testESC(swatch, inspector, testActor);
+  await testESC(swatch, inspector, testActor);
 
   info("Open the eyedropper again");
-  yield openEyedropper(view, swatch);
+  await openEyedropper(view, swatch);
 
   info("Test that a color can be selected with the eyedropper");
-  yield testSelect(view, swatch, inspector, testActor);
+  await testSelect(view, swatch, inspector, testActor);
 
   let onHidden = tooltip.once("hidden");
   tooltip.hide();
-  yield onHidden;
+  await onHidden;
   ok(!tooltip.isVisible(), "color picker tooltip is closed");
 
-  yield waitForTick();
+  await waitForTick();
 }
 
 function* testESC(swatch, inspector, testActor) {

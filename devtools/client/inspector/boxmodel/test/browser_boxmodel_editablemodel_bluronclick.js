@@ -15,17 +15,17 @@ const TEST_URI =
   </style>
   <div id="div1"></div>`;
 
-add_task(function* () {
+add_task(async function() {
   // Make sure the toolbox is tall enough to have empty space below the
   // boxmodel-container.
-  yield pushPref("devtools.toolbox.footer.height", 500);
+  await pushPref("devtools.toolbox.footer.height", 500);
 
-  yield addTab("data:text/html," + encodeURIComponent(TEST_URI));
-  let {inspector, boxmodel} = yield openLayoutView();
+  await addTab("data:text/html," + encodeURIComponent(TEST_URI));
+  let {inspector, boxmodel} = await openLayoutView();
 
-  yield selectNode("#div1", inspector);
-  yield testClickingOutsideEditor(boxmodel);
-  yield testClickingBelowContainer(boxmodel);
+  await selectNode("#div1", inspector);
+  await testClickingOutsideEditor(boxmodel);
+  await testClickingBelowContainer(boxmodel);
 });
 
 function* testClickingOutsideEditor(boxmodel) {

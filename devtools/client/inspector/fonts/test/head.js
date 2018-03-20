@@ -34,21 +34,21 @@ selectNode = function* (node, inspector, reason) {
  * font-inspector tab.
  * @return {Promise} resolves to a {toolbox, inspector, view} object
  */
-var openFontInspectorForURL = Task.async(function* (url) {
-  yield addTab(url);
-  let {toolbox, inspector} = yield openInspector();
+var openFontInspectorForURL = async function(url) {
+  await addTab(url);
+  let {toolbox, inspector} = await openInspector();
 
   // Call selectNode again here to force a fontinspector update since we don't
   // know if the fontinspector-updated event has been sent while the inspector
   // was being opened or not.
-  yield selectNode("body", inspector);
+  await selectNode("body", inspector);
 
   return {
     toolbox,
     inspector,
     view: inspector.fontinspector
   };
-});
+};
 
 /**
  * Focus one of the preview inputs, clear it, type new text into it and wait for the

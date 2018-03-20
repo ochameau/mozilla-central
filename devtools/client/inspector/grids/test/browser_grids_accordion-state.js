@@ -20,19 +20,19 @@ const TEST_URI = `
 
 const GRID_OPENED_PREF = "devtools.layout.grid.opened";
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let { inspector, gridInspector, toolbox } = yield openLayoutView();
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let { inspector, gridInspector, toolbox } = await openLayoutView();
   let { document: doc } = gridInspector;
 
-  yield testAccordionStateAfterClickingHeader(doc);
-  yield testAccordionStateAfterSwitchingSidebars(inspector, doc);
-  yield testAccordionStateAfterReopeningLayoutView(toolbox);
+  await testAccordionStateAfterClickingHeader(doc);
+  await testAccordionStateAfterSwitchingSidebars(inspector, doc);
+  await testAccordionStateAfterReopeningLayoutView(toolbox);
 
   Services.prefs.clearUserPref(GRID_OPENED_PREF);
 });
 
-function* testAccordionStateAfterClickingHeader(doc) {
+function testAccordionStateAfterClickingHeader(doc) {
   let header = doc.querySelector(".grid-pane ._header");
   let gContent = doc.querySelector(".grid-pane ._content");
 
@@ -49,7 +49,7 @@ function* testAccordionStateAfterClickingHeader(doc) {
   ok(!Services.prefs.getBoolPref(GRID_OPENED_PREF), `${GRID_OPENED_PREF} is pref off.`);
 }
 
-function* testAccordionStateAfterSwitchingSidebars(inspector, doc) {
+function testAccordionStateAfterSwitchingSidebars(inspector, doc) {
   info("Checking the grid accordion state is persistent after switching sidebars.");
 
   let gContent = doc.querySelector(".grid-pane ._content");

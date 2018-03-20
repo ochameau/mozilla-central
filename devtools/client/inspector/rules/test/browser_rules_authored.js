@@ -18,8 +18,8 @@ function* createTestContent(style) {
   return view;
 }
 
-add_task(function* () {
-  let view = yield createTestContent("#testid {" +
+add_task(async function() {
+  let view = await createTestContent("#testid {" +
                                      // Invalid property.
                                      "  something: random;" +
                                      // Invalid value.

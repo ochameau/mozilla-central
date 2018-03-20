@@ -18,9 +18,9 @@ const TEST_URI = `
   Testing the color picker tooltip!
 `;
 
-add_task(function* () {
-  yield addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
-  let {view} = yield openRuleView();
+add_task(async function() {
+  await addTab("data:text/html;charset=utf-8," + encodeURIComponent(TEST_URI));
+  let {view} = await openRuleView();
 
   let propertiesToTest = ["color", "background-color", "border"];
 
@@ -28,7 +28,7 @@ add_task(function* () {
     info("Testing that the colorpicker appears on swatch click");
     let value = getRuleViewProperty(view, "body", property).valueSpan;
     let swatch = value.querySelector(".ruleview-colorswatch");
-    yield testColorPickerAppearsOnColorSwatchClick(view, swatch);
+    await testColorPickerAppearsOnColorSwatchClick(view, swatch);
   }
 });
 
