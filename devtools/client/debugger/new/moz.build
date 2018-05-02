@@ -11,3 +11,9 @@ DevToolsModules(
     'pretty-print-worker.js',
     'search-worker.js',
 )
+
+include('node-templates.mozbuild')
+
+DIRS += [
+    'src'
+]

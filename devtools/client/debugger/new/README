@@ -1,0 +1,21 @@
+Building debugger from sources:
+1) Checkout GitHub sources:
+   $ ./copy-from-github.sh
+This script creates a "github" and "src" folders.
+This checkouts julian's "branch-name" branch that I rebased to a recent github revision.
+"github" is a complete checkout of github repo, that is not meant to land in m-c,
+while "src" are files that need to be transpile by babel into the objdir. It is the debugger sources.
+
+3) Create the moz.build files in "src" folder:
+   $ cd github
+   $ yarn
+   $ node bin/create-mozbuild.js src/
+Once `mach` integration is validated, we can land these moz.build files in GitHub
+and maintain them manually, as we do in mozilla-central.
+
+4) Update vendors bundle:
+   $ cd github
+   $ node bin/copy-assets.js --mc ../../../../../
+Ideally, this step would also go away and use only babel.
+
+5) $ ./mach build!

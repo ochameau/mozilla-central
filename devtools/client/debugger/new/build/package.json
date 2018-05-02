@@ -1,0 +1,17 @@
+{
+  "name": "foo",
+  "dependencies": {
+    "@babel/core": "",
+    "shelljs": "",
+    "glob": "",
+    "babel-plugin-transform-flow-strip-types": "",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.46",
+    "@babel/types": "^7.0.0-beta.39",
+    "babel-eslint": "^8.2.1",
+    "babel-plugin-syntax-trailing-function-commas": "^6.22.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1"
+  }
+}
