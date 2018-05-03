@@ -6,7 +6,7 @@ Version 45.1
 Comparison: https://github.com/devtools-html/debugger.html/compare/release-45...release-45.1
 
 Packages:
-- babel-plugin-transform-es2015-modules-commonjs @6.26.0
+- babel-plugin-transform-es2015-modules-commonjs @6.26.2
 - babel-preset-react @6.24.1
 - react @16.2.0
 - react-dom @16.2.0

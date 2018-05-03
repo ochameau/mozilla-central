@@ -1,0 +1,72 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at <http://mozilla.org/MPL/2.0/>. */
+
+.welcomebox {
+  width: calc(100% - 1px);
+
+  /* Offsetting it by 30px for the sources-header area */
+  height: calc(100% - 30px);
+  position: absolute;
+  top: 30px;
+  left: 0;
+  padding: 50px 0 0 0;
+  text-align: center;
+  font-size: 1.25em;
+  background-color: var(--theme-toolbar-background);
+  font-weight: lighter;
+  z-index: 10;
+  user-select: none;
+}
+
+.theme-dark .welcomebox {
+  background-color: var(--theme-body-background);
+}
+
+.welcomebox .command-bar-button {
+  position: absolute;
+  top: auto;
+  offset-inline-end: 0;
+  offset-inline-start: auto;
+  bottom: 0;
+}
+
+.alignlabel {
+  display: flex;
+  white-space: nowrap;
+}
+
+.shortcutKeys {
+  font-family: Courier;
+}
+
+.shortcutKey,
+.shortcutLabel {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.shortcutKey {
+  text-align: right;
+  padding-right: 10px;
+  font-family: Courier;
+}
+
+.shortcutLabel {
+  text-align: left;
+  padding-left: 10px;
+}
+
+.shortcutFunction {
+  flex: 1;
+  color: var(--theme-comment);
+}
+
+.shortcutFunction p {
+  display: flex;
+}
+
+html .welcomebox .toggle-button-end.collapsed {
+  bottom: 1px;
+}
